@@ -1,0 +1,8 @@
+# local account data, secrets and tooling output
+.data/
+.env
+.env.*
+.admin-password.txt
+.vercel/
+node_modules/
+.claude/
