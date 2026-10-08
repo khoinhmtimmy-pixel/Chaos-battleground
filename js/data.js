@@ -118,7 +118,7 @@ a:{k:'proj',n:5,spread:.55,spd:560,r:6,dmg:5,life:.28,cd:.6,nm:'Scatter Shot'},
 q:{k:'proj',n:8,spread:1.1,spd:520,r:7,dmg:6,life:.3,kb:70,cd:5,nm:'Shell Burst'},
 e:{k:'dash',cd:5,dist:200,nova:{r:70,dmg:14,kb:80},nm:'Shoulder Charge'},
 r:{k:'proj',n:3,spread:.3,spd:700,r:20,dmg:30,life:.5,pierce:1,kb:120,cd:14,nm:'Super Slug'}}},
-{n:'Dex',t:'Bomb Thrower',col:'#d9534f',hair:'#222',acc:'hat',hp:90,sp:210,s:{
+{n:'Dex',t:'Bomb Thrower',col:'#d9534f',hair:'#222222',acc:'hat',hp:90,sp:210,s:{
 a:{k:'rain',cur:1,n:1,rad:0,r:55,dmg:12,gap:0,cd:.9,nm:'Lobbed Bomb'},
 q:{k:'mine',r:80,dmg:26,st:.5,cd:6,nm:'Sticky Mine'},
 e:{k:'blink',dist:220,to:1,cd:6,nm:'Rocket Hop'},
@@ -279,11 +279,11 @@ a:{k:'cone',r:55,arc:1.4,dmg:6,cd:.22,nm:'Dagger Flurry'},
 q:{k:'blink',dist:260,to:1,cd:4,nm:'Shadow Hop'},
 e:{k:'mine',r:70,dmg:20,st:.4,cd:5,nm:'Smoke Bomb'},
 r:{k:'chain',n:5,rng:380,dmg:11,cd:13,nm:'Blade Storm'}}},
-{n:'Rovan',t:'MOBA Duelist',col:'#60a5fa',hair:'#1e3a8a',acc:'band',hp:115,sp:235,s:{
-a:{k:'cone',r:68,arc:1.7,dmg:9,cd:.33,nm:'Twin Slash'},
-q:{k:'dash',dist:250,nova:{r:65,dmg:17},cd:4.5,nm:'Lunge Strike'},
-e:{k:'cone',r:115,arc:2.5,dmg:15,kb:100,cd:6,nm:'Sweeping Cut'},
-r:{k:'dash',dist:300,nova:{r:100,dmg:44,st:.6,kb:90},cd:14,nm:'Judgement Cut'}}},
+{n:'Rovan',t:'Wandering Swordsman',col:'#60a5fa',hair:'#1e3a8a',acc:'band',hp:115,sp:235,pas:{x3:1.8,n:8,heal:.1},s:{
+a:{k:'cone',r:72,arc:1.7,dmg:9,cd:.33,nm:'Roaring Edge'},
+q:{k:'dash',dist:230,nova:{r:78,dmg:20,st:.7},cd:6,nm:'Skyward Slash'},
+e:{k:'dash',dist:250,path:{w:46,dmg:15,sl:1.2},hst:1.6,fa:3,chg:2,cd:5.5,nm:'Moon Step'},
+r:{k:'strike',cur:1,rng:420,r:105,dmg:58,delay:1.1,st:.5,hl:.14,cd:16,nm:'Final Verdict'}}},
 // ---- raid bosses (not selectable)
 {boss:1,n:'Gluttony Maw',t:'Cursed Spirit',col:'#8b5cf6',hair:'#2a0a4a',acc:'horn',hp:520,sp:150,s:{
 a:{k:'proj',n:3,spread:.5,spd:380,r:10,dmg:7,life:1.4,home:1,cd:1.1,nm:'Curse Bolts'},
@@ -323,8 +323,40 @@ CH.push(
 {foe:1,ai:'range',n:'Frost Shaman',t:'Cryomancer',col:'#7dd3fc',hair:'#e0f2fe',acc:'bow',hp:34,sp:110,s:{a:{k:'proj',spd:300,r:8,dmg:5,life:1.6,sl:1,cd:1.5,nm:'Frost Bolt'},q:{k:'nova',cur:1,r:85,dmg:9,delay:.9,sl:1.5,cd:6,nm:'Ice Burst'}}},
 {foe:1,elite:1,ai:'rush',n:'Skeleton Knight',t:'Elite Guard',col:'#e2e8f0',hair:'#475569',acc:'crown',hp:130,sp:150,s:{a:{k:'cone',r:80,arc:1.8,dmg:11,cd:1.1,nm:'Cleave'},q:{k:'shield',dur:1.6,cd:7,nm:'Bone Guard'},e:{k:'dash',dist:240,nova:{r:60,dmg:10,st:.4},cd:5,nm:'Lunge'}}},
 {foe:1,elite:1,ai:'range',n:'Necromancer',t:'Elite Caster',col:'#c084fc',hair:'#3b0764',acc:'crown',hp:110,sp:115,s:{a:{k:'proj',n:2,spread:.3,spd:300,r:8,dmg:6,life:2,home:1,cd:1.6,nm:'Soul Bolts'},q:{k:'rain',cur:1,n:4,rad:100,r:42,dmg:10,gap:.2,cd:6,nm:'Bone Rain'}}});
+// ---- secret heroes: stronger than the roster on purpose. sec:'chest' = only from chests at very low odds, sec:'quest' = quest reward (QUESTS in meta.js)
+CH.push(
+{n:'Astra',t:'Star Valkyrie',sec:'chest',col:'#fbbf24',hair:'#fff7d6',acc:'halo',hp:125,sp:240,s:{
+a:{k:'proj',spd:900,r:8,dmg:12,life:.6,pierce:1,cd:.36,ps:'lance',nm:'Star Lance'},
+q:{k:'rain',cur:1,n:8,rad:130,r:40,dmg:17,gap:.08,cd:5,nm:'Starfall'},
+e:{k:'blink',dist:300,to:1,cd:3.5,nm:'Comet Step'},
+r:{k:'beam',len:640,w:46,dur:1.3,dmg:10,st:.2,cd:13,nm:'Heaven Piercer'}}},
+{n:'Omen',t:'Void Reaper',sec:'chest',col:'#8b5cf6',hair:'#e9d5ff',acc:'none',hp:120,sp:235,s:{
+a:{k:'cone',r:96,arc:2.6,dmg:14,ls:.15,cd:.42,nm:'Reap'},
+q:{k:'chain',n:5,rng:320,dmg:16,st:.35,cd:4.5,nm:'Soul Harvest'},
+e:{k:'blink',dist:300,to:1,cd:3.5,nm:'Grave Step'},
+r:{k:'zone',cur:1,r:190,dur:5,dps:22,pull:190,sl:1.5,cd:14,nm:'Abyssal Maw'}}},
+{n:'Kaiser',t:'Arena Champion',sec:'quest',col:'#f59e0b',hair:'#7c2d12',acc:'crown',hp:165,sp:225,s:{
+a:{k:'cone',r:84,arc:2.1,dmg:14,kb:30,cd:.4,nm:'Champion Cleave'},
+q:{k:'dash',dist:270,nova:{r:85,dmg:26,st:.7},cd:4.5,nm:'Lion Charge'},
+e:{k:'haste',dur:3,sh:2,cd:8,nm:'Unbreakable'},
+r:{k:'nova',r:210,dmg:66,delay:.6,kb:200,st:1.1,cd:14,nm:'Coliseum Quake'}}},
+{n:'Drakon',t:'Dragon Sovereign',sec:'quest',col:'#ef4444',hair:'#450a0a',acc:'horn',hp:150,sp:225,s:{
+a:{k:'proj',n:2,spread:.18,spd:640,r:10,dmg:8,life:.6,dot:{d:5,t:2},cd:.38,ps:'fire',nm:'Dragon Fang'},
+q:{k:'cone',r:160,arc:1.5,dmg:26,dot:{d:8,t:3},cd:4.5,nm:'Inferno Breath'},
+e:{k:'dash',dist:320,nova:{r:95,dmg:24,dot:{d:6,t:2},kb:80},cd:4.5,nm:'Wyvern Dive'},
+r:{k:'rain',cur:1,n:10,rad:185,r:52,dmg:22,gap:.09,cd:14,nm:'Meteor Cataclysm'}}},
+{n:'Eon',t:'Timeless Sage',sec:'quest',col:'#22d3ee',hair:'#f1f5f9',acc:'wizhat',hp:115,sp:225,s:{
+a:{k:'proj',spd:640,r:9,dmg:11,life:.9,home:1,pierce:1,cd:.4,nm:'Chrono Bolt'},
+q:{k:'zone',cur:1,r:135,dur:4,dps:15,sl:2,cd:5.5,nm:'Slow Field'},
+e:{k:'blink',dist:320,cd:3,nm:'Rewind'},
+r:{k:'nova',cur:1,r:210,dmg:58,delay:.9,st:1.8,cd:14,nm:'Time Stop'}}},
+{n:'Nyx',t:'Night Empress',sec:'quest',col:'#ec4899',hair:'#1e1b4b',acc:'crown',hp:120,sp:245,s:{
+a:{k:'proj',n:3,spread:.3,spd:700,r:7,dmg:7,life:.7,home:1,cd:.34,ps:'dark',nm:'Moon Shards'},
+q:{k:'mine',r:100,dmg:34,st:.9,cd:4.5,nm:'Eclipse Seal'},
+e:{k:'blink',dist:320,to:1,cd:3.5,nm:'Umbra Step'},
+r:{k:'orbit',n:6,rad:82,dur:7,dmg:14,cd:13,nm:'Lunar Halo'}}});
 for(const c of CH)if(c.foe)for(const k of['a','q','e','r'])if(!c.s[k])c.s[k]={k:'shield',dur:.01,cd:999,nm:'-'};
-const NORM=[...CH.keys()].filter(i=>!CH[i].boss&&!CH[i].foe),BOSS=[...CH.keys()].filter(i=>CH[i].boss),FOE=[...CH.keys()].filter(i=>CH[i].foe);
+const NORM=[...CH.keys()].filter(i=>!CH[i].boss&&!CH[i].foe),BASE=NORM.filter(i=>!CH[i].sec),BOSS=[...CH.keys()].filter(i=>CH[i].boss),FOE=[...CH.keys()].filter(i=>CH[i].foe);
 // run buffs: d/dv = description (en/vi); run:1 = only offered inside a run, never sold as a pre-run buff
 const BUFFS=[{n:'Power Up',ic:'⚔️',d:'+18% damage',dv:'+18% sát thương',f:r=>{r.dm*=1.18}},
 {n:'Rapid Fire',ic:'⏱️',d:'Skills recharge 20% faster',dv:'Hồi chiêu nhanh hơn 20%',f:r=>{r.cd*=1.2}},
@@ -343,11 +375,11 @@ CH.forEach(c=>{const m=MOD[c.n];if(m)for(const k in m)Object.assign(c.s[k],m[k])
 const KIT={Aya:{a:{dmg:6,cd:.5},q:{r:90,dps:10,sl:.8,cd:7},r:{r:180,dur:5,dps:14,sl:1,pull:35,cd:18}},Sakura:{a:{home:0,cd:.55}},Arashi:{a:{home:0,cd:.45}}};
 for(const n in KIT){const c=CH.find(x=>x.n==n);for(const k in KIT[n])Object.assign(c.s[k],KIT[n][k])}
 const BAL={"Rovan":[1.02,1.03],"Zann":[1.19,1.4],"Lyra":[1.11,1.22],"Gorm":[0.92,0.85],"Elara":[1.04,1.08],"Veyra":[0.9,0.8],"Brakk":[0.97,0.94],"Ilsa":[1.09,1.18],"Kade":[1.28,1.62],"Ren":[1.18,1.37],"Monko":[0.96,0.93],"Kuro":[0.94,0.88],"Nara":[1.02,1.03],"Kaen":[0.96,0.92],"Yuki":[1.03,1.06],"Raiden":[0.95,0.91],"Sakura":[0.98,0.96],"Shion":[1.22,1.47],"Aoi":[0.99,0.98],"Gaia":[0.94,0.89],"Hikari":[0.92,0.84],"Noir":[0.94,0.89],"Neko":[0.8,0.65],"Bram":[0.96,0.92],"Dex":[1.12,1.24],"Vesper":[1.21,1.44],"Tusk":[0.87,0.75],"Pip":[0.9,0.81],"Vex":[1.02,1.04],"Rook":[0.99,0.97],"Zig":[1.12,1.25],"Pyra":[0.95,0.9],"Riku":[0.81,0.65],"Kaito":[1.17,1.34],"Mei":[1.04,1.08],"Toru":[0.9,0.8],"Aya":[0.89,0.79],"Nao":[0.97,0.94],"Oren":[0.94,0.88],"Rex":[0.97,0.94],"Sora":[1.34,1.76],"Arashi":[0.89,0.78]};
-function balScale(c,hf,df){c.hp=Math.round(c.hp*hf);for(const k of['a','q','e','r']){const s=c.s[k];for(const f of['dmg','dps']){if(s[f]!=null)s[f]=+(s[f]*df).toFixed(3)}if(s.nova&&s.nova.dmg!=null)s.nova.dmg=+(s.nova.dmg*df).toFixed(3);if(s.dot)s.dot.d=+(s.dot.d*df).toFixed(3)}}
+function balScale(c,hf,df){c.hp=Math.round(c.hp*hf);for(const k of['a','q','e','r']){const s=c.s[k];for(const f of['dmg','dps']){if(s[f]!=null)s[f]=+(s[f]*df).toFixed(3)}if(s.nova&&s.nova.dmg!=null)s.nova.dmg=+(s.nova.dmg*df).toFixed(3);if(s.path)s.path.dmg=+(s.path.dmg*df).toFixed(3);if(s.dot)s.dot.d=+(s.dot.d*df).toFixed(3)}}
 for(const c of CH){const b=BAL[c.n];if(b&&!c.boss&&!c.foe)balScale(c,b[0],b[1])}
 // ---- unlock tiers: 0 starter, 1 rare, 2 epic, 3 legendary (unlock order only, kits stay PvP-balanced)
 const START=['Ren','Kaen','Yuki','Sakura'],RARE=['Monko','Kuro','Nara','Raiden','Shion','Aoi','Gaia','Hikari','Zephyr','Noir','Neko','Ryuu'],LEGEND=['Riku','Kaito','Mei','Toru','Aya','Nao','Oren','Rex','Sora','Arashi'];
-for(const i of NORM){const c=CH[i];c.rar=START.includes(c.n)?0:RARE.includes(c.n)?1:LEGEND.includes(c.n)?3:2}
+for(const i of NORM){const c=CH[i];c.rar=c.sec?4:START.includes(c.n)?0:RARE.includes(c.n)?1:LEGEND.includes(c.n)?3:2}
 // ---- campaign: 5 chapters x 10 stages, a boss closes every chapter
 const CHAP=[{n:'Tide Coast',v:'Bờ Biển Sóng',maps:[1,0,8],foes:['Goblin','Imp Archer','Bat'],boss:'Gluttony Maw',col:'#38bdf8'},
 {n:'Jungle Ruins',v:'Phế Tích Rừng',maps:[7,2,3],foes:['Goblin','Imp Archer','Bomb Imp','Slime','Bat','Ogre'],boss:'Iron Brute',col:'#4ade80'},
@@ -360,3 +392,35 @@ function stagePlan(s){const c=(s-1)/10|0,i=(s-1)%10+1,cp=CHAP[c],pool=cp.foes.ma
   if(last&&i==10)rooms.push({type:'boss',map,boss:chi(cp.boss),adds:2+c,pool});
   else rooms.push({type:'fight',map,n:Math.min(14,4+c+Math.ceil(i/2)+k),elite:last?(i==5?2:i>6?1:0):0,pool})}
  return{s,c,i,rooms,hs:.9*(1+.07*(s-1)),ds:.9*(1+.04*(s-1))}}
+// ---- looks, read by js/art.js: [weapon, gear, hair, extras]. Extras: acc headgear, off off-hand, pair dual-wield, sk skin, sc scale,
+// cc cape / wc wing / fc fist colour, face, sh = custom body painter, h = height for the name bar, ps = portrait scale
+const LOOK={
+Ren:['sword','light+cape','spiky',{pair:1,acc:'scarf',cc:'#2f6a3a'}],Monko:['fist','vest','short',{}],Kuro:['katana','gi','short',{pair:1,bc:'#1e40af'}],Nara:['staff','dress','long',{}],
+Kaen:['sword','armor','spiky',{fl:1}],Yuki:['staff','robe','long',{}],Raiden:['kunai','ninja','spiky',{acc:'scarf',bc:'#facc15'}],Sakura:['bow','dress','pony',{}],
+Shion:['dagger','ninja+hood','short',{}],Aoi:['orb','robe','long',{}],Gaia:['fist','vest','spiky',{fc:'#a8a29e',fr:8.2}],Hikari:['lance','armor+cape','long',{off:'shield',cc:'#f8fafc'}],
+Zephyr:['dagger','light+cape','pony',{cc:'#3f9a6a'}],Noir:['tome','robe+hood','long',{face:'glow'}],Neko:['claws','light+tail','short',{tc:'#e8964a'}],Ryuu:['fist','gi','pony',{fc:'#ff9a2b',bc:'#8a1a1a'}],
+Bram:['shotgun','coat','short',{bc:'#7c2d12'}],Dex:['bomb','coat','short',{acc:'goggles'}],Vesper:['rifle','light+cape+hood','pony',{acc:'none'}],Tusk:['hammer','armor','mohawk',{}],
+Pip:['wand','dress','twin',{}],Vex:['dagger','ninja+hood','short',{}],Rook:['gun','tech','short',{acc:'goggles'}],Zig:['staff','robe','spiky',{}],
+Pyra:['flamer','tech','twin',{}],Riku:['orb','coat','spiky',{}],Kaito:['claws','coat','spiky',{acc:'none'}],Mei:['hammer','dress','bob',{}],
+Toru:['spear','gi','pony',{bc:'#14532d'}],Aya:['orb','coat','spiky',{acc:'blind'}],Nao:['mega','coat','short',{}],Oren:['fist','light+cape','bald',{acc:'none',cc:'#ffffff'}],
+Rex:['cannon','tech','spiky',{acc:'none'}],Sora:['katana','ninja','pony',{acc:'scarf',bc:'#a3e635'}],Arashi:['orb','dress','bob',{acc:'none'}],
+Zann:['sword','ninja+hood','short',{pair:1}],Lyra:['bow','light+cape','long',{acc:'star',cc:'#0e7490'}],Gorm:['hammer','armor','bald',{off:'shield',acc:'helm'}],
+Elara:['staff','robe','long',{acc:'wizhat'}],Veyra:['wand','robe','bob',{}],Brakk:['axe','armor','mohawk',{bc:'#7f1d1d'}],Ilsa:['staff','robe+cape','long',{cc:'#e0f2fe'}],
+Kade:['dagger','light+hood','short',{}],Rovan:['katana','coat+cape','pony',{acc:'scarf',bc:'#e2e8f0',cc:'#1e3a8a'}],
+Astra:['lance','armor+wings','long',{wc:'#ffffff'}],Omen:['scythe','robe+hood+cape','long',{face:'glow',cc:'#2e1065'}],Kaiser:['gsword','armor+cape','short',{off:'shield',cc:'#b91c1c'}],
+Drakon:['spear','armor+wings+tail','spiky',{wc:'#7f1d1d',tc:'#ef4444'}],Eon:['staff','robe+cape','long',{cc:'#0e7490'}],Nyx:['orb','dress+cape','long',{cc:'#1e1b4b'}],
+Goblin:['club','rag','bald',{sk:'#86c24f',acc:'gob',sc:.92}],'Imp Archer':['bow','rag+wings+tail','bald',{sk:'#f0a040',acc:'horn',sc:.9,wc:'#b45309'}],Wraith:[0,0,0,{sh:'ghost',h:54}],
+'Bomb Imp':['bomb','rag+tail','bald',{sk:'#ef6a5a',acc:'horn',sc:.9}],'Hex Mage':['staff','robe+hood','bald',{face:'glow'}],Ogre:['club','rag','bald',{sk:'#c08a4a',acc:'tusk',sc:1.4,face:'rage'}],
+Bat:[0,0,0,{sh:'bat',h:40}],Slime:[0,0,0,{sh:'slime',h:30}],'Fire Imp':['orb','rag+tail','flame',{sk:'#ff9a4c',acc:'horn',sc:.9}],'Frost Shaman':['staff','robe','bald',{sk:'#bfe9ff',acc:'tmask'}],
+'Skeleton Knight':['sword','armor','bald',{sk:'#eef0e6',face:'skull',off:'shield',acc:'none',sc:1.22}],Necromancer:['bstaff','robe+hood','bald',{sk:'#e8e2d0',face:'skull',sc:1.2}],
+'Gluttony Maw':[0,0,0,{sh:'maw',h:56,ps:.8}],'Iron Brute':[0,0,0,{sh:'golem',h:50,ps:.85}],'Ember Tyrant':[0,0,0,{sh:'dragon',h:62,ps:.76}],'Void Sovereign':[0,0,0,{sh:'lord',h:72,ps:.74}],
+'Mad Giant':['fist','bare','wild',{sk:'#e8a07a',face:'rage',sc:1.85,fc:'#e8a07a',fr:7.5,acc:'none'}]};
+for(const c of CH){const l=LOOK[c.n];c.lk=l?Object.assign({wp:l[0]||'none',gr:l[1]||'light',hs:l[2]||'bald'},l[3]):{wp:'sword',gr:'light',hs:'spiky'}}
+// what a shot looks like (ps) and how a rained strike arrives (fs), guessed from the weapon and the skill's name unless the skill says otherwise
+{const elem=s=>/shadow|void|black|curse|soul|dark|hex/i.test(s.nm)?'dark':/ice|frost|snow/i.test(s.nm)?'ice':/fire|flame|ember|dragon|inferno|roar/i.test(s.nm)||s.dot?'fire':'orb';
+ for(const c of CH){const w=c.lk.wp;for(const k in c.s){const s=c.s[k];
+  if(s.k=='proj'&&!s.ps)s.ps=/boulder|rock/i.test(s.nm)?'rock':/needle|nail/i.test(s.nm)?'needle':/note/i.test(s.nm)?'note':/blade|slash|wave|cut/i.test(s.nm)?'wave':w=='fist'&&elem(s)!='fire'?'fist':elem(s)=='fire'?'fire':s.r>30?'vortex':w=='bow'?'arrow':/gun|rifle|cannon/.test(w)?'bullet':w=='kunai'?'star':w=='dagger'?'kunai':/sword|katana|axe|scythe|claws/.test(w)?'wave':w=='lance'||w=='spear'?'lance':w=='flamer'?'fire':elem(s);
+  if(s.k=='rain'&&!s.fs)s.fs=w=='bomb'||/bomb|barrage/i.test(s.nm)?'bomb':/thunder|storm|lightning/i.test(s.nm)?'bolt':'orb';
+  if(w=='fist')s.fc=c.lk.fc}}}
+// ground / obstacle / weather set per map, in MAPS order (TH in js/art.js)
+['sand','sand','stone','stone','stone','lava','ice','grass','sand','night','sand','stone','stone'].forEach((t,i)=>{MAPS[i].th=t});

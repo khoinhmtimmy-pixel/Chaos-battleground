@@ -1,6 +1,6 @@
 # ⚔️ Chaos Battleground
 
-Game hành động nhìn từ trên xuống chạy hoàn toàn trên trình duyệt: chiến dịch 50 màn, raid vô tận, đấu trường PvP (bot / 2v2 / online), 44 nhân vật để mở khoá.
+Game hành động nhìn từ trên xuống chạy hoàn toàn trên trình duyệt: chiến dịch 50 màn, raid vô tận, đấu trường PvP (bot / 2v2 / online), 44 nhân vật để mở khoá và 6 nhân vật Bí ẩn.
 
 ## Chơi thử trên máy
 
@@ -59,18 +59,33 @@ Sau đó màn hình đăng nhập ghi "☁️ Lưu cloud": người chơi đăng
 - **Lên cấp:** qua màn / raid nhận XP. Mỗi cấp cho 1 điểm để cộng Máu, Khiên, Sát thương, Tốc độ (tối đa 20 mỗi loại, cấp tối đa 50).
 - **Vàng:** mở rương nhân vật ngẫu nhiên, mua thẳng nhân vật, nâng cấp nhân vật (tối đa cấp 10), mua Buff May Mắn cho lượt kế, hồi sinh.
 - Chỉ số cộng thêm chỉ áp dụng cho Chiến dịch và Raid. Đấu trường luôn cân bằng.
+- **Nhiệm vụ:** tab 🏆 liệt kê các mốc (thắng Đấu trường, leo Raid, lên cấp, qua màn, hạ quái, sưu tầm nhân vật, gom sao) kèm thưởng vàng.
+- **Nhân vật Bí ẩn** (mạnh hơn dàn thường, kể cả trong Đấu trường):
+  | Nhân vật | Cách nhận |
+  | --- | --- |
+  | Astra, Omen | Chỉ rơi từ rương: 0,5% ở Rương Anh Hùng, 2% ở Rương Huyền Thoại. Khi đã có đủ 44 nhân vật thường, mỗi rương có 3% / 10% trúng, trượt được hoàn 60% vàng |
+  | Kaiser | Thắng 100 trận Đấu trường |
+  | Drakon | Thắng trọn Raid: hạ đủ 5 boss trong một lượt |
+  | Eon | Đạt cấp 50 |
+  | Nyx | Qua hết 50 màn Chiến dịch |
+- **Rovan** là kiếm khách kiểu đấu sĩ MOBA: nhát chém thứ 3 mạnh hơn, trúng 8 đòn thì hồi máu; Q hất tung, E lướt chém tích 2 lần, R biến mất rồi giáng xuống mục tiêu.
 
 ## Cấu trúc mã nguồn
 
 | File | Vai trò |
 | --- | --- |
 | `index.html`, `style.css` | Khung trang và giao diện |
-| `js/data.js` | Nhân vật, quái, boss, bản đồ, buff, độ hiếm, 50 màn chiến dịch |
-| `js/game.js` | Engine: chiến đấu, khiên, phòng / tầng, vẽ canvas, HUD, điều khiển |
+| `js/data.js` | Nhân vật, quái, boss, bản đồ, buff, độ hiếm, 50 màn chiến dịch, bảng ngoại hình `LOOK` (vũ khí, trang phục, tóc của từng con) |
+| `js/game.js` | Engine: chiến đấu, khiên, phòng / tầng, HUD, điều khiển |
+| `js/art.js` | Toàn bộ hình vẽ trong trận: nhân vật, vũ khí, trang bị, quái, boss, địa hình theo chủ đề, hiệu ứng |
 | `js/net.js` | Online PvP (WebRTC, MQTT, WebSocket) |
-| `js/meta.js` | Tài khoản, lưu tiến trình, cấp độ, cửa hàng, các màn hình, âm thanh, song ngữ Việt / Anh |
+| `js/meta.js` | Tài khoản, lưu tiến trình, cấp độ, cửa hàng, nhiệm vụ, các màn hình, âm thanh, song ngữ Việt / Anh |
 | `js/config.js` | Cấu hình công khai (mã băm mật khẩu admin chế độ thiết bị) |
 | `api/` | API tài khoản trên Vercel: `auth` (đăng ký / đăng nhập), `save` (tiến trình), `admin` |
 | `dev-server.js`, `tools/` | Chạy thử trên máy, đổi mật khẩu admin (không deploy) |
 
-Muốn chỉnh độ khó hay kinh tế: `stagePlan()` trong `js/data.js` (số quái, hệ số máu / sát thương theo màn) và nhóm hằng số ở phần "progression rules" trong `js/meta.js` (XP mỗi cấp, giá rương, giá nâng cấp, thưởng).
+Muốn chỉnh độ khó hay kinh tế: `stagePlan()` trong `js/data.js` (số quái, hệ số máu / sát thương theo màn) và nhóm hằng số ở phần "progression rules" trong `js/meta.js` (XP mỗi cấp, giá rương, tỉ lệ rương, danh sách nhiệm vụ `QUESTS`, thưởng).
+
+Muốn đổi ngoại hình một nhân vật: sửa dòng của nó trong bảng `LOOK` (`js/data.js`), ví dụ `Kaen:['sword','armor','spiky',{fl:1}]` là kiếm + giáp + tóc dựng + lưỡi kiếm bốc lửa. Các kiểu vũ khí có sẵn nằm trong `WPN` ở `js/art.js`.
+
+Mỗi lần sửa file `js/` hoặc `style.css`, tăng số `?v=` trong `index.html` để trình duyệt của người chơi tải bản mới.

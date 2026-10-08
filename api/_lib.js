@@ -35,10 +35,11 @@ async function limited(req,max){if(DEV)return false;const ip=String(req.headers[
 
 // the game runs in the browser, so a save cannot be proven honest here; this only keeps it well-formed and inside the game's limits
 const int=(v,a,b)=>Math.max(a,Math.min(b,Math.round(+v)||0));
-function clean(s){if(!s||typeof s!='object'||Array.isArray(s))return null;const st=s.st||{},o={v:1,lvl:int(s.lvl,1,50),xp:int(s.xp,0,1e6),gold:int(s.gold,0,9999999),st:{hp:int(st.hp,0,20),sh:int(st.sh,0,20),dm:int(st.dm,0,20),sp:int(st.sp,0,20)},own:{},sel:HERO.test(s.sel)?s.sel:'Ren',stage:int(s.stage,1,51),stars:{},raid:int(s.raid,0,99999),pb:[],daily:String(s.daily||'').slice(0,10),streak:int(s.streak,0,9999),wins:int(s.wins,0,1e7),ts:int(s.ts,0,9e15)};
+function clean(s){if(!s||typeof s!='object'||Array.isArray(s))return null;const st=s.st||{},o={v:1,lvl:int(s.lvl,1,50),xp:int(s.xp,0,1e6),gold:int(s.gold,0,9999999),st:{hp:int(st.hp,0,20),sh:int(st.sh,0,20),dm:int(st.dm,0,20),sp:int(st.sp,0,20)},own:{},sel:HERO.test(s.sel)?s.sel:'Ren',stage:int(s.stage,1,51),stars:{},raid:int(s.raid,0,99999),rb:int(s.rb,0,99),kills:int(s.kills,0,1e9),q:{},pb:[],daily:String(s.daily||'').slice(0,10),streak:int(s.streak,0,9999),wins:int(s.wins,0,1e7),ts:int(s.ts,0,9e15)};
  if(o.st.hp+o.st.sh+o.st.dm+o.st.sp>o.lvl-1)o.st={hp:0,sh:0,dm:0,sp:0};
  if(s.own&&typeof s.own=='object')for(const k of Object.keys(s.own).slice(0,80))if(HERO.test(k))o.own[k]=int(s.own[k],1,10);
  if(s.stars&&typeof s.stars=='object')for(let i=1;i<=50;i++){const v=int(s.stars[i],0,3);if(v)o.stars[i]=v}
+ if(s.q&&typeof s.q=='object')for(const k of Object.keys(s.q).slice(0,60))if(/^[a-z0-9]{1,8}$/.test(k)&&s.q[k])o.q[k]=1;
  if(Array.isArray(s.pb))for(const b of s.pb.slice(0,3))if(typeof b=='string'&&b.length<=24)o.pb.push(b);return o}
 
 module.exports={crypto,redis,hasDb,ADMIN,ADMIN_PASS,NAME,same,adminV,scrypt,sign,who,body,send,limited,clean};
