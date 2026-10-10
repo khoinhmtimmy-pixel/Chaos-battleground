@@ -2,7 +2,7 @@
 function wire(){const my=R;begin(true);joinT=Date.now();
  my.onPeers(c=>{if(R!==my)return;const seen={};for(const p of c.peers){if(p.isMe||p.presence.ch==null||(p.presence.t===joinT&&p.presence.nm===me.nm))continue;const q=p.presence,id=p.peer,qc=CH[q.ch];if(!qc||qc.boss||qc.foe)continue;q.nm=String(q.nm||'?').slice(0,14);seen[id]=1;
   let e=others[id];if(!e){if(Object.keys(others).length>=3){leave('Room is full (4 players).');return}e=others[id]=mk(q.ch,q.x,q.y,q.nm,false)}
-  if(MAPS[q.mp]&&myPeer()=='G'&&MAP!=q.mp){setMap(q.mp);ents=[];respawn(me)}Object.assign(e,{t:q.t,awt:q.aw?1:0,ch:q.ch,tx:q.x,ty:q.y,hp:q.hp,mx:CH[q.ch].hp,sd:+q.sd||0,sm:+q.sm||0,k:q.k,al:q.al,sh:q.sh?1:0,a:q.a,nm:q.nm})}
+  if(MAPS[q.mp]&&myPeer()=='G'&&MAP!=q.mp){setMap(q.mp);ents=[];respawn(me)}Object.assign(e,{t:q.t,awt:q.aw?1:0,ch:q.ch,tx:q.x,ty:q.y,hp:q.hp,mx:CH[q.ch].hp,sd:+q.sd||0,sm:+q.sm||0,k:q.k,al:q.al,sh:q.sh?1:0,a:q.a,nm:q.nm,gq:q.gq,gc:q.gc,ga:q.ga})}
   for(const id in others)if(!others[id].bot&&!seen[id])delete others[id]});
  my.on('fx',m=>{if(R!==my)return;const d=m.data;if(m.isMe||!d||!CH[d.c]||!CH[d.c].s[d.s]||!others[m.peer])return;cast(others[m.peer],m.peer,d,false)});
  my.on('kill',m=>{if(R!==my)return;if(!m.isMe&&m.data&&m.data.k&&m.data.k===myPeer()&&me.al){me.k++;feedKill(me,others[m.peer]||{nm:'Enemy',tm:1})}});

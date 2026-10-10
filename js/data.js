@@ -79,6 +79,7 @@ a:{k:'proj',cd:.4,spd:640,r:10,dmg:9,life:.4,nm:'Dragon Fist'},
 q:{k:'proj',cd:4,n:3,spread:.4,spd:460,r:12,dmg:14,life:.7,nm:'Dragon Fire'},
 e:{k:'dash',cd:5,dist:240,nova:{r:65,dmg:16},nm:'Dragon Leap'},
 r:{k:'proj',cd:14,spd:520,r:34,dmg:40,life:1.1,sl:.8,nm:'Dragon Roar'}}}];
+CH.push(...ROSTER);
 const MOD={Ren:{a:{kb:20},q:{n:1,spread:0,spd:820,dmg:8,life:.5,nm:'Grapple Pull',kb:-90},r:{st:.8}},
 Monko:{a:{kb:25},r:{kb:170}},Kuro:{q:{kb:70},r:{pierce:1}},Nara:{q:{st:.6},r:{kb:-60}},
 Kaen:{a:{dot:{d:4,t:2}},q:{dot:{d:4,t:2}},e:{nova:{r:70,dmg:16,dot:{d:5,t:2}}},r:{dot:{d:8,t:3}}},
@@ -369,6 +370,42 @@ const BUFFS=[{n:'Power Up',ic:'⚔️',d:'+18% damage',dv:'+18% sát thương',f
 {n:'Quick Guard',ic:'🔋',d:'Shield recharges 40% sooner and faster',dv:'Khiên hồi sớm và nhanh hơn 40%',f:r=>{r.sr*=1.4}},
 {n:'Gold Rush',ic:'🪙',d:'+50% gold from this run',dv:'+50% vàng trong lượt này',f:r=>{r.gm*=1.5}},
 {n:'Field Medic',ic:'🧪',run:1,d:'Restore 40% HP right now',dv:'Hồi ngay 40% máu',f:r=>{me.hp=Math.min(me.mx,me.hp+me.mx*.4)}}];
+
+// ---- accessories. 3 slots (head/charm/aura), bought with gold in the Gear screen.
+// b = PvE-only stat bonuses as fractions (cd < 1 means skills recharge faster), p = gold price, art = draw key in js/art.js
+const GEAR=[
+ {id:'hb_bnd',sl:'head',rar:0,n:'Red Ribbon',v:'Lụa Đỏ',p:300,art:'gband',b:{dm:.03}},
+ {id:'hb_vis',sl:'head',rar:1,n:'Battle Visor',v:'Kính Chiến',p:650,art:'gvisor',b:{sp:.05}},
+ {id:'hb_hod',sl:'head',rar:1,n:'Shadow Hood',v:'Mũ Trùm',p:650,art:'ghood',b:{sh:.06}},
+ {id:'hb_hrn',sl:'head',rar:2,n:'Ram Horns',v:'Sừng Cuồng',p:1400,art:'ghorn',b:{dm:.07}},
+ {id:'hb_ant',sl:'head',rar:2,n:'Signal Antennae',v:'Ăng-ten',p:1400,art:'gant',b:{cd:.94}},
+ {id:'hb_gog',sl:'head',rar:2,n:'Scout Goggles',v:'Kính Quan Sát',p:1400,art:'ggoggles',b:{cd:.95,sp:.03}},
+ {id:'hb_crn',sl:'head',rar:3,n:'Gilded Crown',v:'Vương Miện',p:2600,art:'gcrown',b:{hp:.09}},
+ {id:'hb_hlm',sl:'head',rar:3,n:'Steel Helm',v:'Mũ Giáp',p:2600,art:'ghelm',b:{sh:.10}},
+ {id:'hb_hal',sl:'head',rar:3,n:'Sun Halo',v:'Hào Quang',p:2600,art:'ghalo',b:{sp:.08}},
+ {id:'hb_msk',sl:'head',rar:3,n:'Oni Mask',v:'Mặt Nạ Oni',p:2600,art:'gmask',b:{hp:.07,sh:.06}},
+ {id:'hb_ast',sl:'head',rar:4,n:'Astral Diadem',v:'Vương Miện Sư Phạm',p:5200,art:'gastral',b:{hp:.07,dm:.07,sp:.07,cd:.92}},
+ {id:'ch_orb',sl:'charm',rar:0,n:'Star Bead',v:'Hạt Tinh',p:300,art:'gorb',b:{dm:.03}},
+ {id:'ch_fir',sl:'charm',rar:1,n:'Ember Seed',v:'Hạt Lửa',p:650,art:'gfire',b:{dm:.06}},
+ {id:'ch_frz',sl:'charm',rar:1,n:'Frost Crystal',v:'Tinh Băng',p:650,art:'gice',b:{sh:.06}},
+ {id:'ch_shu',sl:'charm',rar:2,n:'Shuriken Charm',v:'Phi Nhẫn',p:1400,art:'gshur',b:{cd:.93}},
+ {id:'ch_bel',sl:'charm',rar:2,n:'Silver Bell',v:'Chuông Bạc',p:1400,art:'gbell',b:{ls:.03}},
+ {id:'ch_run',sl:'charm',rar:3,n:'Rune Tablet',v:'Bảng Rune',p:2600,art:'grune',b:{hp:.08}},
+ {id:'ch_bld',sl:'charm',rar:3,n:'Blood Drop',v:'Giọt Máu',p:2600,art:'gblood',b:{ls:.05}},
+ {id:'ch_prs',sl:'charm',rar:3,n:'Prism Lens',v:'Lăng Kính',p:2600,art:'gprism',b:{sp:.07}},
+ {id:'ch_vod',sl:'charm',rar:4,n:'Void Seed',v:'Hạt Hư Không',p:5200,art:'gvoid',b:{dm:.11}},
+ {id:'ch_rel',sl:'charm',rar:4,n:'Sacred Relic',v:'Thánh Vật',p:5200,art:'grelic',b:{hp:.05,sh:.05,dm:.05,sp:.05}},
+ {id:'au_ear',sl:'aura',rar:0,n:'Stone Circle',v:'Vòng Đất',p:300,art:'gaur',b:{hp:.04}},
+ {id:'au_emb',sl:'aura',rar:1,n:'Ember Aura',v:'Hơi Than',p:650,art:'gaurf',b:{dm:.06}},
+ {id:'au_frz',sl:'aura',rar:1,n:'Frost Aura',v:'Hơi Băng',p:650,art:'gaura',b:{sp:.06}},
+ {id:'au_thu',sl:'aura',rar:2,n:'Storm Aura',v:'Hơi Lôi',p:1400,art:'gaurt',b:{cd:.94}},
+ {id:'au_nat',sl:'aura',rar:2,n:'Forest Aura',v:'Hơi Rừng',p:1400,art:'gaurn',b:{ls:.03}},
+ {id:'au_gld',sl:'aura',rar:3,n:'Golden Aura',v:'Hào Quang Vàng',p:2600,art:'gaurg',b:{hp:.10}},
+ {id:'au_drk',sl:'aura',rar:3,n:'Shadow Aura',v:'Hào Quang Tối',p:2600,art:'gaurd',b:{dm:.08}},
+ {id:'au_holy',sl:'aura',rar:3,n:'Halo Aura',v:'Hào Quang Thánh',p:2600,art:'gaurh',b:{sh:.09}},
+ {id:'au_vod',sl:'aura',rar:4,n:'Void Aura',v:'Hào Quang Hư Vô',p:5200,art:'gaurv',b:{hp:.05,sh:.05,dm:.05,sp:.05}},
+ {id:'au_drg',sl:'aura',rar:4,n:'Dragon Aura',v:'Hơi Rồng',p:5200,art:'gaurdr',b:{dm:.12}}];
+const GBY=Object.fromEntries(GEAR.map(g=>[g.id,g])),GSLOTS=['head','charm','aura'];
 const IC={proj:'➶',cone:'⚔',beam:'═',orbit:'◎',rain:'☔',mine:'●',chain:'⚡',zone:'◉',nova:'✸',dash:'⇢',blink:'✧',shield:'◍',heal:'✚',haste:'≫'};
 CH.forEach(c=>{const m=MOD[c.n];if(m)for(const k in m)Object.assign(c.s[k],m[k])});
 // ---- balance pass (tuned with 1v1 duel simulations): kit fixes, then per-character [health x, damage x]
@@ -415,6 +452,7 @@ Bat:[0,0,0,{sh:'bat',h:40}],Slime:[0,0,0,{sh:'slime',h:30}],'Fire Imp':['orb','r
 'Skeleton Knight':['sword','armor','bald',{sk:'#eef0e6',face:'skull',off:'shield',acc:'none',sc:1.22}],Necromancer:['bstaff','robe+hood','bald',{sk:'#e8e2d0',face:'skull',sc:1.2}],
 'Gluttony Maw':[0,0,0,{sh:'maw',h:56,ps:.8}],'Iron Brute':[0,0,0,{sh:'golem',h:50,ps:.85}],'Ember Tyrant':[0,0,0,{sh:'dragon',h:62,ps:.76}],'Void Sovereign':[0,0,0,{sh:'lord',h:72,ps:.74}],
 'Mad Giant':['fist','bare','wild',{sk:'#e8a07a',face:'rage',sc:1.85,fc:'#e8a07a',fr:7.5,acc:'none'}]};
+Object.assign(LOOK,LOOK_R);
 for(const c of CH){const l=LOOK[c.n];c.lk=l?Object.assign({wp:l[0]||'none',gr:l[1]||'light',hs:l[2]||'bald'},l[3]):{wp:'sword',gr:'light',hs:'spiky'}}
 // what a shot looks like (ps) and how a rained strike arrives (fs), guessed from the weapon and the skill's name unless the skill says otherwise
 {const elem=s=>/shadow|void|black|curse|soul|dark|hex/i.test(s.nm)?'dark':/ice|frost|snow/i.test(s.nm)?'ice':/fire|flame|ember|dragon|inferno|roar/i.test(s.nm)||s.dot?'fire':'orb';

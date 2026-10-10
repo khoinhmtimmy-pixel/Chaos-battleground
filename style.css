@@ -159,6 +159,8 @@ body.t #tc{display:block}
 .hc span{position:relative}
 .hc .lvb{position:absolute;left:3px;top:3px;font-size:10px;padding:0 5px;border-radius:7px;background:var(--ink);color:var(--gold)}
 .hc.lock img{filter:brightness(0) opacity(.55)}
+/* gear you do not own yet stays visible, just dimmed: you need to see what you are buying */
+.hc.glock img{filter:grayscale(.85) brightness(.62)}
 .hc.lock:after{content:'🔒';position:absolute;right:3px;top:2px;font-size:13px}
 .hc.sec{border-color:#ff4d8d;box-shadow:0 0 12px #ff4d8d88}.hc.sec:before{background:linear-gradient(170deg,#ff4d8d,#7fe4ff 60%,transparent 85%);opacity:.38}
 .hc.on{box-shadow:0 0 0 3px var(--gold),0 0 16px #ffd84d88;transform:translateY(-2px)}

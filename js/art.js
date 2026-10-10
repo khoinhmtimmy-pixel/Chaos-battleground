@@ -48,6 +48,46 @@ none(){}};
 const W_SWING=/sword|katana|dagger|axe|hammer|scythe|club|claws/,W_THRUST=/spear|lance|fist/,W_TWO=/gsword|spear|lance|axe|hammer|scythe|rifle|shotgun|flamer|staff|bstaff/,W_PAIR=/dagger|fist|claws/;
 function shield(x,y,c){aPoly([x-6,y-8,x+6,y-8,x+7,y+1,x,y+9,x-7,y+1],STEEL);aPoly([x-3.4,y-5,x+3.4,y-5,x+4,y,x,y+5.4,x-4,y],c.col,1);aCirc(x,y-.6,1.6,GOLD,1)}
 
+// ---------- accessories. Aura sits on the ground behind the body, head gear on top of the
+// built-in headgear, charm floats at the shoulder. Purely cosmetic art: the bonuses live in pveStats().
+function gearAura(a,ph){
+ ctx.save();const pul=.5+.5*Math.sin(tm*2.6+ph),orb=(n,r,sp,col,n2)=>{for(let i=0;i<n;i++){const t=tm*sp+i*6.283/n;aCirc(Math.cos(t)*r,-3-Math.sin(t)*3,1.6,col,1)}};
+ if(a=='gaur'){aEll(0,-1,15,5,'#8a7a5a');aEll(0,-1,10,3.2,'#6a5a3a',1)}
+ else if(a=='gaurf'){glowAt('#ff9a2b',0,-3,20,.22+pul*.16);aEll(0,-1,15.5,5.4,'#ff7a2b');orb(3,13,1.6,'#ffd08a')}
+ else if(a=='gaura'){glowAt('#7fd8ff',0,-3,20,.2+pul*.14);aEll(0,-1,15.5,5.4,'#6fd0ff');orb(4,13,1.2,'#cdefff')}
+ else if(a=='gaurt'){glowAt('#ffe14d',0,-3,21,.2+pul*.2);aEll(0,-1,16,5.6,'#f5d423');for(let i=0;i<3;i++){const t=tm*4+i*2.1;aLine(Math.cos(t)*15,-3-Math.sin(t)*3,Math.cos(t)*15-2,-7-Math.sin(t)*3,'#fff3a0',1.4)}}
+ else if(a=='gaurn'){glowAt('#5fd97a',0,-3,19,.2+pul*.12);aEll(0,-1,15,5.2,'#4fbf6a');for(let i=0;i<3;i++){const t=tm*1.1+i*2.1;aPoly([Math.cos(t)*13,-4,Math.cos(t)*13+2.6,-10,Math.cos(t)*13+1,-3],'#8fe8a0',1)}}
+ else if(a=='gaurg'){glowAt('#ffd94d',0,-4,24,.26+pul*.2);aEll(0,-1,17,6,'#f0c419');aEll(0,-1,11,3.6,'#fff0a8',1)}
+ else if(a=='gaurd'){glowAt('#6b3fa0',0,-4,22,.26+pul*.18);aEll(0,-1,16.5,5.8,'#3b1f5c');aEll(0,-1,11,3.4,'#7a3fb8',1)}
+ else if(a=='gaurh'){glowAt('#ffffff',0,-4,23,.24+pul*.16);aEll(0,-1,16,5.6,'#e8f4ff');aEll(0,-1,10,3.2,'#ffffff',1)}
+ else if(a=='gaurv'){glowAt('#8b5cf6',0,-4,25,.3+pul*.22);aEll(0,-1,18,6.4,'#2e1065');aEll(0,-1,12,4,'#8b5cf6',1);orb(4,16,1.8,'#c4b5fd')}
+ else if(a=='gaurdr'){glowAt('#ef4444',0,-4,27,.3+pul*.24);aEll(0,-1,18.5,6.6,'#7f1d1d');aEll(0,-1,12.5,4,'#ef4444',1);for(let i=0;i<4;i++){const t=tm*2.4+i*1.6;aPoly([Math.cos(t)*17,-4,Math.cos(t)*17+3,-11,Math.cos(t)*17+1,-3],'#fca5a5',1)}}
+ ctx.restore()}
+function gearHead(a,hy0,R,ey,sway){
+ if(a=='gband'){aRR(-11.4,-42.5,24.8,4.2,1.6,'#e94a4a');aPoly([-11,-41,-20+sway,-38,-19+sway,-33.5,-11,-38.5],'#e94a4a')}
+ else if(a=='gvisor'){aRR(-10.4,-39.4,22.4,6.4,2.2,'#1c2a4a');aRR(-8.6,-38.3,18.6,3.4,1.4,'#7ff0ff');glowAt('#7ff0ff',1,-36.6,13,.3)}
+ else if(a=='ghood'){aPoly([-13,-30,-17,-48,-6,-53,12,-51,14,-30,8,-34,-8,-34],'#2b2140');aPoly([-11,-32,-13,-46,-5,-49,3,-47,-4,-33],'#3f3157',1)}
+ else if(a=='ghorn'){aPoly([-8,-43,-14,-58,-2,-46],'#f0e6d2');aPoly([9,-44,16,-58,4,-46],'#f0e6d2')}
+ else if(a=='gant'){aLine(-6,-46,-10,-58,'#9fb0cc',1.6);aCirc(-10.6,-59,2.2,'#7ff0ff');aLine(8,-46,12,-58,'#9fb0cc',1.6);aCirc(12.6,-59,2.2,'#7ff0ff')}
+ else if(a=='ggoggles'){aRR(-11.6,-42,25.2,3.2,1,'#3b2f4a');aCirc(-2.4,-40.5,3.8,'#9be7ff');aCirc(7,-40.5,3.8,'#9be7ff');aCirc(-3.4,-41.5,1,'#fff',1);aCirc(6,-41.5,1,'#fff',1)}
+ else if(a=='gcrown'){aPoly([-9,-45,-9,-56,-3.5,-50,1,-60,5.5,-50,11,-56,11,-45],'#ffd84d');aCirc(1,-49,1.8,'#ff5a7a',1)}
+ else if(a=='ghelm'){ctx.beginPath();ctx.arc(1,hy0-1,R+1.8,Math.PI,0);ctx.closePath();aFS('#cbd5e1');aRR(1,-38,3.4,10,1,'#94a3b8');aPoly([-2,-47,-10,-58,3,-51],'#e2e8f0')}
+ else if(a=='ghalo'){ctx.beginPath();ctx.ellipse(1,-55,12,3.8,0,0,7);ctx.lineWidth=5.6;ctx.stroke();ctx.lineWidth=3;ctx.strokeStyle='#ffe14d';ctx.stroke();ctx.lineWidth=2.4;ctx.strokeStyle=INK;glowAt('#ffe14d',1,-55,17,.3)}
+ else if(a=='gmask'){aRR(-5,ey-3,17,10,3.4,'#b91c1c');aPoly([-2,ey-1,2.4,ey-1,.2,ey+4],'#fff');aPoly([4,ey-1,8.4,ey-1,6.2,ey+4],'#fff');aLine(-1,ey+5.4,7.4,ey+5.4,'#7f1d1d',1.4)}
+ else if(a=='gastral'){const b=Math.sin(tm*1.8)*1.7;aStar(1,-59+b,8.5,4,'#fbbf24',tm*.6);aStar(-12,-55+b*.6,4.5,4,'#fde68a',tm*.9);aStar(14,-54+b*.6,4.5,4,'#fde68a',tm*.7);glowAt('#fbbf24',1,-59,21,.28)}}
+function gearCharm(a,ph){
+ const cx=-13,cy=-26+Math.sin(tm*2+ph)*2.4;
+ if(a=='gorb'){glowAt('#9be7ff',cx,cy,11,.4);aStar(cx,cy,5,5,'#dff6ff',tm*1.4)}
+ else if(a=='gfire'){glowAt('#ff9a2b',cx,cy,13,.5);aCirc(cx,cy,4.6,'#ff7a2b');aCirc(cx-1.4,cy-1.4,2,'#ffe0a8',1)}
+ else if(a=='gice'){glowAt('#7fd8ff',cx,cy,13,.45);aPoly([cx,cy-6,cx+5,cy,cx,cy+6,cx-5,cy],'#bfe9ff');aLine(cx-3,cy-2,cx+3,cy+2,'#fff',1)}
+ else if(a=='gshur'){aStar(cx,cy,5.4,4,'#d8dde8',tm*4);aCirc(cx,cy,1.8,'#3b2f4a',1)}
+ else if(a=='gbell'){aPoly([cx-5,cy+4,cx-3.6,cy-5,cx+3.6,cy-5,cx+5,cy+4],'#e0c46a');aCirc(cx,cy+5.4,2,'#fff3a0',1)}
+ else if(a=='grune'){aRR(cx-5,cy-6,10,12,1.6,'#3f3a52');aLine(cx-2.6,cy-3,cx+2.6,cy+1,'#c4b5fd',1.4);aLine(cx+2.6,cy-3,cx-2.6,cy+1,'#c4b5fd',1.4)}
+ else if(a=='gblood'){aPoly([cx,cy-6,cx+5,cy+3,cx,cy+6,cx-5,cy+3],'#ef4444');aEll(cx-1.4,cy-.6,1.6,2,'#fecaca',1)}
+ else if(a=='gprism'){aPoly([cx,cy-6.5,cx+5.5,cy,cx,cy+6.5,cx-5.5,cy],'#a5f3fc');aLine(cx,cy-6.5,cx,cy+6.5,'#fff',1)}
+ else if(a=='gvoid'){glowAt('#8b5cf6',cx,cy,16,.55);aCirc(cx,cy,6,'#2e1065');aCirc(cx,cy,3,'#a78bfa',1)}
+ else if(a=='grelic'){glowAt('#fbbf24',cx,cy,16,.4);aStar(cx,cy,7,6,'#fbbf24',tm*.5);aCirc(cx,cy,2.4,'#fff7d6',1)}}
+
 // ---------- the shared hero rig. Origin = feet, facing +x (the caller mirrors it)
 function human(e,c,L,o){
  const g=L.gr||'light',sk=L.sk||SKN,col=c.col,c2=L.c2||shade(col,-.34),hair=e.awt>0?'#fff3a0':(c.hair||'#333'),hs=L.hs||'spiky',acc=L.acc||c.acc,wp=L.wp||'none';
@@ -55,7 +95,8 @@ function human(e,c,L,o){
  const slv=bare?sk:arm?STEEL:col,robe=g.includes('robe'),hood=g.includes('hood'),face=L.face,flap=Math.sin(tm*(o.walk?9:4))*3;
  ctx.lineJoin=ctx.lineCap='round';ctx.lineWidth=2.4;ctx.strokeStyle=INK;
  // back layer
- if(g.includes('wings')){const wc=L.wc||'#fff';aPoly([-5,-25,-24,-42+flap,-31,-28+flap,-23,-20,-27,-12+flap,-9,-14],wc);aPoly([6,-25,21,-40+flap,25,-27+flap,13,-16],wc);aLine(-8,-24,-25,-36+flap,shade(wc,-.25),1.2);aLine(-8,-20,-24,-24+flap,shade(wc,-.25),1.2)}
+ if(e.ga)gearAura(e.ga,e.x*.03);
+  if(g.includes('wings')){const wc=L.wc||'#fff';aPoly([-5,-25,-24,-42+flap,-31,-28+flap,-23,-20,-27,-12+flap,-9,-14],wc);aPoly([6,-25,21,-40+flap,25,-27+flap,13,-16],wc);aLine(-8,-24,-25,-36+flap,shade(wc,-.25),1.2);aLine(-8,-20,-24,-24+flap,shade(wc,-.25),1.2)}
  if(g.includes('tail'))aLimb(-5,-10,-17,-5+sway,3,L.tc||sk);
  if(g.includes('cape'))aPoly([-8,-25,7,-25,5,-12,-3+sway*.3,-3,-16+sway,-2,-13+sway*.5,-15],L.cc||c2);
  if(!hood){
@@ -129,7 +170,9 @@ function human(e,c,L,o){
  else if(acc=='helm'){ctx.beginPath();ctx.arc(hx0,hy0-1,R+1.4,Math.PI,0);ctx.closePath();aFS(STEEL);aRR(3,-37,3,9,1,STEEL);aPoly([-2,-47,-9+sway*.5,-56,3,-50],col)}
  else if(acc=='blind'){aRR(-10.6,-37.5,24,6.2,2,'#1b1030');aPoly([-10,-36,-19+sway,-34,-18+sway,-30,-10,-33],'#1b1030')}
  else if(acc=='gob'){aPoly([-10,-35,-25,-42,-11,-28],sk);aPoly([12,-35,24,-43,13,-28],sk)}
- if(!wBack)drawW()}
+ if(e.gq)gearHead(e.gq,hy0,R,ey,sway);
+  if(e.gc)gearCharm(e.gc,e.x*.05);
+  if(!wBack)drawW()}
 
 // ---------- monsters and bosses with their own bodies
 const MON={
@@ -185,8 +228,8 @@ function drawFig(e,c,sc,sq,bob,walk,hit,ph){const L=c.lk||LK0,fx=Math.cos(e.a)>=
  try{(MON[L.sh]||human)(e,c,L,{walk,ph,la:fx>0?e.a:Math.PI-e.a,atk:at>=0&&at<1?at:-1})}finally{HIT=0;ctx.restore()}}
 const PT={};
 // static portrait (data URL) for the menus; works for heroes, monsters and bosses
-function portrait(ch,px){const k=ch+'|'+px;if(PT[k])return PT[k];const c=document.createElement('canvas');c.width=c.height=px;const x=c.getContext('2d'),o=ctx,s=px/88,L=CH[ch].lk||LK0;x.scale(s,s);ctx=x;
- try{drawFig({x:L.sh?40:30,y:58,a:-.32,awt:0},CH[ch],1.15*(L.ps||1),1,0,false,false,0)}finally{ctx=o}return PT[k]=c.toDataURL()}
+function portrait(ch,px,gq,gc,ga){const k=ch+'|'+px+'|'+(gq||'')+(gc||'')+(ga||'');if(PT[k])return PT[k];const c=document.createElement('canvas');c.width=c.height=px;const x=c.getContext('2d'),o=ctx,s=px/88,L=CH[ch].lk||LK0;x.scale(s,s);ctx=x;
+ try{drawFig({x:L.sh?40:30,y:58,a:-.32,awt:0,gq,gc,ga},CH[ch],1.15*(L.ps||1),1,0,false,false,0)}finally{ctx=o}return PT[k]=c.toDataURL()}
 const figScale=(e,c)=>(c.lk&&c.lk.sc)||(e.boss?1.7:1);
 function hiddenE(e){if(raid||!e||e===me||e.dum||e.raidE)return false;if(tmode&&e.tm===me.tm)return false;return BUSH.some(b=>Math.hypot(e.x-b[0],e.y-b[1])<b[2])&&Math.hypot(e.x-me.x,e.y-me.y)>150&&tm>(e.rv||0)&&tm>(e.hft||0)+1}
 function drawChar(e,id){if(e.dum)return drawDummy(e);const c=CH[e.ch],bs=figScale(e,c),cd=c.col,fly=c.lk&&/bat|ghost|lord/.test(c.lk.sh||'');

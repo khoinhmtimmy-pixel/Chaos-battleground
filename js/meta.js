@@ -7,7 +7,10 @@ const TX={vi:{tapStart:'NHẤN ĐỂ BẮT ĐẦU',login:'Đăng nhập',registe
  hintCloud:'☁️ Tài khoản lưu trên máy chủ: đăng nhập ở máy nào cũng giữ nguyên tiến trình.',hintDev:'💾 Chưa kết nối máy chủ tài khoản: tài khoản và tiến trình chỉ lưu trên thiết bị này.',
  tagCloud:'☁️ Lưu cloud',tagDev:'💾 Lưu trên thiết bị',wait:'Đang xử lý…',
  errName:'Tên 3–16 ký tự: chữ không dấu, số, gạch dưới',errPass:'Mật khẩu tối thiểu 6 ký tự',errPass2:'Hai mật khẩu không khớp',errTaken:'Tên này đã có người dùng',errLogin:'Sai tên hoặc mật khẩu',errNet:'Không kết nối được máy chủ, thử lại sau',errRate:'Thử quá nhiều lần, đợi vài phút rồi thử lại',errAdminOff:'Tài khoản admin chưa được cấu hình',errAuth:'Phiên đăng nhập hết hạn, hãy đăng nhập lại',offline:'Đang chơi ngoại tuyến, tiến trình sẽ đồng bộ khi có mạng',
- nHome:'Sảnh',nStages:'Màn chơi',nHeroes:'Nhân vật',nStats:'Nâng cấp',nShop:'Cửa hàng',
+ nHome:'Sảnh',nStages:'Màn chơi',nHeroes:'Nhân vật',nStats:'Nâng cấp',nShop:'Cửa hàng',nGear:'Trang bị',
+  gearSub:'3 chỗ: đầu · vùi người · hào quang. Chỉ áp dụng cho Màn chơi và Raid, đấu PvP luôn cân bằng.',
+  slHead:'Đầu',slCharm:'Vùi người',slAura:'Hào quang',gearOwned:'Đã sở hữu',gearWear:'Trang bị',gearTakeOff:'Tháo ra',
+  gearEquip:'Mặc',gearEquipped:'✔ Đang mặc',gearAll:'Đã có hết phụ kiện!',gearBon:'Cộng thêm',
  campaign:'CHIẾN DỊCH',raid:'RAID VÔ TẬN',arena:'ĐẤU TRƯỜNG',play:'CHƠI ▶',open:'MỞ ▶',stage:'Màn',campDone:'Đã phá đảo! Chơi lại để cày vàng và XP',raidSub:'Kỷ lục: tầng {0} · phòng {1}',raidNew:'Leo tầng không giới hạn, boss mỗi 5 phòng',raidLock:'🔒 Qua màn 1-3 để mở khoá',arenaCard:'Đấu bot · 2v2 · Online PvP',change:'Đổi nhân vật',
  daily:'Quà hằng ngày',dailyd:'Đăng nhập mỗi ngày để nhận vàng. Chuỗi ngày càng dài, quà càng lớn (tối đa 7 ngày).',claim:'Nhận 🪙 {0}',claimed:'Đã nhận hôm nay · chuỗi {0} ngày',nextBuffs:'Buff cho lượt kế',noBuff:'Chưa có, mua ở Cửa hàng',
  rar0:'Cơ bản',rar1:'Hiếm',rar2:'Sử thi',rar3:'Huyền thoại',rar4:'BÍ ẨN',nQuests:'Nhiệm vụ',locked:'Chưa mở khoá',start:'BẮT ĐẦU',stInfo:'{0} phòng',first:'lần đầu ×2',stars3:'3★: không hồi sinh và còn từ 50% máu',
@@ -27,7 +30,10 @@ en:{tapStart:'TAP TO START',login:'Log in',register:'Sign up',username:'Username
  hintCloud:'☁️ Cloud account: your progress follows you to any device.',hintDev:'💾 Account server not connected: accounts and progress stay on this device only.',
  tagCloud:'☁️ Cloud saves',tagDev:'💾 Saved on this device',wait:'Working…',
  errName:'Name must be 3–16 letters, digits or underscores',errPass:'Password needs at least 6 characters',errPass2:'Passwords do not match',errTaken:'That name is taken',errLogin:'Wrong name or password',errNet:'Could not reach the server, try again later',errRate:'Too many attempts, wait a few minutes',errAdminOff:'The admin account is not configured',errAuth:'Session expired, please log in again',offline:'Playing offline, progress will sync when you are back online',
- nHome:'Lobby',nStages:'Stages',nHeroes:'Heroes',nStats:'Upgrade',nShop:'Shop',
+ nHome:'Lobby',nStages:'Stages',nHeroes:'Heroes',nStats:'Upgrade',nShop:'Shop',nGear:'Gear',
+  gearSub:'3 slots: head · charm · aura. Applies to Stages and Raid only; PvP is always even.',
+  slHead:'Head',slCharm:'Charm',slAura:'Aura',gearOwned:'Owned',gearWear:'Wear',gearTakeOff:'Take off',
+  gearEquip:'Equip',gearEquipped:'✔ Equipped',gearAll:'You own every accessory!',gearBon:'Bonus',
  campaign:'CAMPAIGN',raid:'ENDLESS RAID',arena:'ARENA',play:'PLAY ▶',open:'OPEN ▶',stage:'Stage',campDone:'Campaign cleared! Replay to farm gold and XP',raidSub:'Best: floor {0} · room {1}',raidNew:'Climb forever, a boss every 5 rooms',raidLock:'🔒 Clear stage 1-3 to unlock',arenaCard:'Bots · 2v2 · Online PvP',change:'Change hero',
  daily:'Daily gift',dailyd:'Log in every day for gold. Longer streaks pay more (up to 7 days).',claim:'Claim 🪙 {0}',claimed:'Claimed today · {0} day streak',nextBuffs:'Buffs for next run',noBuff:'None yet, buy in the Shop',
  rar0:'Basic',rar1:'Rare',rar2:'Epic',rar3:'Legendary',rar4:'SECRET',nQuests:'Quests',locked:'Locked',start:'START',stInfo:'{0} rooms',first:'first clear ×2',stars3:'3★: no revive and at least 50% health left',
@@ -62,7 +68,7 @@ function sfx(n){const d=SND[n];if(!d||SFX.vol<=0)return;const now=performance.no
 // ---- progression rules
 const MAXL=50,SMAX=20,CMAX=10,RICH=9999999,BON={hp:.05,sh:.06,dm:.04,sp:.015},CHEST=[{cost:300,w:[0,70,24.5,5,.5],sec:3},{cost:900,w:[0,0,68,30,2],sec:10}],PRICE=[0,700,1400,2800],LUCKY=120,RESPEC=100;
 const need=l=>50+30*l+4*l*l,upCost=l=>100*l,reviveCost=r=>r.mode=='stage'?40+6*r.stage:60+40*r.floor;
-const fresh=()=>({v:1,lvl:1,xp:0,gold:200,st:{hp:0,sh:0,dm:0,sp:0},own:{Ren:1,Kaen:1,Yuki:1,Sakura:1},sel:'Ren',stage:1,stars:{},raid:0,rb:0,kills:0,q:{},pb:[],daily:'',streak:0,wins:0,ts:0});
+const fresh=()=>({v:1,lvl:1,xp:0,gold:200,st:{hp:0,sh:0,dm:0,sp:0},own:{Ren:1,Kaen:1,Yuki:1,Sakura:1},sel:'Ren',stage:1,stars:{},raid:0,rb:0,kills:0,q:{},pb:[],gw:{},eq:{},daily:'',streak:0,wins:0,ts:0});
 // quests: k = which counter, n = target, g = gold reward or hero = the secret hero it unlocks
 const QUESTS=[{id:'w1',ic:'⚔️',k:'wins',n:1,g:100},{id:'w10',ic:'⚔️',k:'wins',n:10,g:400},{id:'w30',ic:'⚔️',k:'wins',n:30,g:1000},{id:'w100',ic:'👑',k:'wins',n:100,hero:'Kaiser'},
  {id:'r2',ic:'🏰',k:'rf',n:2,g:300},{id:'r3',ic:'🏰',k:'rf',n:3,g:700},{id:'r5',ic:'🐲',k:'rb',n:5,hero:'Drakon'},
@@ -79,14 +85,22 @@ function fix(s){s=Object.assign(fresh(),s&&typeof s=='object'?s:{});s.lvl=clamp(
  const own={},o=s.own||{};for(const i of NORM){const n=CH[i].n;if(o[n])own[n]=clamp(o[n]|0,1,CMAX)}for(const n of START)own[n]=own[n]||1;s.own=own;if(!own[s.sel])s.sel=START[0];
  s.stage=clamp(s.stage|0,1,NSTAGE+1);const sr={};for(let i=1;i<=NSTAGE;i++){const v=s.stars&&s.stars[i]|0;if(v>0)sr[i]=Math.min(3,v)}s.stars=sr;s.raid=Math.max(0,s.raid|0);
  s.rb=clamp(s.rb|0,0,99);s.kills=Math.max(0,s.kills|0);const q={};if(s.q&&typeof s.q=='object')for(const x of QUESTS)if(s.q[x.id])q[x.id]=1;s.q=q;
- s.pb=(Array.isArray(s.pb)?s.pb:[]).filter(n=>BUFFS.some(b=>b.n==n&&!b.run)).slice(0,3);s.daily=String(s.daily||'').slice(0,10);s.streak=Math.max(0,s.streak|0);s.wins=Math.max(0,s.wins|0);s.ts=+s.ts||0;return s}
+ s.pb=(Array.isArray(s.pb)?s.pb:[]).filter(n=>BUFFS.some(b=>b.n==n&&!b.run)).slice(0,3);s.daily=String(s.daily||'').slice(0,10);s.streak=Math.max(0,s.streak|0);s.wins=Math.max(0,s.wins|0);s.ts=+s.ts||0;fixGear(s);return s}
+// accessories: drop unknown ids, and only keep an equipped piece if it is actually owned in that slot
+function fixGear(s){const gw={},g=s.gw;if(g&&typeof g=='object')for(const k in GBY)if(g[k])gw[k]=1;s.gw=gw;
+  const eq={},e=s.eq;if(e&&typeof e=='object')for(const sl of GSLOTS){const p=GBY[e[sl]];if(p&&p.sl==sl&&gw[p.id])eq[sl]=p.id}s.eq=eq}
 function adminSave(old){const s=fresh();s.lvl=MAXL;s.gold=RICH;s.st={hp:SMAX,sh:SMAX,dm:SMAX,sp:SMAX};for(const i of NORM)s.own[CH[i].n]=CMAX;s.stage=NSTAGE+1;for(let i=1;i<=NSTAGE;i++)s.stars[i]=3;
- if(old){if(s.own[old.sel])s.sel=old.sel;s.raid=old.raid|0;s.rb=old.rb|0;s.kills=old.kills|0;s.wins=old.wins|0;if(old.q&&typeof old.q=='object')s.q=old.q;s.daily=old.daily||'';s.streak=old.streak|0;s.pb=Array.isArray(old.pb)?old.pb.slice(0,3):[]}return s}
+ if(old){if(s.own[old.sel])s.sel=old.sel;s.raid=old.raid|0;s.rb=old.rb|0;s.kills=old.kills|0;s.wins=old.wins|0;if(old.q&&typeof old.q=='object')s.q=old.q;s.daily=old.daily||'';s.streak=old.streak|0;s.pb=Array.isArray(old.pb)?old.pb.slice(0,3):[];if(old.gw)s.gw=old.gw;if(old.eq)s.eq=old.eq}return s}
 const pts=()=>Math.max(0,S.lvl-1-(S.st.hp+S.st.sh+S.st.dm+S.st.sp));
 function addXp(x){let up=0;if(S.lvl>=MAXL)return 0;S.xp+=x;while(S.lvl<MAXL&&S.xp>=need(S.lvl)){S.xp-=need(S.lvl);S.lvl++;up++}if(S.lvl>=MAXL)S.xp=0;S.gold+=50*up;return up}
 const charMul=n=>1+.05*((S.own[n]||1)-1);
+// push the equipped pieces onto an entity as art keys (art.js reads e.gq / e.gc / e.ga)
+function setGear(e){for(const[sl,k]of[['head','gq'],['charm','gc'],['aura','ga']]){const g=GBY[S.eq[sl]];e[k]=g&&g.art||''}return e}
 // the engine asks for this when a run starts; buffs bought beforehand are spent here
-function pveStats(){const cm=charMul(CH[sel].n),b=S.pb.slice();if(b.length){S.pb=[];persist()}return{hp:cm*(1+BON.hp*S.st.hp),sh:1+BON.sh*S.st.sh,dm:cm*(1+BON.dm*S.st.dm),sp:1+BON.sp*S.st.sp,buffs:b}}
+// gear sits next to the stat points: same multipliers, separate axis. Multipliers only, so nothing needs clamping.
+function gearMul(){const o={hp:1,sh:1,dm:1,sp:1,ls:0,cd:1};for(const sl of GSLOTS){const g=GBY[S.eq[sl]];if(!g)continue;const b=g.b;for(const k of['hp','sh','dm','sp'])o[k]*=1+(b[k]||0);o.ls+=b.ls||0;o.cd*=b.cd||1}return o}
+function pveStats(){const cm=charMul(CH[sel].n),b=S.pb.slice();if(b.length){S.pb=[];persist()}const g=gearMul();
+ return{hp:cm*(1+BON.hp*S.st.hp)*g.hp,sh:(1+BON.sh*S.st.sh)*g.sh,dm:cm*(1+BON.dm*S.st.dm)*g.dm,sp:(1+BON.sp*S.st.sp)*g.sp,ls:g.ls,cd:g.cd,buffs:b}}
 const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
 const dailyReady=()=>S.daily!==today();
 function nextStreak(){const y=new Date();y.setDate(y.getDate()-1);const ys=y.getFullYear()+'-'+String(y.getMonth()+1).padStart(2,'0')+'-'+String(y.getDate()).padStart(2,'0');return S.daily===ys?Math.min(7,S.streak+1):1}
@@ -133,14 +147,14 @@ const modal=id=>document.querySelectorAll('.modal').forEach(e=>e.classList.toggl
 function ov(kind,html){const o=$('ov');ovKind=kind;o.innerHTML=html||'';o.classList.toggle('on',!!kind)}
 function toast(msg,bad){if(!msg)return;const d=document.createElement('div');d.textContent=msg;if(bad)d.className='bad';$('toast').appendChild(d);setTimeout(()=>d.remove(),3100)}
 const chapName=i=>LANG=='vi'?CHAP[i].v:CHAP[i].n,bIcon=n=>(BUFFS.find(b=>b.n==n)||{}).ic||'✨',starStr=n=>'★'.repeat(n)+'<u>'+'★'.repeat(3-n)+'</u>';
-function curStats(i){const c=CH[i],cm=charMul(c.n);return{hp:Math.round(c.hp*cm*(1+BON.hp*S.st.hp)),sh:Math.round(shOf(c)*(1+BON.sh*S.st.sh)),dm:Math.round((cm*(1+BON.dm*S.st.dm)-1)*100),sp:Math.round(c.sp*(1+BON.sp*S.st.sp))}}
+function curStats(i){const c=CH[i],cm=charMul(c.n),g=gearMul();return{hp:Math.round(c.hp*cm*(1+BON.hp*S.st.hp)*g.hp),sh:Math.round(shOf(c)*(1+BON.sh*S.st.sh)*g.sh),dm:Math.round((cm*(1+BON.dm*S.st.dm)*g.dm-1)*100),sp:Math.round(c.sp*(1+BON.sp*S.st.sp)*g.sp)}}
 function skillDesc(s){const a=[],d=s.k=='zone'?s.dps:s.k=='dash'?(s.nova||s.path).dmg:['shield','heal','haste','blink'].includes(s.k)?0:s.dmg;if(d)a.push('⚔'+Math.round(d)+(s.n>1&&s.k!='orbit'&&s.k!='chain'?'×'+s.n:'')+(s.k=='zone'?'/s':s.k=='beam'?'/tick':''));if(s.heal||s.amt)a.push('✚'+(s.heal||s.amt));if(s.k=='shield')a.push('◍'+s.dur+'s');
  if(s.st||(s.nova&&s.nova.st))a.push('★');if(s.dot||(s.nova&&s.nova.dot))a.push('🔥');if(s.sl)a.push('❄');if(s.pierce)a.push('⇶');if(s.home)a.push('🎯');if(s.kb||s.pull||(s.nova&&s.nova.kb))a.push('↔');if(s.ls||s.hl)a.push('🩸');if(s.chg)a.push('('+t('charges',s.chg)+')');a.push('⏱'+s.cd+'s');return a.join(' ')}
 const questText=q=>q?t('q_'+q.k,fmt(q.n)):'';
 function setSel(i){sel=i;S.sel=CH[i].n;heroSel=i;persist()}
 
 function topBar(){const n=need(S.lvl),mx=S.lvl>=MAXL;$('top').innerHTML=`<div class="who"><img src="${portrait(sel,100)}" alt=""><span class="lv">${S.lvl}</span></div><div class="nmx"><b>${esc(ACC.name)}</b><span class="tag ${ACC.role=='admin'?'':ACC.mode=='cloud'?'cloud':'dev'}">${ACC.role=='admin'?'ADMIN':ACC.mode=='cloud'?'☁':'💾'}</span><div class="xp"><i style="width:${mx?100:Math.min(100,S.xp/n*100)}%"></i><span>${mx?'MAX':Math.floor(S.xp)+' / '+n+' XP'}</span></div></div><div class="gold">🪙 ${fmt(S.gold)}</div><button class="icb" data-a="settings" aria-label="${t('settings')}">⚙️</button>`}
-const NAV=[['home','🏠','nHome'],['stages','🗺️','nStages'],['heroes','🦸','nHeroes'],['stats','💪','nStats'],['shop','🛒','nShop'],['quests','🏆','nQuests']];
+const NAV=[['home','🏠','nHome'],['stages','🗺️','nStages'],['heroes','🦸','nHeroes'],['stats','💪','nStats'],['shop','🛒','nShop'],['gear','💍','nGear'],['quests','🏆','nQuests']];
 function navBar(){const p=pts(),qr=qReady();$('nav').innerHTML=NAV.map(([k,ic,l])=>`<button class="${page==k?'on':''}" data-a="go" data-v="${k}"><span>${ic}</span>${t(l)}${k=='stats'&&p>0?`<i class="dot">${p}</i>`:k=='shop'&&dailyReady()?'<i class="dot">!</i>':k=='quests'&&qr?`<i class="dot">${qr}</i>`:''}</button>`).join('')}
 function render(){if(!S)return;topBar();navBar();$('page').innerHTML=PAGES[page]()}
 function dailyCard(){return dailyReady()?`<button class="btn sm green" data-a="daily">${t('claim',dailyAmt())}</button>`:`<span class="mut">${t('claimed',S.streak)}</span>`}
@@ -172,6 +186,17 @@ stats(){const p=pts(),c=CH[sel],cur=curStats(sel),used=S.lvl-1-p,rows=[['hp','�
  ${rows.map(([k,ic,nm,col])=>{const v=S.st[k];return`<div class="srow" style="--sc:${col}"><span class="si">${ic}</span><div class="sn"><span>${t(nm)} <small>${v}/${SMAX}</small></span><small>+${Math.round(v*BON[k]*100)}%${v<SMAX?' → +'+Math.round((v+1)*BON[k]*100)+'%':''}</small></div><div class="pips">${Array.from({length:SMAX},(_,i)=>`<i${i<v?' class="f"':''}></i>`).join('')}</div><button class="btn sm green${p>0&&v<SMAX?'':' off'}" data-a="stat" data-v="${k}">+</button></div>`}).join('')}
  <div class="hact"><button class="btn sm ghost${used?'':' off'}" data-a="respec">${t('respec',RESPEC)}</button></div><p class="mut" style="margin-top:8px">${t('statNote')}</p></div>
  <div class="card"><h3 style="color:${c.col}">${c.n} · Lv.${S.own[c.n]||1}</h3><div class="kv" style="margin-top:8px"><span></span><i>${t('base')}</i><i>${t('now')}</i><span>❤️ ${t('sHp')}</span><i>${c.hp}</i><b>${cur.hp}</b><span>🛡️ ${t('sSh')}</span><i>${shOf(c)}</i><b>${cur.sh}</b><span>⚔️ ${t('sDm')}</span><i>100%</i><b>${100+cur.dm}%</b><span>👟 ${t('sSp')}</span><i>${c.sp}</i><b>${cur.sp}</b></div><p class="mut" style="margin-top:10px">${t('charNote')}</p></div></div>`},
+gear(){const slName={head:'slHead',charm:'slCharm',aura:'slAura'},cur=gearMul();
+  const bonus=b=>['hp','sh','dm','sp'].filter(k=>b[k]).map(k=>t({'hp':'sHp','sh':'sSh','dm':'sDm','sp':'sSp'}[k])+' +'+Math.round(b[k]*100)+'%').concat(b.ls?'🩸 +'+Math.round(b.ls*100)+'%':[],b.cd&&b.cd<1?'⏱ −'+Math.round((1-b.cd)*100)+'%':[]).join(' · ');
+  const sec=GSLOTS.map(sl=>{const eq=S.eq[sl],e2=eq?GBY[eq]:null;
+   return`<div class="card" style="margin-bottom:10px"><h3>${t(slName[sl])} — ${e2?(LANG=='vi'?e2.v:e2.n):'—'}</h3><div class="hgrid">`+
+    GEAR.filter(x=>x.sl==sl).map(x=>{const o=S.gw[x.id],on=eq==x.id;
+     const img=portrait(sel,128,eq==x.id?x.art:(eq?GBY[eq].art:''),x.sl=='charm'?x.art:(x.sl=='charm'&&S.eq.charm?GBY[S.eq.charm].art:''),x.sl=='aura'?x.art:(x.sl=='aura'&&S.eq.aura?GBY[S.eq.aura].art:''));
+     return`<button class="hc ${o?'':'glock'} ${on?'on':''}" style="--rc:var(--r${x.rar})" data-a="gearDo" data-v="${x.id}">
+      <img loading="lazy" src="${img}" alt=""><span>${LANG=='vi'?x.v:x.n}</span><small>${bonus(x.b)}</small>
+      ${on?`<span class="lvb">${t('gearEquipped')}</span>`:o?`<span class="lvb">${t('gearWear')}</span>`:`<span class="lvb">🪙 ${fmt(x.p)}</span>`}</button>`}).join('')+'</div></div>'}).join('');
+  return`<div><p class="mut" style="margin-bottom:10px">${t('gearSub')}</p>${sec}
+   <p class="mut" style="margin-top:6px">${Object.keys(S.gw).length}/${GEAR.length} ${t('gearOwned')}</p></div>`},
 shop(){const all=!chestPool().length,os=onlySecret();
  return`<div><div class="shop">${[0,1].map(k=>`<div class="card item c${k+1}"><div class="big">${k?'💎':'🎁'}</div><h3>${t('chest'+(k+1))}</h3><p class="mut">${all?t('allOwned'):os?t('chestLeft',CHEST[k].sec,Math.round(CHEST[k].cost*.6)):t('chest'+(k+1)+'d')}</p><button class="btn${all||S.gold<CHEST[k].cost?' off':''}" data-a="chest" data-v="${k}">🪙 ${CHEST[k].cost}</button></div>`).join('')}
  <div class="card item"><div class="big">🎲</div><h3>${t('lucky')}</h3><p class="mut">${t('luckyd')}</p>${buffRow()}<button class="btn purple${S.gold<LUCKY||S.pb.length>=3?' off':''}" data-a="lucky">🪙 ${LUCKY}</button></div>
@@ -215,6 +240,11 @@ pick(){if(S.own[CH[heroSel].n]&&heroSel!=sel){setSel(heroSel);render()}},
 useNew(v){setSel(+v);modal(null);render()},
 upChar(){const n=CH[heroSel].n,lv=S.own[n];if(!lv||lv>=CMAX||!spend(upCost(lv)))return;S.own[n]=lv+1;persist();sfx('buy');toast(t('upDone',n,lv+1));render()},
 buyChar(){const c=CH[heroSel];if(S.own[c.n]||c.sec||!spend(PRICE[c.rar]))return;S.own[c.n]=1;persist();render();reveal(heroSel)},
+ // one button per piece: buy it (buying also equips), tap again to take it off
+ gearDo(id){const g=GBY[id];if(!g)return;
+  if(!S.gw[id]){if(!spend(g.p))return;S.gw[id]=1;sfx('buy');toast(t('got',LANG=='vi'?g.v:g.n))}
+  if(S.eq[g.sl]==id)delete S.eq[g.sl];else S.eq[g.sl]=id;
+  fixGear(S);persist();render()},
 stat(k){if(!(k in BON))return;if(pts()<=0){toast(t('noPts'),1);sfx('err');return}if(S.st[k]>=SMAX)return;S.st[k]++;persist();sfx('buy');render()},
 respec(){if(ACC.role=='admin'||pts()>=S.lvl-1||!spend(RESPEC))return;S.st={hp:0,sh:0,dm:0,sp:0};persist();toast(t('respecDone'));render()},
 chest(v){const k=+v;if(!CHEST[k])return;if(!chestPool().length){toast(t('allOwned'));return}if(!spend(CHEST[k].cost))return;const i=roll(k);
