@@ -1,6 +1,6 @@
 # ⚔️ Chaos Battleground
 
-Game hành động nhìn từ trên xuống chạy hoàn toàn trên trình duyệt: chiến dịch 50 màn, raid vô tận, đấu trường PvP (bot / 2v2 / online), 44 nhân vật để mở khoá và 6 nhân vật Bí ẩn.
+Game hành động nhìn từ trên xuống chạy hoàn toàn trên trình duyệt: chiến dịch 50 màn, raid vô tận, đấu trường PvP (bot / 2v2 / online), **144 nhân vật** để mở khoá và 6 nhân vật Bí ẩn.
 
 ## Chơi thử trên máy
 
@@ -77,17 +77,20 @@ Sau đó màn hình đăng nhập ghi "☁️ Lưu cloud": người chơi đăng
 | --- | --- |
 | `index.html`, `style.css` | Khung trang và giao diện |
 | `js/data.js` | Nhân vật, quái, boss, bản đồ, buff, độ hiếm, 50 màn chiến dịch, bảng ngoại hình `LOOK` (vũ khí, trang phục, tóc của từng con) |
+| `js/roster.js` | **File sinh tự động** bởi `tools/gen-roster.js`: 100 nhân vật + ngoại hình + cấp hiếm (`RARE_R`, `LEGEND_R`). `data.js` gộp vào `CH` / `LOOK` trước bước hậu xử lý |
 | `js/game.js` | Engine: chiến đấu, khiên, phòng / tầng, HUD, điều khiển |
 | `js/art.js` | Toàn bộ hình vẽ trong trận: nhân vật, vũ khí, trang bị, quái, boss, địa hình theo chủ đề, hiệu ứng |
 | `js/net.js` | Online PvP (WebRTC, MQTT, WebSocket) |
 | `js/meta.js` | Tài khoản, lưu tiến trình, cấp độ, cửa hàng, nhiệm vụ, các màn hình, âm thanh, song ngữ Việt / Anh |
 | `js/config.js` | Cấu hình công khai (mã băm mật khẩu admin chế độ thiết bị) |
 | `api/` | API tài khoản trên Vercel: `auth` (đăng ký / đăng nhập), `save` (tiến trình), `admin` |
-| `dev-server.js`, `tools/` | Chạy thử trên máy, đổi mật khẩu admin, kiểm tra dữ liệu phụ kiện (không deploy) |
+| `dev-server.js`, `tools/` | Chạy thử trên máy, đổi mật khẩu admin, kiểm tra phụ kiện, sinh lại roster (không deploy) |
 
 Muốn chỉnh độ khó hay kinh tế: `stagePlan()` trong `js/data.js` (số quái, hệ số máu / sát thương theo màn) và nhóm hằng số ở phần "progression rules" trong `js/meta.js` (XP mỗi cấp, giá rương, tỉ lệ rương, danh sách nhiệm vụ `QUESTS`, thưởng).
 
 Muốn thêm hoặc chỉnh phụ kiện: bảng `GEAR` trong `js/data.js` (`id` khớp regex `GEARID` ở `api/_lib.js`, `art` là khoá vẽ trong `js/art.js`, `b` là phần thưởng). Chạy `node tools/check-gear.js` để kiểm tra id trùng, slot thiếu món, khoá vẽ chưa dùng, và bộ huyền thoại có vượt trục chỉ số hay không.
+
+Muốn sửa 100 nhân vật sinh tự động: sửa bảng `ROSTER` trong `tools/gen-roster.js` rồi chạy `node tools/gen-roster.js` để sinh lại `js/roster.js` (**đừng sửa `js/roster.js` tay, nó sẽ bị ghi đè**). Script tự kiểm tra trước khi ghi: tên phải 2–12 chữ cái (khớp regex `HERO` ở `api/_lib.js`), không trùng nhân vật sẵn có, vũ khí / trang phục / tóc / mũ phải nằm trong từ vựng mà `js/art.js` vẽ được, và mỗi nhân vật phải có đủ 4 chiêu hợp lệ. Thêm nhân vật thì nhớ đưa vào một `K` archetype sẵn có hoặc viết thêm archetype mới.
 
 Muốn đổi ngoại hình một nhân vật: sửa dòng của nó trong bảng `LOOK` (`js/data.js`), ví dụ `Kaen:['sword','armor','spiky',{fl:1}]` là kiếm + giáp + tóc dựng + lưỡi kiếm bốc lửa. Các kiểu vũ khí có sẵn nằm trong `WPN` ở `js/art.js`.
 

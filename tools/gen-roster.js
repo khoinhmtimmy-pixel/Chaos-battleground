@@ -275,6 +275,16 @@ for(const r of ROSTER){
 }
 if(ROSTER.length!==100)err.push('roster must hold exactly 100 characters, has '+ROSTER.length);
 
+// a name collision is silent and nasty: chi() returns the first match, so the later
+// character becomes unreachable and both share one LOOK entry. Catch it against the
+// hand-written roster that data.js defines before CH.push(...ROSTER).
+const dataSrc=fs.readFileSync(path.join(root,'js','data.js'),'utf8');
+const head=dataSrc.slice(0,dataSrc.indexOf('CH.push(...ROSTER)'));
+const existing=new Set();
+for(const m of head.matchAll(/\{n:'([^']+)'/g))existing.add(m[1]);
+for(const m of head.matchAll(/^\s*'?([A-Za-z][A-Za-z ]*)'?:\s*\[/gm))existing.add(m[1]);
+for(const r of ROSTER)if(existing.has(r[0]))err.push('name collides with an existing character: '+r[0]+' (chi() would return the wrong index)');
+
 if(err.length){console.error('ROSTER PROBLEMS ('+err.length+'):\n  '+err.join('\n  '));process.exit(1)}
 console.log('roster ok: '+ROSTER.length+' characters, names valid, kits valid, looks within the art vocabulary');
 

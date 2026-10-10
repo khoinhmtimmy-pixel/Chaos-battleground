@@ -415,7 +415,7 @@ const BAL={"Rovan":[1.02,1.03],"Zann":[1.19,1.4],"Lyra":[1.11,1.22],"Gorm":[0.92
 function balScale(c,hf,df){c.hp=Math.round(c.hp*hf);for(const k of['a','q','e','r']){const s=c.s[k];for(const f of['dmg','dps']){if(s[f]!=null)s[f]=+(s[f]*df).toFixed(3)}if(s.nova&&s.nova.dmg!=null)s.nova.dmg=+(s.nova.dmg*df).toFixed(3);if(s.path)s.path.dmg=+(s.path.dmg*df).toFixed(3);if(s.dot)s.dot.d=+(s.dot.d*df).toFixed(3)}}
 for(const c of CH){const b=BAL[c.n];if(b&&!c.boss&&!c.foe)balScale(c,b[0],b[1])}
 // ---- unlock tiers: 0 starter, 1 rare, 2 epic, 3 legendary (unlock order only, kits stay PvP-balanced)
-const START=['Ren','Kaen','Yuki','Sakura'],RARE=['Monko','Kuro','Nara','Raiden','Shion','Aoi','Gaia','Hikari','Zephyr','Noir','Neko','Ryuu'],LEGEND=['Riku','Kaito','Mei','Toru','Aya','Nao','Oren','Rex','Sora','Arashi'];
+const START=['Ren','Kaen','Yuki','Sakura'],RARE=[...RARE_R,'Monko','Kuro','Nara','Raiden','Shion','Aoi','Gaia','Hikari','Zephyr','Noir','Neko','Ryuu'],LEGEND=[...LEGEND_R,'Riku','Kaito','Mei','Toru','Aya','Nao','Oren','Rex','Sora','Arashi'];
 for(const i of NORM){const c=CH[i];c.rar=c.sec?4:START.includes(c.n)?0:RARE.includes(c.n)?1:LEGEND.includes(c.n)?3:2}
 // ---- campaign: 5 chapters x 10 stages, a boss closes every chapter
 const CHAP=[{n:'Tide Coast',v:'Bờ Biển Sóng',maps:[1,0,8],foes:['Goblin','Imp Archer','Bat'],boss:'Gluttony Maw',col:'#38bdf8'},
