@@ -11,6 +11,8 @@ const TX={vi:{tapStart:'NHẤN ĐỂ BẮT ĐẦU',login:'Đăng nhập',registe
   gearSub:'3 chỗ: đầu · vùi người · hào quang. Chỉ áp dụng cho Màn chơi và Raid, đấu PvP luôn cân bằng.',
   slHead:'Đầu',slCharm:'Vùi người',slAura:'Hào quang',gearOwned:'Đã sở hữu',gearWear:'Trang bị',gearTakeOff:'Tháo ra',
   gearEquip:'Mặc',gearEquipped:'✔ Đang mặc',gearAll:'Đã có hết phụ kiện!',gearBon:'Cộng thêm',gearOther:'Dấu ấn riêng của {0} — bạn phải chọn nhân vật đó',
+  gearWorn:'Đang mặc',gearEmpty:'Trống',gearSigilOf:'Dấu ấn của {0}',
+  gearSigilNote:'Mỗi nhân vật có đúng một dấu ấn, miễn phí, chỉ đeo được khi đang chọn nhân vật đó. Đổi nhân vật ở tab Nhân vật để xem dấu ấn khác.',
   dark:'Bóng tối Halloween',darkNote:'Chỉ trong Màn chơi và Raid. Quái vẫn gây sát thương khi bạn không nhìn thấy.',
   evOver:'Halloween đã kết thúc',evDays:'Halloween còn {0} ngày',candy:'Kẹo',hChest:'Rương Halloween',hLeft:'Rương Halloween còn {0} ngày',hOver:'Rương Halloween đã đóng',
  campaign:'CHIẾN DỊCH',raid:'RAID VÔ TẬN',arena:'ĐẤU TRƯỜNG',play:'CHƠI ▶',open:'MỞ ▶',stage:'Màn',campDone:'Đã phá đảo! Chơi lại để cày vàng và XP',raidSub:'Kỷ lục: tầng {0} · phòng {1}',raidNew:'Leo tầng không giới hạn, boss mỗi 5 phòng',raidLock:'🔒 Qua màn 1-3 để mở khoá',arenaCard:'Đấu bot · 2v2 · Online PvP',change:'Đổi nhân vật',
@@ -36,6 +38,8 @@ en:{tapStart:'TAP TO START',login:'Log in',register:'Sign up',username:'Username
   gearSub:'3 slots: head · charm · aura. Applies to Stages and Raid only; PvP is always even.',
   slHead:'Head',slCharm:'Charm',slAura:'Aura',gearOwned:'Owned',gearWear:'Wear',gearTakeOff:'Take off',
   gearEquip:'Equip',gearEquipped:'✔ Equipped',gearAll:'You own every accessory!',gearBon:'Bonus',gearOther:"{0}'s own sigil — pick that hero to wear it",
+  gearWorn:'Currently worn',gearEmpty:'Empty',gearSigilOf:"{0}'s sigil",
+  gearSigilNote:'Every hero has exactly one sigil, free to use, and it can only be worn while that hero is selected. Switch hero on the Heroes tab to see another one.',
   dark:'Halloween darkness',darkNote:'Stages and Raid only. Enemies still hit you when you cannot see them.',
   evOver:'Halloween has ended',evDays:'Halloween: {0} days left',candy:'Candy',hChest:'Halloween Chest',hLeft:'Halloween Chest: {0} days left',hOver:'The Halloween Chest is closed',
  campaign:'CAMPAIGN',raid:'ENDLESS RAID',arena:'ARENA',play:'PLAY ▶',open:'OPEN ▶',stage:'Stage',campDone:'Campaign cleared! Replay to farm gold and XP',raidSub:'Best: floor {0} · room {1}',raidNew:'Climb forever, a boss every 5 rooms',raidLock:'🔒 Clear stage 1-3 to unlock',arenaCard:'Bots · 2v2 · Online PvP',change:'Change hero',
@@ -201,18 +205,30 @@ stats(){const p=pts(),c=CH[sel],cur=curStats(sel),used=S.lvl-1-p,rows=[['hp','�
  ${rows.map(([k,ic,nm,col])=>{const v=S.st[k];return`<div class="srow" style="--sc:${col}"><span class="si">${ic}</span><div class="sn"><span>${t(nm)} <small>${v}/${SMAX}</small></span><small>+${Math.round(v*BON[k]*100)}%${v<SMAX?' → +'+Math.round((v+1)*BON[k]*100)+'%':''}</small></div><div class="pips">${Array.from({length:SMAX},(_,i)=>`<i${i<v?' class="f"':''}></i>`).join('')}</div><button class="btn sm green${p>0&&v<SMAX?'':' off'}" data-a="stat" data-v="${k}">+</button></div>`}).join('')}
  <div class="hact"><button class="btn sm ghost${used?'':' off'}" data-a="respec">${t('respec',RESPEC)}</button></div><p class="mut" style="margin-top:8px">${t('statNote')}</p></div>
  <div class="card"><h3 style="color:${c.col}">${c.n} · Lv.${S.own[c.n]||1}</h3><div class="kv" style="margin-top:8px"><span></span><i>${t('base')}</i><i>${t('now')}</i><span>❤️ ${t('sHp')}</span><i>${c.hp}</i><b>${cur.hp}</b><span>🛡️ ${t('sSh')}</span><i>${shOf(c)}</i><b>${cur.sh}</b><span>⚔️ ${t('sDm')}</span><i>100%</i><b>${100+cur.dm}%</b><span>👟 ${t('sSp')}</span><i>${c.sp}</i><b>${cur.sp}</b></div><p class="mut" style="margin-top:10px">${t('charNote')}</p></div></div>`},
-gear(){const slName={head:'slHead',charm:'slCharm',aura:'slAura'},cur=gearMul(),writable=g=>!g.ex||g.ex===CH[sel].n;
+gear(){const slName={head:'slHead',charm:'slCharm',aura:'slAura'},cur=gearMul(),hero=CH[sel].n;
   const bonus=b=>['hp','sh','dm','sp'].filter(k=>b[k]).map(k=>t({'hp':'sHp','sh':'sSh','dm':'sDm','sp':'sSp'}[k])+' +'+Math.round(b[k]*100)+'%').concat(b.ls?'🩸 +'+Math.round(b.ls*100)+'%':[],b.cd&&b.cd<1?'⏱ −'+Math.round((1-b.cd)*100)+'%':[]).join(' · ');
-  const sec=GSLOTS.map(sl=>{const eq=S.eq[sl],e2=eq?GBY[eq]:null;
-   return`<div class="card" style="margin-bottom:10px"><h3>${t(slName[sl])} — ${e2?(LANG=='vi'?e2.v:e2.n):'—'}</h3><div class="hgrid">`+
-    GEAR.filter(x=>x.sl==sl).map(x=>{const o=S.gw[x.id],on=eq==x.id;
-     const pick=on?x.art:(S.eq.head?GBY[S.eq.head].art:'');
-     const img='<img data-p="'+sel+'|128|'+pick+'|'+(x.sl=='charm'?x.art:(S.eq.charm?GBY[S.eq.charm].art:''))+'|'+(x.sl=='aura'?x.art:(S.eq.aura?GBY[S.eq.aura].art:''))+'">';
-     return`<button class="hc ${o?'':'glock'} ${on?'on':''} ${!writable(x)?'ex':''}" style="--rc:var(--r${x.rar})" data-a="gearDo" data-v="${x.id}">
-      ${img}<span>${LANG=='vi'?x.v:x.n}</span><small>${bonus(x.b)}</small>
-      ${x.ex?`<span class="lvb sig">${x.ex===CH[sel].n?(on?'✔':'Dấu ấn'):'🔒 '+x.ex}</span>`:on?`<span class="lvb">${t('gearEquipped')}</span>`:o?`<span class="lvb">${t('gearWear')}</span>`:`<span class="lvb">🪙 ${fmt(x.p)}</span>`}</button>`}).join('')+'</div></div>'}).join('');
-  return`<div><p class="mut" style="margin-bottom:10px">${t('gearSub')}</p>${sec}
-   <p class="mut" style="margin-top:6px">${Object.keys(S.gw).length}/${GEAR.length} ${t('gearOwned')}</p></div>`},
+  const imgFor=x=>'<img data-p="'+sel+'|128|'+(x.sl=='head'?x.art:(S.eq.head?GBY[S.eq.head].art:''))+'|'+(x.sl=='charm'?x.art:(S.eq.charm?GBY[S.eq.charm].art:''))+'|'+(x.sl=='aura'?x.art:(S.eq.aura?GBY[S.eq.aura].art:''))+'">';
+  const tile=x=>{const o=S.gw[x.id],on=S.eq[x.sl]==x.id;
+   return`<button class="hc ${o?'':'glock'} ${on?'on':''}" style="--rc:var(--r${x.rar})" data-a="gearDo" data-v="${x.id}">
+    ${imgFor(x)}<span>${LANG=='vi'?x.v:x.n}</span><small>${bonus(x.b)}</small>
+    ${on?`<span class="lvb">${t('gearEquipped')}</span>`:o?`<span class="lvb">${t('gearWear')}</span>`:`<span class="lvb">🪙 ${fmt(x.p)}</span>`}</button>`};
+  // equipped summary: what you actually have on, and what it adds
+  const worn=GSLOTS.map(sl=>{const g=S.eq[sl]?GBY[S.eq[sl]]:null;
+   return`<div class="wslot${g?'':' none'}"><span class="wi">${g?imgFor(g):''}</span><b>${t(slName[sl])}</b><small>${g?(LANG=='vi'?g.v:g.n):t('gearEmpty')}</small></div>`}).join('');
+  const tot=[['hp',Math.round((cur.hp-1)*100)],['sh',Math.round((cur.sh-1)*100)],['dm',Math.round((cur.dm-1)*100)],['sp',Math.round((cur.sp-1)*100)]];
+  // one card per slot, universal pieces only. Signature trinkets get their own card below:
+  // they are bound to a single hero, so listing all of them here was 150+ unusable tiles.
+  const sec=GSLOTS.map(sl=>`<div class="card" style="margin-bottom:10px"><h3>${t(slName[sl])}</h3><div class="hgrid">`+
+    GEAR.filter(x=>x.sl==sl&&!x.ex).map(tile).join('')+'</div></div>').join('');
+  const sig=GBY['sg_'+hero];
+  const sigCard=sig?`<div class="card" style="margin-bottom:10px"><h3>${t('gearSigilOf',hero)}</h3>
+   <p class="mut" style="margin:6px 0 10px">${t('gearSigilNote')}</p><div class="hgrid">${tile(sig)}</div></div>`:'';
+  return`<div>
+   <div class="card" style="margin-bottom:10px"><h3>${t('gearWorn')}</h3><div class="worn">${worn}</div>
+    <div class="chips" style="justify-content:center;margin-top:10px">${tot.map(([k,v])=>`<span class="chip">${t({'hp':'sHp','sh':'sSh','dm':'sDm','sp':'sSp'}[k])} ${v>0?'+'+v+'%':'—'}</span>`).join('')}</div>
+    <p class="mut" style="text-align:center;margin-top:10px">${t('gearSub')}</p></div>
+   ${sec}${sigCard}
+   <p class="mut" style="margin-top:4px">${Object.keys(S.gw).length}/${GEAR.filter(g=>!g.ex).length} ${t('gearOwned')}</p></div>`},
 shop(){const all=!chestPool().length,os=onlySecret(),hv=evOn(),hl=HLEFT();
  return`<div><div class="shop">${[0,1].map(k=>`<div class="card item c${k+1}"><div class="big">${k?'💎':'🎁'}</div><h3>${t('chest'+(k+1))}</h3><p class="mut">${all?t('allOwned'):os?t('chestLeft',CHEST[k].sec,Math.round(CHEST[k].cost*.6)):t('chest'+(k+1)+'d')}</p><button class="btn${all||S.gold<CHEST[k].cost?' off':''}" data-a="chest" data-v="${k}">🪙 ${CHEST[k].cost}</button></div>`).join('')}
  <div class="card item${hv?'':' evoff'}"><div class="big">🎃</div><h3>${t('hChest')}</h3><p class="mut">${hv?(hl.length?t('chestLeft',hl.length,HCHEST.cost):t('allOwned')):t('hOver')}</p><button class="btn${hv&&hl.length&&S.gold>=HCHEST.cost?'':' off'}" data-a="hchest">🪙 ${HCHEST.cost}</button></div>
