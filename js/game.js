@@ -17,7 +17,7 @@ $('mpsel').innerHTML=MAPS.map((m,i)=>'<option value="'+i+'">'+m.n+'</option>').j
 $('rc').value=Math.random().toString(36).slice(2,6);
 // armor (sd of sm) soaks hits first and recharges SHD seconds after the last hit; health never regenerates on its own
 const SHD=3.5,SHR=.22,shOf=c=>(c.boss||c.foe)?0:Math.round(15+c.hp*.3);
-const mk=(ch,x,y,nm,bot)=>{const c=CH[ch],f=bot?.8:1,sm=Math.round(shOf(c)*f);let cg=null;for(const k in c.s)if(c.s[k].chg)(cg=cg||{})[k]=c.s[k].chg;return{cg,x,y,ch,hp:c.hp*f,mx:c.hp*f,sd:sm,sm,sdt:0,k:0,al:1,nm,bot,cd:{a:0,q:0,e:0,r:0},sh:0,sl:0,a:0,dash:null,rt:0,tn:0,tb:0,tx:x,ty:y}};
+const mk=(ch,x,y,nm,bot)=>{const c=CH[ch],f=bot?.8:1,sm=Math.round(shOf(c)*f);let cg=null;for(const k in c.s)if(c.s[k].chg)(cg=cg||{})[k]=c.s[k].chg;return{cg,x,y,ch,hp:c.hp*f,mx:c.hp*f,sd:sm,sm,sdt:0,k:0,al:1,nm,bot,cd:{a:0,q:0,e:0,r:0,c:0},sh:0,sl:0,a:0,dash:null,rt:0,tn:0,tb:0,tx:x,ty:y}};
 const rs=()=>SP[Math.random()*4|0];
 const all=()=>allC||(allC=[['me',me],...Object.entries(others)]);
 // how far from its centre a fighter can be hit (bosses and big elites are easier to hit, as they look)
@@ -43,19 +43,27 @@ function dest(e,s,tx,ty){let d=s.dist;if(s.to)d=Math.min(d,Math.hypot(tx-e.x,ty-
 // the same four casts mashing. Kept modest because it applies in PvP too, where both sides get it.
 const CBW=2.8,CMX=5,CBON=.06;   // CMX, not CMAX: meta.js already declares CMAX for hero level
 const comboMul=e=>1+(e.ck>1?(e.ck-1)*CBON:0);
+// ---- slot c, the desperation move. A 5th skill that is strong on purpose but welded shut most of
+// the time: it only opens at <=50% hp or on a full 5-stack chain, and costs 22s. That raises the
+// ceiling without raising uptime, so nothing had to be nerfed to make room for it.
+const DCD=22,DHP=.5;
+const desOpen=e=>(e.hp<=e.mx*DHP||e.ck>=CMX);
+const desReady=e=>e.cd.c<=0&&desOpen(e);
 function bumpCombo(e,key){
  const keep=e.ckt>0&&e.ckk!==key;
  e.ck=keep?Math.min(CMX,(e.ck||0)+1):1;
  e.ckk=key;e.ckt=CBW;
- if(e.ck>1&&e.ckm!==e.ck){e.ckm=e.ck;if(key=='a'||e.al)say(e.x,e.y-46-e.ck*4,'×'+e.ck,e.ck>=CMAX?'#ffd84d':'#c7d2fe')}
+ if(e.ck>1&&e.ckm!==e.ck){e.ckm=e.ck;if(key=='a'||e.al)say(e.x,e.y-46-e.ck*4,'×'+e.ck,e.ck>=CMX?'#ffd84d':'#c7d2fe')}
  return e.ck}
 function tryCast(e,id,key,tx,ty){const s=CH[e.ch].s[key];if(!e.al||e.dash||e.stn>0||e.van>0||s.nm=='-')return;
+ // the desperation move refuses politely rather than firing into an empty screen
+ if(key=='c'&&!desReady(e)){if(id=='me'&&e.cd.c<=0)say(e.x,e.y-52,'✖','#ff7b8a');return}
  // chg = stored charges that refill one at a time; fa = quickened basic attacks left
  if(s.chg){if(!(e.cg&&e.cg[key]>0)||tm<(e.cgt||0))return;e.cg[key]--;e.cgt=tm+.3;if(e.cd[key]<=0)e.cd[key]=s.cd}else{if(e.cd[key]>0)return;e.cd[key]=s.cd;if(key=='a'&&e.fa>0){e.fa--;e.cd.a=s.cd*.55}}
  if(s.k=='strike'){const dd=Math.hypot(tx-e.x,ty-e.y);if(dd>s.rng){tx=e.x+(tx-e.x)/dd*s.rng;ty=e.y+(ty-e.y)/dd*s.rng}}
  const d={c:e.ch,s:key,x:e.x,y:e.y,a:e.a,tx:s.cur?tx:e.x,ty:s.cur?ty:e.y};
  if(s.k=='dash'||s.k=='blink'){[d.tx,d.ty]=dest(e,s,tx,ty)}
- cast(e,id,d,true);bumpCombo(e,key);if(R&&id=='me')R.emit('fx',d)}
+ cast(e,id,d,true);if(key=='c'){e.ck=0;e.ckt=0;e.ckk='';e.ckm=0}else bumpCombo(e,key);if(R&&id=='me')R.emit('fx',d)}
 // same side: raid enemies with each other, or teammates in 2v2
 const ally=(o,e)=>raid?!!(e.raidE&&raid.fid[o]):tmode?!!(ent(o)&&ent(o)!==e&&ent(o).tm===e.tm):false;
 function cast(e,o,d,local){const c=CH[d.c],s=c.s[d.s],ba=d.s=='a'?1:0;if(e){e.rv=tm+1.2;e.at=tm;e.atn=(e.atn||0)+1}if(local&&o=='me')sfx(d.s=='a'?'atk':d.s=='r'?'ult':'skl');
@@ -200,7 +208,7 @@ function update(dt){if(choice)return;allC=null;matchT+=dt;
    move(e,(Math.cos(e.a)*dir-Math.sin(e.a)*st)*spd*dt,(Math.sin(e.a)*dir+Math.cos(e.a)*st)*spd*dt);const rg=ai=='rush'?100:ai=='snipe'?600:ai=='bomb'?360:440;
    if(bd<rg&&Math.random()<dt*(ai=='rush'?4.5:2))tryCast(e,id,'a',t.x,t.y);if(bd<rg+80&&Math.random()<dt*.35)tryCast(e,id,'q',t.x,t.y);if(ai=='rush'&&bd>140&&bd<320&&Math.random()<dt*.5)tryCast(e,id,'e',t.x,t.y);continue}
   if(e.boss){e.a=Math.atan2(t.y-e.y,t.x-e.x);const dir=bd>260?1:bd<140?-1:0,sp=CH[e.ch].sp*.62*(e.sl>0?.5:1);move(e,Math.cos(e.a)*dir*sp*dt,Math.sin(e.a)*dir*sp*dt);
-   if(bd<560){if(Math.random()<dt*1.8)tryCast(e,id,'a',t.x,t.y);if(Math.random()<dt*.45)tryCast(e,id,'q',t.x,t.y);if(Math.random()<dt*.2)tryCast(e,id,'e',t.x,t.y);if(Math.random()<dt*.16)tryCast(e,id,'r',t.x,t.y)}continue}
+   if(bd<560){if(Math.random()<dt*1.8)tryCast(e,id,'a',t.x,t.y);if(Math.random()<dt*.45)tryCast(e,id,'q',t.x,t.y);if(Math.random()<dt*.2)tryCast(e,id,'e',t.x,t.y);if(Math.random()<dt*.16)tryCast(e,id,'r',t.x,t.y);if(desOpen(e)&&Math.random()<dt*.5)tryCast(e,id,'c',t.x,t.y)}continue}
   if(e.err==null||Math.random()<dt*1.5)e.err=(Math.random()-.5)*.9;e.a=Math.atan2(t.y-e.y,t.x-e.x)+e.err;
   const dir=bd>240?1:bd<150?-1:0,st=Math.sin(tm*1.3+id.charCodeAt(1))*.7,sp=CH[e.ch].sp*.5*(e.sl>0?.5:1)*(e.hst>0?1.6:1);
   move(e,(Math.cos(e.a)*dir-Math.sin(e.a)*st)*sp*dt,(Math.sin(e.a)*dir+Math.cos(e.a)*st)*sp*dt);
@@ -232,16 +240,22 @@ function drawDummy(e){ctx.fillStyle='#0005';ctx.beginPath();ctx.ellipse(e.x,e.y+
 // lighten (f>0) or darken (f<0) a hex colour; returns hex so results can be shaded again
 const SHC={};function shade(c,f){const k=c+f;if(SHC[k])return SHC[k];if(c.length==4)c='#'+c[1]+c[1]+c[2]+c[2]+c[3]+c[3];const n=parseInt(c.slice(1,7),16),t=f<0?0:255,p=Math.abs(f),h=v=>Math.round((t-v)*p+v).toString(16).padStart(2,'0');return SHC[k]='#'+h(n>>16&255)+h(n>>8&255)+h(n&255)}
 function skillBtns(){const sk=CH[me.ch].s;
- for(const [k,x,y,r] of [['a',cw-70,chh-76,38],['q',cw-152,chh-50,27],['e',cw-140,chh-118,27],['r',cw-78,chh-152,27]]){const s=sk[k],cg=s.chg?me.cg[k]:-1,cd=cg>0?0:me.cd[k],fr=cd>0?Math.min(1,cd/s.cd):0;
+ for(const [k,x,y,r] of [['a',cw-70,chh-76,38],['q',cw-152,chh-50,27],['e',cw-140,chh-118,27],['r',cw-78,chh-152,27],['c',cw-212,chh-176,27]]){const s=sk[k],cg=s.chg?me.cg[k]:-1,cd=cg>0?0:me.cd[k],fr=cd>0?Math.min(1,cd/s.cd):0;
+  // the desperation button reads sealed unless the condition is actually met
+  const lockd=k=='c'&&!desOpen(me),rdy=k=='c'&&desReady(me);
   ctx.fillStyle='rgba(0,0,0,.35)';ctx.beginPath();ctx.arc(x,y+4,r+3,0,7);ctx.fill();
-  const g=ctx.createRadialGradient(x-r*.3,y-r*.35,2,x,y,r);g.addColorStop(0,k=='a'?'#ffa070':shade(CH[me.ch].col,.4));g.addColorStop(1,k=='a'?'#d13a1e':shade(CH[me.ch].col,-.28));ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill();ctx.strokeStyle='#1b1030';ctx.lineWidth=4;ctx.stroke();
-  ctx.fillStyle='#fff';ctx.font='900 '+(r*.95|0)+'px system-ui';ctx.textAlign='center';ctx.fillText(IC[s.k]||'✦',x,y+r*.32);
+  const g=ctx.createRadialGradient(x-r*.3,y-r*.35,2,x,y,r);g.addColorStop(0,k=='a'?'#ffa070':shade(CH[me.ch].col,.4));g.addColorStop(1,k=='a'?'#d13a1e':shade(CH[me.ch].col,-.28));ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill();ctx.strokeStyle=lockd?'#1b1030':rdy?'#ffd84d':'#1b1030';ctx.lineWidth=lockd?4:rdy?5:4;ctx.stroke();
+  if(rdy){ctx.globalAlpha=.35+.25*Math.sin(tm*8);ctx.fillStyle='#ffd84d';ctx.beginPath();ctx.arc(x,y,r+6,0,7);ctx.fill();ctx.globalAlpha=1}
+  ctx.fillStyle=lockd?'#5b5470':'#fff';ctx.font='900 '+(r*.95|0)+'px system-ui';ctx.textAlign='center';ctx.fillText(lockd?'🔒':IC[s.k]||'✦',x,y+r*.32);
+  if(lockd){ctx.font='900 8px system-ui';ctx.strokeStyle='#1b1030';ctx.lineWidth=2.5;ctx.strokeText('≤50% HP',x,y+r+13);ctx.fillStyle='#c9b6ff';ctx.fillText('≤50% HP',x,y+r+13);continue}
   if(fr>0){ctx.fillStyle='rgba(10,5,30,.74)';ctx.beginPath();ctx.moveTo(x,y);ctx.arc(x,y,r-1,-Math.PI/2,-Math.PI/2+Math.PI*2*fr);ctx.closePath();ctx.fill();ctx.fillStyle='#fff';ctx.font='900 '+(r*.7|0)+'px system-ui';ctx.fillText(cd.toFixed(cd<10?1:0),x,y+r*.25)}
   if(cg>=0){ctx.fillStyle='#7fe4ff';ctx.strokeStyle='#1b1030';ctx.lineWidth=3;ctx.beginPath();ctx.arc(x+r*.72,y-r*.72,9,0,7);ctx.fill();ctx.stroke();ctx.fillStyle='#1b1030';ctx.font='900 11px system-ui';ctx.fillText(cg,x+r*.72,y-r*.72+4)}
   ctx.font='900 10px system-ui';ctx.lineWidth=3;ctx.strokeStyle='#1b1030';const lb=k=='a'?'MOUSE':k.toUpperCase();ctx.strokeText(lb,x,y+r+13);ctx.fillStyle='#fff';ctx.fillText(lb,x,y+r+13);
-  if(k!='a'){ctx.font='bold 9px system-ui';ctx.strokeText(s.nm.slice(0,13),x,y-r-5);ctx.fillStyle='#d7e8ff';ctx.fillText(s.nm.slice(0,13),x,y-r-5)}}
+  if(k!='a'){ctx.font='bold 9px system-ui';ctx.strokeText(s.nm.slice(0,13),x,y-r-5);ctx.fillStyle=rdy?'#ffd84d':'#d7e8ff';ctx.fillText(s.nm.slice(0,13),x,y-r-5)}}
   // combo counter, beside the ability cluster; the ring drains with the window
-  if(me.ck>1){const cx2=cw-232,cy2=chh-108,max=me.ck>=CMX;
+  // combo counter, left of the awaken dial; the ring drains with the window. cw-286 rather than
+// cw-232 because the awaken button sits at cw-214 r25 and the two circles would overlap.
+if(me.ck>1){const cx2=cw-286,cy2=chh-96,max=me.ck>=CMX;
    ctx.fillStyle='rgba(8,4,22,.55)';ctx.beginPath();ctx.arc(cx2,cy2,26,0,7);ctx.fill();
    ctx.strokeStyle='rgba(255,255,255,.16)';ctx.lineWidth=3;ctx.beginPath();ctx.arc(cx2,cy2,26,0,7);ctx.stroke();
    ctx.strokeStyle=max?'#ffd84d':'#c7d2fe';ctx.lineWidth=3.5;ctx.beginPath();ctx.arc(cx2,cy2,26,-Math.PI/2,-Math.PI/2+Math.PI*2*Math.max(0,me.ckt/CBW));ctx.stroke();
@@ -303,7 +317,7 @@ function draw(){
  if(raid)hudRun();else hudPvp();
  const sk=CH[me.ch].s;
  if(!touch)skillBtns();
- else{for(const k of['q','e','r']){const v=sk[k].chg&&me.cg[k]>0?0:Math.round(me.cd[k]/sk[k].cd*20)*5;if(TB[k]!==v){TB[k]=v;$('b'+k).lastChild.style.height=v+'%'}}
+ else{for(const k of['q','e','r','c']){const v=sk[k].chg&&me.cg[k]>0?0:Math.round(me.cd[k]/sk[k].cd*20)*5;if(TB[k]!==v){TB[k]=v;$('b'+k).lastChild.style.height=v+'%'}}
   const av=Math.round(100-(me.awt>0?100:me.aw||0)),rdy=me.aw>=100&&!(me.awt>0);if(TB.w!==av){TB.w=av;$('bw').lastChild.style.height=av+'%'}if(TB.g!==rdy){TB.g=rdy;$('bw').style.boxShadow=rdy?'0 0 14px 4px #ffd84d':''}}
  if(touch&&!raid){const on=me.awt>0,by=chh-16,bx=cw/2-150,pct=on?me.awt/15:(me.aw||0)/100;rr(bx,by,306,9,4,'#000a');rr(bx,by,306*pct,9,4,on?'#fff3a0':'#ffd84d');ctx.font='bold 11px system-ui';ctx.textAlign='center';ctx.fillStyle='#fff';ctx.fillText(on?'AWAKENED '+me.awt.toFixed(1)+'s':(me.aw>=100?'AWAKEN READY!':'Awakening '+Math.floor(me.aw||0)+'%'),cw/2,by-3)}
  if(tmode)scoreboard();hudFeed();minimap();
@@ -350,8 +364,8 @@ function loop(t){if(!run)return;const raw=(t-last)/1e3,dt=Math.min(.05,raw);last
  if(!paused){tm+=dt;update(dt);draw();pd=0}else if(!pd){draw();pd=1}
  raf=requestAnimationFrame(loop)}
 addEventListener('keydown',e=>{const k=e.key.toLowerCase();if(!run||$('m').style.display!='none')return;if(k=='escape'){UI.pause();return}if(choice){if('123'.includes(k)&&k.length==1)pickBuff(+k-1);return}if(paused)return;(loc2&&(k.startsWith('arrow')||k=='enter')?k2:keys)[k]=1;
- if('qer'.includes(k)&&k.length==1){me.a=Math.atan2(mouse.y-me.y,mouse.x-me.x);hold=0;tryCast(me,'me',k,mouse.x,mouse.y);e.preventDefault()}
- if(loc2&&others.p2&&',./'.includes(k)&&k.length==1){const p=others.p2;tryCast(p,'p2',{',':'q','.':'e','/':'r'}[k],p.x+Math.cos(p.a)*220,p.y+Math.sin(p.a)*220);e.preventDefault()}
+ if('qerc'.includes(k)&&k.length==1){me.a=Math.atan2(mouse.y-me.y,mouse.x-me.x);hold=0;tryCast(me,'me',k,mouse.x,mouse.y);e.preventDefault()}
+ if(loc2&&others.p2&&',./;'.includes(k)&&k.length==1){const p=others.p2;tryCast(p,'p2',{',':'q','.':'e','/':'r',';':'c'}[k],p.x+Math.cos(p.a)*220,p.y+Math.sin(p.a)*220);e.preventDefault()}
  if(k=='enter')e.preventDefault()
  if(k==' ')awaken();if(k==' '||k.startsWith('arrow'))e.preventDefault()});
 addEventListener('keyup',e=>{const k=e.key.toLowerCase();keys[k]=0;k2[k]=0});addEventListener('blur',()=>{keys={};k2={};mouse.down=false});
@@ -359,7 +373,7 @@ const mp=e=>{const r=cv.getBoundingClientRect();mouse.x=cam.x+(e.clientX-r.left)
 cv.addEventListener('mousemove',e=>{if(!touch)mp(e)});cv.addEventListener('mousedown',e=>{if(touch)return;mp(e);mouse.down=true});addEventListener('mouseup',()=>{if(!touch)mouse.down=false});
 cv.addEventListener('contextmenu',e=>e.preventDefault());
 
-function lab(){const s=CH[me.ch].s;['q','e','r'].forEach(k=>{$('b'+k).querySelector('small').textContent=s[k].nm})}
+function lab(){const s=CH[me.ch].s;['q','e','r','c'].forEach(k=>{$('b'+k).querySelector('small').textContent=s[k].nm})}
 let jid=null;const js=$('js');
 function jmove(e){const r=js.getBoundingClientRect();let dx=(e.clientX-r.left-r.width/2)/(r.width/2),dy=(e.clientY-r.top-r.height/2)/(r.height/2);const l=Math.hypot(dx,dy);if(l>1){dx/=l;dy/=l}joy.x=Math.abs(dx)<.12?0:dx;joy.y=Math.abs(dy)<.12?0:dy;$('kn').style.transform='translate('+dx*39+'px,'+dy*39+'px)'}
 js.addEventListener('pointerdown',e=>{jid=e.pointerId;try{js.setPointerCapture(jid)}catch(err){}jmove(e)});
@@ -372,7 +386,7 @@ js.addEventListener('pointerup',jend);js.addEventListener('pointercancel',jend);
  const end=e=>{if(e.pointerId!==pid)return;pid=null;mouse.down=false;if(aim&&aim.key=='a')aim=null};
  ['pointerup','pointercancel'].forEach(t=>b.addEventListener(t,end))}
 function aimRange(s){return Math.min(520,s.cur?380:(s.len||(s.spd&&s.life?s.spd*s.life:0)||s.dist||s.r||(s.rad||0)+120||200))}
-['q','e','r'].forEach(k=>{const b=$('b'+k);let pid=null,cx=0,cy=0;
+['q','e','r','c'].forEach(k=>{const b=$('b'+k);let pid=null,cx=0,cy=0;
  b.addEventListener('pointerdown',e=>{if(!run||!me)return;pid=e.pointerId;try{b.setPointerCapture(pid)}catch(err){}const r=b.getBoundingClientRect();cx=r.left+r.width/2;cy=r.top+r.height/2;aim={key:k,a:me.a,f:0,on:0};e.preventDefault()});
  b.addEventListener('pointermove',e=>{if(e.pointerId!==pid||!aim)return;const dx=e.clientX-cx,dy=e.clientY-cy,l=Math.hypot(dx,dy);if(l>14){aim.on=1;aim.a=Math.atan2(dy,dx);aim.f=Math.min(1,l/90)}});
  b.addEventListener('pointerup',e=>{if(e.pointerId!==pid)return;pid=null;const a=aim;aim=null;if(!a||!run||!me)return;

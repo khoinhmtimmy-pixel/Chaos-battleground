@@ -10,112 +10,136 @@ const fs=require('fs'),path=require('path'),root=path.join(__dirname,'..');
 
 // ---------------------------------------------------------------- kit archetypes
 // cd bands mirror the hand-written roster: a .24-.6, q 3.5-6, e 3.5-10, r 13-16
+// slot c is the desperation move: cd 22, and the engine only lets it fire at <=50% hp or on a
+// 5-stack combo, so it may be far stronger than r without inflating how often a hero is strong.
+// x5* options override its numbers; they are deliberately named x5 and not cd, which is the field.
 const K={
  blade:(o={})=>{const s=o.spd||520;
   return{a:{k:'proj',cd:.32,spd:s,r:8,dmg:o.ad||8,life:.4,nm:'Slash'},
    q:{k:'proj',cd:4,n:3,spread:.5,spd:s*.9,r:11,dmg:o.qd||14,life:.5,nm:'Triple Cut'},
    e:{k:'dash',cd:5,dist:o.ed||250,nova:{r:62,dmg:o.edmg||15},nm:'Lunge'},
-   r:{k:'nova',cd:14,r:o.rad||150,dmg:o.rd||44,delay:.5,sl:.5,nm:'Whirlwind'}}},
+   r:{k:'nova',cd:14,r:o.rad||150,dmg:o.rd||44,delay:.5,sl:.5,nm:'Whirlwind'},
+    c:{k:'cone',cd:22,r:235,arc:3.4,dmg:o.x5||72,st:.45,nm:'Cross Slash'}}},
  duelist:(o={})=>{const s=o.spd||620;
   return{a:{k:'proj',cd:.3,spd:s,r:7,dmg:o.ad||7,life:.35,nm:'Quick Slash'},
    q:{k:'nova',cd:5,r:105,dmg:o.qd||22,delay:.2,nm:'Crescent'},
    e:{k:'dash',cd:4.5,dist:280,nova:{r:55,dmg:12},nm:'Step Slash'},
-   r:{k:'proj',cd:13,n:3,spread:.3,spd:s*1.15,r:14,dmg:o.rd||24,life:.6,nm:'Triple Fang'}}},
+   r:{k:'proj',cd:13,n:3,spread:.3,spd:s*1.15,r:14,dmg:o.rd||24,life:.6,nm:'Triple Fang'},
+    c:{k:'proj',cd:22,n:9,spread:1.25,spd:s*1.35,r:13,dmg:o.x5||26,life:.7,pierce:2,nm:'Thousand Cuts'}}},
  mage:(o={})=>{const s=o.spd||440;
   return{a:{k:'proj',cd:.48,spd:s,r:11,dmg:o.ad||10,life:1,nm:'Arcane Bolt'},
    q:{k:'zone',cd:5.5,r:130,dur:4,dps:o.qd||15,sl:2,nm:'Gravity Well'},
    e:{k:'blink',cd:6,dist:o.ed||260,nm:'Arcane Step'},
-   r:{k:'beam',cd:14,len:620,w:44,dur:1.2,dmg:o.rd||11,st:.3,nm:'Arcane Lance'}}},
+   r:{k:'beam',cd:14,len:620,w:44,dur:1.2,dmg:o.rd||11,st:.3,nm:'Arcane Lance'},
+    c:{k:'beam',cd:22,len:840,w:82,dur:1.9,dmg:o.x5||19,st:.55,nm:'Arcane Cataclysm'}}},
  storm:(o={})=>{const s=o.spd||580;
   return{a:{k:'proj',cd:.34,spd:s,r:7,dmg:o.ad||7,life:.6,nm:'Spark'},
    q:{k:'chain',cd:4.5,n:o.n||5,rng:300,dmg:o.qd||15,st:.25,nm:'Chain Bolt'},
    e:{k:'blink',cd:5,dist:280,to:1,nm:'Leap'},
-   r:{k:'nova',cd:14,cur:1,r:100,dmg:o.rd||46,delay:.8,nm:'Thunder Call'}}},
+   r:{k:'nova',cd:14,cur:1,r:100,dmg:o.rd||46,delay:.8,nm:'Thunder Call'},
+    c:{k:'chain',cd:22,n:12,rng:430,dmg:o.x5||23,st:.45,nm:'Thunderstorm Chain'}}},
  pyro:(o={})=>{const s=o.spd||480;
   return{a:{k:'proj',cd:.45,spd:s,r:10,dmg:o.ad||8,life:.5,dot:{d:4,t:2},ps:'fire',nm:'Ember'},
    q:{k:'cone',cd:5,r:150,arc:1.5,dmg:o.qd||24,dot:{d:7,t:3},nm:'Flame Breath'},
    e:{k:'dash',cd:5,dist:230,nova:{r:66,dmg:15,dot:{d:5,t:2}},nm:'Fire Dash'},
-   r:{k:'rain',cd:14,n:10,rad:175,r:48,dmg:o.rd||21,gap:.09,nm:'Meteor Rain'}}},
+   r:{k:'rain',cd:14,n:10,rad:175,r:48,dmg:o.rd||21,gap:.09,nm:'Meteor Rain'},
+    c:{k:'rain',cd:22,n:18,rad:235,r:70,dmg:o.x5||30,gap:.05,fs:'fire',dot:{d:10,t:3},nm:'Inferno'}}},
  cryo:(o={})=>{const s=o.spd||470;
   return{a:{k:'proj',cd:.46,spd:s,r:9,dmg:o.ad||7,life:.9,sl:.6,nm:'Frost Bolt'},
    q:{k:'nova',cd:5.5,r:120,dmg:11,delay:.15,sl:2,nm:'Frost Nova'},
    e:{k:'blink',cd:5.5,dist:240,nm:'Glide'},
-   r:{k:'proj',cd:14,spd:190,r:38,dmg:o.rd||46,life:3,sl:2,nm:'Absolute Zero'}}},
+   r:{k:'proj',cd:14,spd:190,r:38,dmg:o.rd||46,life:3,sl:2,nm:'Absolute Zero'},
+    c:{k:'nova',cd:22,cur:1,r:235,dmg:o.x5||27,delay:.55,sl:3,nm:'Eternal Winter'}}},
  shade:(o={})=>{const s=o.spd||400;
   return{a:{k:'proj',cd:.46,spd:s,r:12,dmg:o.ad||10,life:1.1,ps:'dark',nm:'Umbra'},
    q:{k:'nova',cd:5,cur:1,r:100,dmg:o.qd||25,delay:.7,nm:'Void Pit'},
    e:{k:'blink',cd:6,dist:220,nm:'Shade Step'},
-   r:{k:'proj',cd:15,spd:160,r:36,dmg:o.rd||50,life:3.5,sl:2,nm:'Black Hole'}}},
+   r:{k:'proj',cd:15,spd:160,r:36,dmg:o.rd||50,life:3.5,sl:2,nm:'Black Hole'},
+    c:{k:'proj',cd:22,spd:150,r:58,dmg:o.x5||64,life:4.5,sl:3,nm:'Event Horizon'}}},
  sniper:(o={})=>{const s=o.spd||780;
   return{a:{k:'proj',cd:.26,spd:s,r:5,dmg:o.ad||5,life:.4,pierce:1,nm:'Snap Shot'},
    q:{k:'proj',cd:4,n:5,spread:.8,spd:s*.9,r:6,dmg:o.qd||8,life:.5,nm:'Burst'},
    e:{k:'blink',cd:4,dist:300,to:1,nm:'Slide'},
-   r:{k:'proj',cd:13,spd:s*1.1,r:26,dmg:o.rd||38,life:1,pierce:1,nm:'Piercing Shot'}}},
+   r:{k:'proj',cd:13,spd:s*1.1,r:26,dmg:o.rd||38,life:1,pierce:1,nm:'Piercing Shot'},
+    c:{k:'proj',cd:22,spd:s*1.45,r:22,dmg:o.x5||96,life:1.2,pierce:3,nm:'Perfect Shot'}}},
  brawler:(o={})=>{const s=o.spd||440;
   return{a:{k:'proj',cd:.5,spd:s,r:12,dmg:o.ad||10,life:.3,nm:'Punch'},
    q:{k:'nova',cd:5,r:110,dmg:o.qd||23,delay:.3,kb:40,nm:'Slam'},
    e:{k:'dash',cd:5,dist:200,nova:{r:80,dmg:17},nm:'Charge'},
-   r:{k:'nova',cd:15,cur:1,r:130,dmg:o.rd||43,delay:1,kb:90,nm:'Ground Pound'}}},
+   r:{k:'nova',cd:15,cur:1,r:130,dmg:o.rd||43,delay:1,kb:90,nm:'Ground Pound'},
+    c:{k:'nova',cd:22,r:215,dmg:o.x5||72,delay:.35,kb:155,st:.9,nm:'Catastrophic Slam'}}},
  tank:(o={})=>{const s=o.spd||400;
   return{a:{k:'proj',cd:.55,spd:s,r:13,dmg:o.ad||10,life:.3,nm:'Bash'},
    q:{k:'nova',cd:5,r:120,dmg:o.qd||22,delay:.35,nm:'Quake'},
    e:{k:'shield',cd:9,dur:o.sh||3,nm:'Bulwark'},
-   r:{k:'nova',cd:15,r:o.rad||165,dmg:o.rd||48,delay:.6,kb:110,nm:'Cataclysm'}}},
+   r:{k:'nova',cd:15,r:o.rad||165,dmg:o.rd||48,delay:.6,kb:110,nm:'Cataclysm'},
+    c:{k:'nova',cd:22,r:255,dmg:o.x5||78,delay:.5,kb:145,form:{dur:8,mul:1.6,hp:.5,sh:1},nm:'Titan Cataclysm'}}},
  guardian:(o={})=>{const s=o.spd||500;
   return{a:{k:'proj',cd:.45,spd:s,r:9,dmg:o.ad||7,life:.7,nm:'Ward Bolt'},
    q:{k:'shield',cd:8,dur:o.sh||3.5,nm:'Sanctuary'},
    e:{k:'haste',cd:10,dur:4,sh:1.5,nm:'Empower'},
-   r:{k:'heal',cd:16,amt:o.heal||50,nm:'Dawnlight'}}},
+   r:{k:'heal',cd:16,amt:o.heal||50,nm:'Dawnlight'},
+    c:{k:'haste',cd:22,dur:8,sh:o.x5sh||8,nm:'Bulwark of Dawn'}}},
  assassin:(o={})=>{const s=o.spd||660;
   return{a:{k:'cone',cd:.3,r:92,arc:2.4,dmg:o.ad||12,ls:.15,nm:'Reap'},
    q:{k:'proj',cd:4,n:3,spread:.4,spd:s,r:9,dmg:o.qd||13,life:.4,nm:'Fan of Blades'},
    e:{k:'blink',cd:3.5,dist:300,to:1,nm:'Vanish'},
-   r:{k:'nova',cd:14,r:90,dmg:o.rd||50,delay:.45,sl:.5,nm:'Execute'}}},
+   r:{k:'nova',cd:14,r:90,dmg:o.rd||50,delay:.45,sl:.5,nm:'Execute'},
+    c:{k:'strike',cd:22,rng:540,r:155,dmg:o.x5||155,delay:.35,st:1,hl:1,nm:'Death Mark'}}},
  archer:(o={})=>{const s=o.spd||700;
   return{a:{k:'proj',cd:.5,spd:s,r:6,dmg:o.ad||9,life:.8,ps:'arrow',nm:'Arrow'},
    q:{k:'proj',cd:4.5,n:4,spread:.9,spd:s*.85,r:9,dmg:o.qd||11,life:.6,nm:'Volley'},
    e:{k:'dash',cd:4.5,dist:290,nova:{r:50,dmg:10},nm:'Roll'},
-   r:{k:'rain',cd:14,n:12,rad:170,r:34,dmg:o.rd||18,gap:.06,fs:'bolt',nm:'Arrow Storm'}}},
+   r:{k:'rain',cd:14,n:12,rad:170,r:34,dmg:o.rd||18,gap:.06,fs:'bolt',nm:'Arrow Storm'},
+    c:{k:'rain',cd:22,n:22,rad:225,r:46,dmg:o.x5||26,gap:.035,fs:'bolt',nm:'Skyfall'}}},
  artillery:(o={})=>{
   return{a:{k:'proj',cd:.6,spd:o.spd||340,r:16,dmg:o.ad||12,life:.8,ps:'rock',nm:'Shell'},
    q:{k:'nova',cd:6,r:150,dmg:o.qd||30,delay:.6,kb:70,nm:'Barrage'},
    e:{k:'dash',cd:5.5,dist:230,nova:{r:70,dmg:16},nm:'Reposition'},
-   r:{k:'zone',cd:15,cur:1,r:190,dur:5,dps:o.rd||20,pull:80,nm:'Siege Zone'}}},
+   r:{k:'zone',cd:15,cur:1,r:190,dur:5,dps:o.rd||20,pull:80,nm:'Siege Zone'},
+    c:{k:'zone',cd:22,cur:1,r:255,dur:7,dps:o.x5||35,pull:125,nm:'Annihilation Zone'}}},
  toxic:(o={})=>{const s=o.spd||520;
   return{a:{k:'proj',cd:.42,spd:s,r:8,dmg:o.ad||7,life:.6,dot:{d:5,t:3},nm:'Toxin'},
    q:{k:'zone',cd:5.5,r:125,dur:5,dps:o.qd||14,sl:1.2,nm:'Gas Cloud'},
    e:{k:'blink',cd:5,dist:260,nm:'Slip'},
-   r:{k:'mine',cd:13,r:105,dmg:o.rd||40,st:1,nm:'Blast Flask'}}},
+   r:{k:'mine',cd:13,r:105,dmg:o.rd||40,st:1,nm:'Blast Flask'},
+    c:{k:'zone',cd:22,cur:1,r:205,dur:7,dps:o.x5||27,sl:1.6,nm:'Corruption Field'}}},
  nature:(o={})=>{const s=o.spd||520;
   return{a:{k:'proj',cd:.46,spd:s,r:9,dmg:o.ad||8,life:.7,ps:'leaf',nm:'Thorn'},
    q:{k:'zone',cd:5.5,r:140,dur:5,dps:o.qd||14,heal:.06,nm:'Bloom Field'},
    e:{k:'haste',cd:9,dur:4,sh:1.2,nm:'Wild Surge'},
-   r:{k:'heal',cd:15,amt:o.heal||45,nm:'Verdant Grace'}}},
+   r:{k:'heal',cd:15,amt:o.heal||45,nm:'Verdant Grace'},
+    c:{k:'zone',cd:22,cur:1,r:195,dur:6.5,heal:.14,dps:o.x5||17,nm:'Worldbloom'}}},
  knight:(o={})=>{const s=o.spd||680;
   return{a:{k:'proj',cd:.42,spd:s,r:8,dmg:o.ad||8,life:.6,nm:'Light Lance'},
    q:{k:'proj',cd:4.5,n:4,spread:6.2832,spd:s*.75,r:10,dmg:o.qd||12,life:.6,nm:'Holy Ring'},
    e:{k:'shield',cd:9,dur:2.5,nm:'Aegis'},
-   r:{k:'beam',cd:14,len:660,w:40,dur:1.1,dmg:o.rd||10,st:.4,nm:'Judgement'}}},
+   r:{k:'beam',cd:14,len:660,w:40,dur:1.1,dmg:o.rd||10,st:.4,nm:'Judgement'},
+    c:{k:'nova',cd:22,cur:1,r:235,dmg:o.x5||76,delay:.4,form:{dur:7,mul:1.7,hp:.4,sh:.8},nm:'Divine Verdict'}}},
  gunner:(o={})=>{const s=o.spd||820;
   return{a:{k:'proj',cd:.24,spd:s,r:5,dmg:o.ad||5,life:.3,ps:'bullet',nm:'Pistol'},
    q:{k:'proj',cd:3.5,n:6,spread:.7,spd:s*.9,r:6,dmg:o.qd||7,life:.35,nm:'Spray'},
    e:{k:'dash',cd:4,dist:300,nova:{r:45,dmg:8},nm:'Roll'},
-   r:{k:'cone',cd:13,r:200,arc:.8,dmg:o.rd||30,nm:'Suppressor Fire'}}},
+   r:{k:'cone',cd:13,r:200,arc:.8,dmg:o.rd||30,nm:'Suppressor Fire'},
+    c:{k:'cone',cd:22,r:305,arc:1.45,dmg:o.x5||58,nm:'Annihilation Fire'}}},
  beast:(o={})=>{const s=o.spd||540;
   return{a:{k:'proj',cd:.26,spd:s,r:7,dmg:o.ad||6,life:.25,nm:'Claw'},
    q:{k:'proj',cd:4,n:6,spread:1,spd:s*.9,r:6,dmg:o.qd||6,life:.3,nm:'Claw Storm'},
    e:{k:'dash',cd:4.5,dist:260,nova:{r:55,dmg:12},nm:'Pounce'},
-   r:{k:'nova',cd:14,r:125,dmg:o.rd||36,delay:.4,ls:.2,nm:'Frenzy'}}},
+   r:{k:'nova',cd:14,r:125,dmg:o.rd||36,delay:.4,ls:.2,nm:'Frenzy'},
+    c:{k:'nova',cd:22,r:215,dmg:o.x5||64,delay:.3,ls:.35,kb:80,nm:'Blood Frenzy'}}},
  mystic:(o={})=>{const s=o.spd||460;
   return{a:{k:'proj',cd:.45,spd:s,r:9,dmg:o.ad||7,life:.8,home:1,nm:'Spirit'},
    q:{k:'mine',cd:5,r:105,dmg:o.qd||30,st:.8,nm:'Seal'},
    e:{k:'blink',cd:5,dist:290,to:1,nm:'Fade'},
-   r:{k:'orbit',cd:13,n:5,rad:85,dur:7,dmg:o.rd||14,nm:'Spirit Ring'}}},
+   r:{k:'orbit',cd:13,n:5,rad:85,dur:7,dmg:o.rd||14,nm:'Spirit Ring'},
+    c:{k:'orbit',cd:22,n:11,rad:120,dur:9,dmg:o.x5||25,nm:'Spirit Armada'}}},
  trickster:(o={})=>{const s=o.spd||600;
   return{a:{k:'proj',cd:.3,spd:s,r:6,dmg:o.ad||6,life:.4,pierce:1,nm:'Illusion Dart'},
    q:{k:'proj',cd:4,n:3,spread:0,spd:s*1.3,r:9,dmg:o.qd||13,life:.5,nm:'Mirror Volley'},
    e:{k:'blink',cd:3.5,dist:320,to:1,nm:'Blink'},
-   r:{k:'nova',cd:13,cur:1,r:150,dmg:o.rd||40,delay:.3,nm:'Prank'}}},
+   r:{k:'nova',cd:13,cur:1,r:150,dmg:o.rd||40,delay:.3,nm:'Prank'},
+    c:{k:'nova',cd:22,cur:1,r:215,dmg:o.x5||64,delay:.25,kb:70,nm:'Grand Illusion'}}},
 };
 
 // ---------------------------------------------------------------- the 100
@@ -246,7 +270,7 @@ const KNOWN_WPN=new Set('sword gsword katana dagger spear lance axe hammer scyth
 const KNOWN_ACC=new Set('scarf tmask tusk hat band horn bow mask halo crown ears star goggles wizhat helm blind gob none'.split(' '));
 const KNOWN_HS=new Set('long pony twin bob wild spiky mohawk flame short bald'.split(' '));
 const KNOWN_GR=new Set('robe hood wings tail cape rag bare armor coat dress tech ninja gi vest light'.split(' '));
-const KNOWN_KIND=new Set(['proj','cone','beam','orbit','rain','mine','chain','zone','nova','dash','blink','shield','heal','haste']);
+const KNOWN_KIND=new Set(['proj','cone','beam','orbit','rain','mine','chain','zone','nova','dash','blink','shield','heal','haste','strike']);
 
 const names=new Set(),err=[];
 for(const r of ROSTER){
@@ -262,15 +286,19 @@ for(const r of ROSTER){
   if(hp<80||hp>170)err.push(n+': hp '+hp+' outside 80-170');
   if(sp<170||sp>260)err.push(n+': sp '+sp+' outside 170-260');
   const kit=K[k]();
-  for(const s of['a','q','e','r']){
+  for(const s of['a','q','e','r','c']){
    const sk=kit[s];
+   if(!sk){err.push(n+'.'+s+': slot missing');continue}
    if(!KNOWN_KIND.has(sk.k))err.push(n+'.'+s+': unknown skill kind '+sk.k);
    if(!(sk.cd>0))err.push(n+'.'+s+': missing cd');
    if(!sk.nm)err.push(n+'.'+s+': missing nm');
+   if(s=='c'&&Math.abs(sk.cd-22)>.01)err.push(n+'.c: desperation cd must be 22, got '+sk.cd);
    if(sk.k=='dash'&&(!sk.nova||!sk.nova.dmg))err.push(n+'.'+s+': dash needs nova.dmg');
    if(sk.k=='zone'&&!(sk.dps||sk.heal))err.push(n+'.'+s+': zone needs dps or heal');
    if(sk.k=='shield'&&!sk.dur)err.push(n+'.'+s+': shield needs dur');
    if(sk.k=='heal'&&!sk.amt)err.push(n+'.'+s+': heal needs amt');
+   if(sk.k=='strike'&&!(sk.rng&&sk.dmg))err.push(n+'.'+s+': strike needs rng and dmg');
+   if(sk.k=='haste'&&s=='c'&&!sk.sh)err.push(n+'.c: haste desperation needs a shield or it has no answer to low hp');
   }
 }
 if(ROSTER.length!==100)err.push('roster must hold exactly 100 characters, has '+ROSTER.length);
@@ -288,7 +316,7 @@ function skillsOf(src,from){
   const c=src[i];
   if(c==='{'){d++;i++;continue}
   if(c==='}'){d--;i++;continue}
-  if(/[aqer]/.test(c)&&src[i+1]==':'&&i+2<src.length&&src[i+2]=='{'){
+  if(/[aqerc]/.test(c)&&src[i+1]==':'&&i+2<src.length&&src[i+2]=='{'){
    const k=c,start=i+2;let dd=0,j=start;
    for(;j<src.length;j++){if(src[j]==='{')dd++;else if(src[j]==='}'){dd--;if(!dd)break}}
    if(!out[k])out[k]=src.slice(start,j+1);
@@ -305,7 +333,7 @@ for(const n of uniq){
   const sk=skillsOf(dsrc,at);
   if(!sk||!sk.a)continue;          // monsters and stubs are skipped
   checked++;
-  for(const k of ['a','q','e','r']){
+  for(const k of ['a','q','e','r','c']){
    const body=sk[k];
    if(!body||body.length<4){err.push(n+'.'+k+': no skill object found');continue}
    const cd=body.match(/\bcd:([\d.]+)/);
@@ -339,7 +367,7 @@ const chars=ROSTER.map(([n,t,k,w,gr,hs,acc,hp,sp,ex])=>{
   const kit=K[k]();
   return`{n:'${n}',t:'${t}',col:'${COLS[n.length%8]}',hair:'${COLS[(n.length*3+2)%8]}'`+
    (acc?`,acc:'${acc}'`:'')+`,hp:${hp},sp:${sp},s:{`+
-   ['a','q','e','r'].map(q=>q+':'+lit(kit[q])).join(',')+'}}';
+   ['a','q','e','r','c'].map(q=>q+':'+lit(kit[q])).join(',')+'}}';
 });
 const looks=ROSTER.map(([n,t,k,w,gr,hs,acc,hp,sp,ex])=>
  `${n}:['${w}','${gr}','${hs}',{${Object.entries(ex).map(([a,b])=>a+':'+(typeof b=='string'?lit(b):b)).join(',')}}]`);

@@ -3,82 +3,114 @@ const CH=[
 a:{k:'proj',cd:.35,spd:600,r:7,dmg:7,life:.35,nm:'Twin Blades'},
 q:{k:'proj',cd:4,n:3,spread:.6,spd:560,r:10,dmg:12,life:.4,nm:'Blade Fan'},
 e:{k:'dash',cd:4,dist:360,nova:{r:70,dmg:16,st:.3},hst:.7,nm:'Grapple Hook'},
-r:{k:'nova',cd:15,r:165,dmg:44,delay:.5,form:{dur:9,mul:1.7,hp:.9,sh:.5,hst:9},nm:'Titan Form'}}},
+r:{k:'nova',cd:15,r:165,dmg:44,delay:.5,form:{dur:9,mul:1.7,hp:.9,sh:.5,hst:9},nm:'Titan Form'},
+ c:{k:'dash',cd:22,dist:560,nova:{r:100,dmg:36},hst:1.4,fa:5,nm:'Skyline Breach'}
+}},
 {n:'Monko',t:'Rubber Pirate',col:'#ff5a4d',hair:'#3a1f1f',acc:'hat',hp:120,sp:205,s:{
 a:{k:'proj',cd:.45,spd:850,r:9,dmg:9,life:.25,nm:'Stretch Punch'},
 q:{k:'proj',cd:4,n:7,spread:.7,spd:720,r:7,dmg:6,life:.3,nm:'Fist Barrage'},
 e:{k:'dash',cd:5,dist:260,nova:{r:70,dmg:16},nm:'Rubber Rocket'},
-r:{k:'proj',cd:14,spd:380,r:46,dmg:44,life:.9,nm:'Giant Fist'}}},
+r:{k:'proj',cd:14,spd:380,r:46,dmg:44,life:.9,nm:'Giant Fist'},
+ c:{k:'cone',cd:22,r:250,arc:2.6,dmg:78,kb:180,nm:'Gum Buster'}
+}},
 {n:'Kuro',t:'Three-Sword Hunter',col:'#5fb0ff',hair:'#1b2a55',acc:'band',hp:105,sp:225,s:{
 a:{k:'proj',cd:.4,spd:540,r:9,dmg:8,life:.45,nm:'Slash Wave'},
 q:{k:'nova',cd:5,r:105,dmg:22,delay:.2,nm:'Demon Cyclone'},
 e:{k:'dash',cd:5,dist:230,nova:{r:55,dmg:12},nm:'Shadow Dash'},
-r:{k:'proj',cd:14,n:3,spread:.35,spd:700,r:16,dmg:22,life:.7,nm:'Triple Dragon'}}},
+r:{k:'proj',cd:14,n:3,spread:.35,spd:700,r:16,dmg:22,life:.7,nm:'Triple Dragon'},
+ c:{k:'proj',cd:22,n:8,spread:1.2,spd:760,r:14,dmg:27,life:0.75,pierce:2,nm:'Eightfold Slash'}
+}},
 {n:'Nara',t:'Storm Navigator',col:'#ffd94d',hair:'#e08a1e',acc:'star',hp:90,sp:220,s:{
 a:{k:'proj',cd:.4,spd:620,r:7,dmg:7,life:.7,nm:'Spark Bolt'},
 q:{k:'nova',cd:5,cur:1,r:90,dmg:26,delay:.7,nm:'Thunder Cloud'},
 e:{k:'blink',cd:6,dist:240,to:1,nm:'Mirage Step'},
-r:{k:'proj',cd:14,spd:230,r:42,dmg:42,life:2.5,sl:2,nm:'Tornado'}}},
+r:{k:'proj',cd:14,spd:230,r:42,dmg:42,life:2.5,sl:2,nm:'Tornado'},
+ c:{k:'chain',cd:22,n:10,rng:400,dmg:24,st:0.5,nm:'Storm Circuit'}
+}},
 {n:'Kaen',t:'Flame Swordsman',col:'#ff6a3c',hair:'#d84a1a',acc:'horn',hp:110,sp:210,s:{
 a:{k:'proj',cd:.45,spd:520,r:9,dmg:8,life:.5,nm:'Fire Slash'},
 q:{k:'proj',cd:4,n:3,spread:.5,spd:480,r:12,dmg:14,life:.6,nm:'Fire Fan'},
 e:{k:'dash',cd:5,dist:220,nova:{r:70,dmg:16},nm:'Flame Dash'},
-r:{k:'nova',cd:14,r:150,dmg:40,delay:.5,nm:'Phoenix Burst'}}},
+r:{k:'nova',cd:14,r:150,dmg:40,delay:.5,nm:'Phoenix Burst'},
+ c:{k:'nova',cd:22,cur:1,r:215,dmg:62,delay:0.5,dot:{d:14,t:4},form:{dur:6,mul:1.5,hp:0.35},nm:'Phoenix Rebirth'}
+}},
 {n:'Yuki',t:'Frost Mage',col:'#6fd3ff',hair:'#cfefff',acc:'bow',hp:90,sp:200,s:{
 a:{k:'proj',cd:.5,spd:460,r:9,dmg:7,life:.9,sl:.6,nm:'Ice Bolt'},
 q:{k:'nova',cd:6,r:120,dmg:12,delay:.15,sl:2,nm:'Frost Nova'},
 e:{k:'blink',cd:6,dist:200,nm:'Snow Step'},
-r:{k:'proj',cd:14,spd:200,r:40,dmg:45,life:3,sl:2,nm:'Absolute Zero'}}},
+r:{k:'proj',cd:14,spd:200,r:40,dmg:45,life:3,sl:2,nm:'Absolute Zero'},
+ c:{k:'nova',cd:22,cur:1,r:230,dmg:26,delay:0.5,sl:3,nm:'Eternal Winter'}
+}},
 {n:'Raiden',t:'Lightning Ninja',col:'#ffe14d',hair:'#e6c200',acc:'mask',hp:90,sp:250,s:{
 a:{k:'proj',cd:.3,spd:640,r:6,dmg:6,life:.6,nm:'Shuriken'},
 q:{k:'proj',cd:4,n:5,spread:.8,spd:600,r:7,dmg:8,life:.6,nm:'Kunai Storm'},
 e:{k:'blink',cd:5,dist:280,to:1,nm:'Shadow Step'},
-r:{k:'nova',cd:14,cur:1,r:95,dmg:45,delay:.8,nm:'Thunder Judgment'}}},
+r:{k:'nova',cd:14,cur:1,r:95,dmg:45,delay:.8,nm:'Thunder Judgment'},
+ c:{k:'chain',cd:22,n:12,rng:430,dmg:23,st:0.45,nm:'Thunderstorm Chain'}
+}},
 {n:'Sakura',t:'Spirit Archer',col:'#ff8fd0',hair:'#ff8fd0',acc:'bow',hp:100,sp:220,s:{
 a:{k:'proj',cd:.5,spd:700,r:6,dmg:9,life:.8,nm:'Spirit Arrow'},
 q:{k:'proj',cd:5,spd:950,r:16,dmg:26,life:.9,nm:'Spirit Beam'},
 e:{k:'shield',cd:9,dur:2,nm:'Sakura Barrier'},
-r:{k:'proj',cd:14,n:12,spread:6.3,spd:320,r:9,dmg:12,life:1.4,nm:'Cherry Storm'}}},
+r:{k:'proj',cd:14,n:12,spread:6.3,spd:320,r:9,dmg:12,life:1.4,nm:'Cherry Storm'},
+ c:{k:'rain',cd:22,cur:1,n:20,rad:215,r:42,dmg:20,gap:0.04,home:1,nm:'Sakura Eclipse'}
+}},
 {n:'Shion',t:'Shadow Assassin',col:'#a06bff',hair:'#2a1a4a',acc:'mask',hp:85,sp:255,s:{
 a:{k:'proj',cd:.28,spd:640,r:6,dmg:6,life:.3,nm:'Dagger Throw'},
 q:{k:'proj',cd:4,n:3,spread:.5,spd:600,r:8,dmg:11,life:.5,nm:'Shadow Fan'},
 e:{k:'blink',cd:5,dist:300,to:1,nm:'Umbral Step'},
-r:{k:'nova',cd:14,cur:1,r:80,dmg:40,delay:.5,nm:'Assassinate'}}},
+r:{k:'nova',cd:14,cur:1,r:80,dmg:40,delay:.5,nm:'Assassinate'},
+ c:{k:'strike',cd:22,rng:520,r:150,dmg:150,delay:0.35,st:1,hl:1,nm:'Phantom Execution'}
+}},
 {n:'Aoi',t:'Water Priestess',col:'#4fd6c8',hair:'#2a8fa8',acc:'halo',hp:95,sp:215,s:{
 a:{k:'proj',cd:.45,spd:520,r:9,dmg:7,life:.8,sl:.6,nm:'Water Shot'},
 q:{k:'proj',cd:5,spd:400,r:26,dmg:15,life:.8,sl:.8,nm:'Tide Wave'},
 e:{k:'shield',cd:9,dur:2.5,nm:'Bubble Veil'},
-r:{k:'heal',cd:16,amt:45,nm:'Healing Rain'}}},
+r:{k:'heal',cd:16,amt:45,nm:'Healing Rain'},
+ c:{k:'zone',cd:22,cur:1,r:200,dur:7,heal:0.13,dps:16,nm:'Tide Sanctuary'}
+}},
 {n:'Gaia',t:'Earth Brawler',col:'#b0824a',hair:'#5a3a1a',acc:'horn',hp:135,sp:190,s:{
 a:{k:'proj',cd:.5,spd:480,r:12,dmg:10,life:.3,nm:'Rock Punch'},
 q:{k:'nova',cd:5,r:110,dmg:24,delay:.35,nm:'Quake'},
 e:{k:'dash',cd:5,dist:200,nova:{r:80,dmg:18},nm:'Boulder Rush'},
-r:{k:'nova',cd:15,cur:1,r:130,dmg:44,delay:1,nm:'Meteor Drop'}}},
+r:{k:'nova',cd:15,cur:1,r:130,dmg:44,delay:1,nm:'Meteor Drop'},
+ c:{k:'nova',cd:22,r:220,dmg:74,delay:0.4,kb:150,st:1,nm:'Continental Crash'}
+}},
 {n:'Hikari',t:'Holy Knight',col:'#ffee99',hair:'#fff2b0',acc:'halo',hp:110,sp:210,s:{
 a:{k:'proj',cd:.4,spd:700,r:7,dmg:8,life:.55,nm:'Light Lance'},
 q:{k:'proj',cd:5,n:4,spread:6.3,spd:500,r:9,dmg:12,life:.6,nm:'Holy Cross'},
 e:{k:'shield',cd:9,dur:1.8,nm:'Aegis'},
-r:{k:'proj',cd:14,spd:800,r:30,dmg:38,life:1,nm:'Judgement Beam'}}},
+r:{k:'proj',cd:14,spd:800,r:30,dmg:38,life:1,nm:'Judgement Beam'},
+ c:{k:'nova',cd:22,cur:1,r:230,dmg:72,delay:0.4,form:{dur:7,mul:1.7,hp:0.4,sh:0.8},nm:'Divine Verdict'}
+}},
 {n:'Zephyr',t:'Wind Rogue',col:'#9dffb8',hair:'#7fe0a0',acc:'star',hp:90,sp:260,s:{
 a:{k:'proj',cd:.28,spd:620,r:6,dmg:6,life:.45,nm:'Wind Blade'},
 q:{k:'proj',cd:4,n:5,spread:.9,spd:520,r:7,dmg:7,life:.45,nm:'Gale Fan'},
 e:{k:'dash',cd:4.5,dist:300,nova:{r:50,dmg:10},nm:'Gust Dash'},
-r:{k:'nova',cd:14,r:160,dmg:30,delay:.5,sl:1.5,nm:'Cyclone'}}},
+r:{k:'nova',cd:14,r:160,dmg:30,delay:.5,sl:1.5,nm:'Cyclone'},
+ c:{k:'zone',cd:22,cur:1,r:200,dur:5,pull:190,dps:26,sl:2,nm:'Void Cyclone'}
+}},
 {n:'Noir',t:'Dark Sorcerer',col:'#9a5bff',hair:'#3a1a5a',acc:'crown',hp:90,sp:200,s:{
 a:{k:'proj',cd:.5,spd:380,r:12,dmg:10,life:1.1,nm:'Shadow Orb'},
 q:{k:'nova',cd:5,cur:1,r:100,dmg:26,delay:.8,nm:'Void Pit'},
 e:{k:'blink',cd:6,dist:220,nm:'Void Step'},
-r:{k:'proj',cd:15,spd:160,r:36,dmg:50,life:3.5,sl:2,nm:'Black Hole'}}},
+r:{k:'proj',cd:15,spd:160,r:36,dmg:50,life:3.5,sl:2,nm:'Black Hole'},
+ c:{k:'proj',cd:22,spd:150,r:56,dmg:62,life:4.5,sl:3,nm:'Event Horizon'}
+}},
 {n:'Neko',t:'Cat Striker',col:'#ffb36b',hair:'#e8964a',acc:'ears',hp:95,sp:245,s:{
 a:{k:'proj',cd:.25,spd:560,r:7,dmg:6,life:.25,nm:'Claw Slash'},
 q:{k:'proj',cd:4,n:6,spread:1,spd:520,r:6,dmg:6,life:.3,nm:'Claw Storm'},
 e:{k:'dash',cd:4.5,dist:260,nova:{r:55,dmg:12},nm:'Pounce'},
-r:{k:'nova',cd:14,r:120,dmg:34,delay:.4,nm:'Frenzy'}}},
+r:{k:'nova',cd:14,r:120,dmg:34,delay:.4,nm:'Frenzy'},
+ c:{k:'cone',cd:22,r:230,arc:2.6,dmg:62,ls:0.3,nm:'Nine Lives'}
+}},
 {n:'Ryuu',t:'Dragon Monk',col:'#ff9a2b',hair:'#8a1a1a',acc:'band',hp:115,sp:215,s:{
 a:{k:'proj',cd:.4,spd:640,r:10,dmg:9,life:.4,nm:'Dragon Fist'},
 q:{k:'proj',cd:4,n:3,spread:.4,spd:460,r:12,dmg:14,life:.7,nm:'Dragon Fire'},
 e:{k:'dash',cd:5,dist:240,nova:{r:65,dmg:16},nm:'Dragon Leap'},
-r:{k:'proj',cd:14,spd:520,r:34,dmg:40,life:1.1,sl:.8,nm:'Dragon Roar'}}}];
+r:{k:'proj',cd:14,spd:520,r:34,dmg:40,life:1.1,sl:.8,nm:'Dragon Roar'},
+ c:{k:'cone',cd:22,r:250,arc:2,dmg:70,dot:{d:12,t:3},kb:120,nm:'Dragon Cataclysm'}
+}}];
 CH.push(...ROSTER);
 // Vaen: relentless close-range skirmisher. Fastest basic attack in the game, grapples and
 // gas bursts for repositioning, and an ultimate that surrounds him with a ring of blades.
@@ -86,7 +118,9 @@ CH.push({n:'Vaen',t:'Blade Captain',col:'#cbd5e1',hair:'#0f172a',acc:'mask',hp:9
  a:{k:'cone',cd:.22,r:68,arc:1.5,dmg:7,nm:'Whirl Cut'},
  q:{k:'dash',cd:3.5,dist:330,nova:{r:60,dmg:18},hst:.5,nm:'Cable Rush'},
  e:{k:'blink',cd:3,dist:340,to:1,hst:1.6,nm:'Gas Burst'},
- r:{k:'orbit',cd:13,n:7,rad:92,dur:7,dmg:13,nm:'Blade Cyclone'}}});
+ r:{k:'orbit',cd:13,n:7,rad:92,dur:7,dmg:13,nm:'Blade Cyclone'},
+ c:{k:'orbit',cd:22,n:12,rad:118,dur:8.5,dmg:24,nm:'Grand Blade Cyclone'}
+}});
 // ---- Halloween heroes. sec:'halloween' keeps them out of the normal chests and out of the
 // quest pool; they only ever drop from the Trick-or-Treat chest, and only inside the EV window.
 // Original characters, not costumes of anything existing.
@@ -94,17 +128,23 @@ CH.push({n:'Marrow',t:'Bone Warden',col:'#e7e5e4',sec:'halloween',hair:'#1c1917'
  a:{k:'proj',cd:.5,spd:420,r:14,dmg:11,life:.3,nm:'Bone Chip'},
  q:{k:'nova',cd:5,r:130,dmg:24,delay:.35,kb:60,nm:'Rib Slam'},
  e:{k:'shield',cd:8,dur:3.2,nm:'Carapace'},
- r:{k:'nova',cd:15,r:175,dmg:52,delay:.6,kb:130,nm:'Graveyard Crash'}}});
+ r:{k:'nova',cd:15,r:175,dmg:52,delay:.6,kb:130,nm:'Graveyard Crash'},
+ c:{k:'nova',cd:22,r:245,dmg:80,delay:0.55,kb:150,st:0.9,nm:'Cataclysm of Bones'}
+}});
 CH.push({n:'Sallow',t:'Hollow Shade',col:'#84cc16',sec:'halloween',hair:'#1a2e05',acc:'mask',hp:95,sp:255,pas:{ba:1,n:9,heal:.14},s:{
  a:{k:'proj',cd:.26,spd:640,r:6,dmg:6,life:.3,nm:'Wisp Cut'},
  q:{k:'cone',cd:4,r:100,arc:2.2,dmg:16,ls:.2,nm:'Sickly Sweep'},
  e:{k:'blink',cd:3.2,dist:320,to:1,nm:'Fade Out'},
- r:{k:'orbit',cd:13,n:6,rad:96,dur:6,dmg:15,nm:'Cursed Ring'}}});
+ r:{k:'orbit',cd:13,n:6,rad:96,dur:6,dmg:15,nm:'Cursed Ring'},
+ c:{k:'orbit',cd:22,n:10,rad:112,dur:8,dmg:26,ls:0.25,nm:'Hollow Requiem'}
+}});
 CH.push({n:'Nettle',t:'Candle Witch',col:'#fb923c',sec:'halloween',hair:'#3b0764',acc:'wizhat',hp:92,sp:220,s:{
  a:{k:'proj',cd:.42,spd:540,r:9,dmg:8,life:.6,ps:'fire',nm:'Wick Bolt'},
  q:{k:'zone',cur:1,r:150,dur:5,dps:17,sl:1.5,pull:50,cd:6,nm:'Hex Cauldron'},
  e:{k:'blink',cd:5,dist:300,to:1,nm:'Sweep Away'},
- r:{k:'rain',cd:14,n:12,rad:190,r:46,dmg:24,gap:.08,fs:'bomb',nm:'Candy Storm'}}});
+ r:{k:'rain',cd:14,n:12,rad:190,r:46,dmg:24,gap:.08,fs:'bomb',nm:'Candy Storm'},
+ c:{k:'zone',cd:22,cur:1,r:230,dur:7,dps:30,sl:2,pull:140,nm:'Hex Renaissance'}
+}});
 const MOD={Ren:{a:{kb:20},q:{n:1,spread:0,spd:820,dmg:8,life:.5,nm:'Grapple Pull',kb:-90},r:{st:.8}},
 Monko:{a:{kb:25},r:{kb:170}},Kuro:{q:{kb:70},r:{pierce:1}},Nara:{q:{st:.6},r:{kb:-60}},
 Kaen:{a:{dot:{d:4,t:2}},q:{dot:{d:4,t:2}},e:{nova:{r:70,dmg:16,dot:{d:5,t:2}}},r:{dot:{d:8,t:3}}},
@@ -143,47 +183,65 @@ CH.push(
 a:{k:'proj',n:5,spread:.55,spd:560,r:6,dmg:5,life:.28,cd:.6,nm:'Scatter Shot'},
 q:{k:'proj',n:8,spread:1.1,spd:520,r:7,dmg:6,life:.3,kb:70,cd:5,nm:'Shell Burst'},
 e:{k:'dash',cd:5,dist:200,nova:{r:70,dmg:14,kb:80},nm:'Shoulder Charge'},
-r:{k:'proj',n:3,spread:.3,spd:700,r:20,dmg:30,life:.5,pierce:1,kb:120,cd:14,nm:'Super Slug'}}},
+r:{k:'proj',n:3,spread:.3,spd:700,r:20,dmg:30,life:.5,pierce:1,kb:120,cd:14,nm:'Super Slug'},
+ c:{k:'proj',cd:22,n:7,spread:0.9,spd:820,r:22,dmg:34,life:0.6,pierce:2,kb:150,nm:'Scrapstorm'}
+}},
 {n:'Dex',t:'Bomb Thrower',col:'#d9534f',hair:'#222222',acc:'hat',hp:90,sp:210,s:{
 a:{k:'rain',cur:1,n:1,rad:0,r:55,dmg:12,gap:0,cd:.9,nm:'Lobbed Bomb'},
 q:{k:'mine',r:80,dmg:26,st:.5,cd:6,nm:'Sticky Mine'},
 e:{k:'blink',dist:220,to:1,cd:6,nm:'Rocket Hop'},
-r:{k:'rain',cur:1,n:6,rad:120,r:50,dmg:16,gap:.1,cd:14,nm:'Bomb Barrage'}}},
+r:{k:'rain',cur:1,n:6,rad:120,r:50,dmg:16,gap:.1,cd:14,nm:'Bomb Barrage'},
+ c:{k:'rain',cd:22,n:16,rad:225,r:62,dmg:34,gap:0.05,fs:'bomb',nm:'Total Barrage'}
+}},
 {n:'Vesper',t:'Long-range Sniper',col:'#6ee7b7',hair:'#1b4a3a',acc:'bow',hp:80,sp:215,s:{
 a:{k:'proj',spd:1100,r:7,dmg:14,life:.8,cd:1,nm:'Sniper Shot'},
 q:{k:'beam',len:560,w:12,dur:.1,dmg:28,cd:5,nm:'Piercing Bolt'},
 e:{k:'blink',dist:260,cd:5,nm:'Smoke Step'},
-r:{k:'nova',cur:1,r:110,dmg:34,delay:.9,st:.8,cd:14,nm:'Marked Shot'}}},
+r:{k:'nova',cur:1,r:110,dmg:34,delay:.9,st:.8,cd:14,nm:'Marked Shot'},
+ c:{k:'beam',cd:22,len:900,w:30,dur:1.1,dmg:30,nm:'Vantage Shot'}
+}},
 {n:'Tusk',t:'Heavy Brawler',col:'#a78bfa',hair:'#3a2a5a',acc:'horn',hp:150,sp:190,s:{
 a:{k:'cone',r:70,arc:1.8,dmg:12,kb:30,cd:.5,nm:'Haymaker'},
 q:{k:'orbit',n:3,rad:48,dur:3.5,dmg:8,cd:7,nm:'Spinning Fists'},
 e:{k:'dash',cd:5,dist:240,nova:{r:80,dmg:18,st:.4},nm:'Bull Rush'},
-r:{k:'nova',r:150,dmg:36,delay:.6,st:1,cd:15,nm:'Ground Pound'}}},
+r:{k:'nova',r:150,dmg:36,delay:.6,st:1,cd:15,nm:'Ground Pound'},
+ c:{k:'nova',cd:22,r:225,dmg:76,delay:0.35,kb:160,st:1,nm:'Tuskbreaker'}
+}},
 {n:'Pip',t:'Healer Support',col:'#f9a8d4',hair:'#ff9bd0',acc:'halo',hp:90,sp:220,s:{
 a:{k:'proj',spd:520,r:8,dmg:6,life:.8,home:1,cd:.45,nm:'Magic Note'},
 q:{k:'zone',r:100,dur:4,heal:12,cd:7,nm:'Heal Aura'},
 e:{k:'shield',dur:2,cd:8,nm:'Sparkle Shield'},
-r:{k:'heal',amt:40,cd:15,nm:'Full Heal'}}},
+r:{k:'heal',amt:40,cd:15,nm:'Full Heal'},
+ c:{k:'zone',cd:22,cur:1,r:185,dur:7,heal:0.15,dps:14,nm:'Everbloom'}
+}},
 {n:'Vex',t:'Shadow Assassin',col:'#64748b',hair:'#0f172a',acc:'mask',hp:75,sp:265,s:{
 a:{k:'cone',r:55,arc:1.6,dmg:7,cd:.25,nm:'Twin Daggers'},
 q:{k:'dash',dist:260,nova:{r:60,dmg:16},cd:4,nm:'Shadow Slash'},
 e:{k:'blink',dist:240,to:1,cd:5,nm:'Vanish'},
-r:{k:'haste',dur:5,sh:1,cd:14,nm:'Bloodlust'}}},
+r:{k:'haste',dur:5,sh:1,cd:14,nm:'Bloodlust'},
+ c:{k:'haste',cd:22,dur:9,sh:5,form:{dur:9,mul:1.55,hp:0.3},nm:'Blood Sovereign'}
+}},
 {n:'Rook',t:'Engineer',col:'#fbbf24',hair:'#5a4a1a',acc:'band',hp:100,sp:210,s:{
 a:{k:'proj',spd:620,r:6,dmg:6,life:.6,cd:.3,nm:'Rivet Gun'},
 q:{k:'orbit',n:2,rad:60,dur:5,dmg:7,cd:7,nm:'Saw Drones'},
 e:{k:'mine',r:70,dmg:22,st:.4,cd:5,nm:'Spike Trap'},
-r:{k:'beam',len:480,w:26,dur:.9,dmg:7,cd:14,nm:'Mega Laser'}}},
+r:{k:'beam',len:480,w:26,dur:.9,dmg:7,cd:14,nm:'Mega Laser'},
+ c:{k:'orbit',cd:22,n:8,rad:100,dur:8,dmg:20,nm:'Reactor Overdrive'}
+}},
 {n:'Zig',t:'Chain Mage',col:'#38bdf8',hair:'#e0f2fe',acc:'star',hp:90,sp:215,s:{
 a:{k:'chain',n:2,rng:240,dmg:7,cd:.6,nm:'Zap'},
 q:{k:'rain',cur:1,n:4,rad:90,r:40,dmg:12,gap:.12,cd:6,nm:'Storm Strike'},
 e:{k:'blink',dist:200,cd:6,nm:'Static Jump'},
-r:{k:'zone',cur:1,r:140,dur:4,dps:12,sl:1,cd:14,nm:'Thunder Field'}}},
+r:{k:'zone',cur:1,r:140,dur:4,dps:12,sl:1,cd:14,nm:'Thunder Field'},
+ c:{k:'zone',cd:22,cur:1,r:210,dur:7,dps:26,sl:1.5,nm:'Tempest Field'}
+}},
 {n:'Pyra',t:'Fire Thrower',col:'#fb923c',hair:'#b91c1c',acc:'ears',hp:105,sp:215,s:{
 a:{k:'proj',n:2,spread:.2,spd:480,r:9,dmg:4,life:.32,dot:{d:4,t:2},cd:.2,nm:'Flame Jet'},
 q:{k:'zone',cur:1,r:90,dur:3,dps:12,cd:6,nm:'Fire Pool'},
 e:{k:'dash',dist:220,nova:{r:60,dmg:12,dot:{d:6,t:2}},cd:5,nm:'Fire Dash'},
-r:{k:'beam',len:420,w:34,dur:1.2,dmg:8,cd:14,nm:'Inferno'}}});
+r:{k:'beam',len:420,w:34,dur:1.2,dmg:8,cd:14,nm:'Inferno'},
+ c:{k:'beam',cd:22,len:560,w:80,dur:2.1,dmg:20,dot:{d:9,t:3},nm:'Pillar of Fire'}
+}});
 const wl=(a,b,c,d,r=20)=>{const n=Math.max(1,Math.round(Math.hypot(c-a,d-b)/(r*1.5)));return Array.from({length:n+1},(_,i)=>[a+(c-a)*i/n,b+(d-b)*i/n,r])};
 const MAPS=[
 {n:'Tide Island',sea:['#0e7ab0','#0a3d78'],rim:'#b98f55',sand:['#f6e3a8','#e0bf78'],rock:['#a3a9c4','#464c6e'],pil:[[300,200,38],[600,200,38],[300,400,38],[600,400,38],[450,300,30]]},
@@ -219,123 +277,171 @@ CH.push(
 a:{k:'proj',spd:700,r:6,dmg:7,life:.5,cd:.35,nm:'Blood Needle'},
 q:{k:'proj',spd:900,r:12,dmg:20,life:.7,pierce:1,cd:5,nm:'Crimson Lance'},
 e:{k:'orbit',n:3,rad:50,dur:4,dmg:9,cd:7,nm:'Blood Blades'},
-r:{k:'beam',len:520,w:20,dur:.5,dmg:30,cd:14,nm:'Red Nova'}}},
+r:{k:'beam',len:520,w:20,dur:.5,dmg:30,cd:14,nm:'Red Nova'},
+ c:{k:'beam',cd:22,len:720,w:44,dur:1.4,dmg:26,st:0.4,nm:'Crimson Cataclysm'}
+}},
 {n:'Kaito',t:'Shadow Summoner',col:'#475569',hair:'#0f172a',acc:'mask',hp:100,sp:215,s:{
 a:{k:'cone',r:70,arc:1.8,dmg:9,cd:.4,nm:'Shadow Claw'},
 q:{k:'mine',r:80,dmg:22,st:.5,cd:5,nm:'Shadow Pit'},
 e:{k:'blink',dist:240,to:1,cd:5,nm:'Shadow Step'},
-r:{k:'orbit',n:4,rad:70,dur:6,dmg:10,cd:14,nm:'Shadow Hounds'}}},
+r:{k:'orbit',n:4,rad:70,dur:6,dmg:10,cd:14,nm:'Shadow Hounds'},
+ c:{k:'orbit',cd:22,n:9,rad:105,dur:8.5,dmg:24,nm:'Shadow Legion'}
+}},
 {n:'Mei',t:'Nail & Thread Curse',col:'#f472b6',hair:'#831843',acc:'bow',hp:90,sp:215,s:{
 a:{k:'proj',spd:760,r:5,dmg:6,life:.5,cd:.3,nm:'Nail Shot'},
 q:{k:'chain',n:4,rng:300,dmg:11,st:.3,cd:5,nm:'Resonance Chain'},
 e:{k:'mine',r:70,dmg:20,st:.5,cd:5,nm:'Nail Trap'},
-r:{k:'rain',cur:1,n:8,rad:130,r:34,dmg:12,gap:.1,cd:14,nm:'Nail Rain'}}},
+r:{k:'rain',cur:1,n:8,rad:130,r:34,dmg:12,gap:.1,cd:14,nm:'Nail Rain'},
+ c:{k:'chain',cd:22,n:11,rng:400,dmg:22,st:0.4,nm:'Grand Resonance'}
+}},
 {n:'Toru',t:'Restricted Brawler',col:'#16a34a',hair:'#14532d',acc:'band',hp:130,sp:275,s:{
 a:{k:'cone',r:65,arc:1.8,dmg:10,cd:.3,nm:'Rapid Strikes'},
 q:{k:'dash',dist:300,nova:{r:70,dmg:20,kb:60},cd:4,nm:'Burst Rush'},
 e:{k:'haste',dur:4,cd:9,nm:'Overdrive'},
-r:{k:'cone',r:120,arc:2.8,dmg:44,kb:140,cd:13,nm:'Fatal Combo'}}},
+r:{k:'cone',r:120,arc:2.8,dmg:44,kb:140,cd:13,nm:'Fatal Combo'},
+ c:{k:'cone',cd:22,r:265,arc:3,dmg:86,kb:200,nm:'Final Fatal'}
+}},
 {n:'Aya',t:'Limitless Sorceress',col:'#818cf8',hair:'#f8fafc',acc:'blind',hp:90,sp:225,pas:{inf:78},s:{
 a:{k:'proj',spd:600,r:9,dmg:9,life:.8,home:1,cd:.45,nm:'Limitless Orb'},
 q:{k:'cone',r:130,arc:1.9,dmg:20,st:.3,cd:5,nm:'Cursed Technique'},
 e:{k:'blink',cd:6,dist:300,to:1,nm:'Void Step'},
-r:{k:'zone',cur:1,r:250,dur:7,dps:26,pull:120,sl:2,cd:17,nm:'Domain Expansion'}}},
+r:{k:'zone',cur:1,r:250,dur:7,dps:26,pull:120,sl:2,cd:17,nm:'Domain Expansion'},
+ c:{k:'nova',cd:22,cur:1,r:280,dmg:78,delay:0.6,st:0.8,form:{dur:8,mul:1.6,hp:0.4},nm:'Unlimited Void'}
+}},
 {n:'Nao',t:'Cursed Speech',col:'#facc15',hair:'#713f12',acc:'mask',hp:85,sp:215,s:{
 a:{k:'proj',n:3,spread:.4,spd:560,r:7,dmg:6,life:.5,cd:.5,nm:'Whisper Shot'},
 q:{k:'nova',r:130,dmg:8,delay:.3,st:1,cd:7,nm:'Halt!'},
 e:{k:'nova',r:120,dmg:14,delay:.3,kb:160,cd:6,nm:'Blast Away'},
-r:{k:'nova',cur:1,r:160,dmg:30,delay:.8,st:1.4,cd:15,nm:'Crush!'}}},
+r:{k:'nova',cur:1,r:160,dmg:30,delay:.8,st:1.4,cd:15,nm:'Crush!'},
+ c:{k:'nova',cd:22,cur:1,r:215,dmg:56,delay:0.5,st:1.6,kb:220,nm:'Oblivion!'}
+}},
 {n:'Oren',t:'Caped Hero',col:'#fde047',hair:'#fef9c3',acc:'star',hp:110,sp:230,s:{
 a:{k:'cone',r:60,arc:1.5,dmg:8,cd:.35,nm:'Casual Jab'},
 q:{k:'cone',r:120,arc:1.3,dmg:50,kb:220,cd:9,nm:'Normal Punch'},
 e:{k:'dash',dist:280,nova:{r:60,dmg:12},cd:4.5,nm:'Hero Dash'},
-r:{k:'nova',r:260,dmg:75,delay:1,kb:300,cd:20,nm:'Serious Punch'}}},
+r:{k:'nova',r:260,dmg:75,delay:1,kb:300,cd:20,nm:'Serious Punch'},
+ c:{k:'cone',cd:22,r:280,arc:2.4,dmg:110,kb:340,st:0.8,nm:'One Punch'}
+}},
 {n:'Rex',t:'Demon Cyborg',col:'#f97316',hair:'#9ca3af',acc:'band',hp:110,sp:205,s:{
 a:{k:'proj',spd:760,r:5,dmg:4,life:.5,cd:.18,nm:'Machine Gun'},
 q:{k:'beam',len:500,w:14,dur:.6,dmg:12,cd:6,nm:'Incinerate'},
 e:{k:'blink',dist:220,cd:5,nm:'Thruster Jump'},
-r:{k:'rain',cur:1,n:10,rad:150,r:40,dmg:12,gap:.08,cd:14,nm:'Barrage Protocol'}}},
+r:{k:'rain',cur:1,n:10,rad:150,r:40,dmg:12,gap:.08,cd:14,nm:'Barrage Protocol'},
+ c:{k:'rain',cd:22,cur:1,n:20,rad:215,r:44,dmg:24,gap:0.035,fs:'bolt',nm:'Overdrive Protocol'}
+}},
 {n:'Sora',t:'Speed Ninja',col:'#a3e635',hair:'#1a2e05',acc:'mask',hp:80,sp:285,s:{
 a:{k:'cone',r:55,arc:1.4,dmg:6,cd:.2,nm:'Flash Cut'},
 q:{k:'dash',dist:320,nova:{r:50,dmg:16},cd:3.5,nm:'Afterimage Slash'},
 e:{k:'blink',dist:260,to:1,cd:4,nm:'Blink Step'},
-r:{k:'chain',n:6,rng:400,dmg:12,cd:14,nm:'Thousand Cuts'}}},
+r:{k:'chain',n:6,rng:400,dmg:12,cd:14,nm:'Thousand Cuts'},
+ c:{k:'dash',cd:22,dist:620,nova:{r:80,dmg:40},hst:2,fa:8,nm:'Phantom Tempest'}
+}},
 {n:'Arashi',t:'Psychic Esper',col:'#67e8f9',hair:'#164e63',acc:'bow',hp:90,sp:215,s:{
 a:{k:'proj',spd:600,r:8,dmg:7,life:.7,cd:.4,home:1,nm:'Psy Bolt'},
 q:{k:'zone',cur:1,r:110,dur:3.5,dps:8,pull:200,cd:7,nm:'Telekinetic Pull'},
 e:{k:'shield',dur:2,cd:8,nm:'Psychic Barrier'},
-r:{k:'proj',n:12,spread:6.3,spd:380,r:12,dmg:14,life:1.2,kb:80,cd:14,nm:'Psychic Storm'}}},
+r:{k:'proj',n:12,spread:6.3,spd:380,r:12,dmg:14,life:1.2,kb:80,cd:14,nm:'Psychic Storm'},
+ c:{k:'proj',cd:22,n:20,spread:6.3,spd:460,r:14,dmg:22,life:1.3,kb:110,home:1,nm:'Psychic Singularity'}
+}},
 {n:'Zann',t:'MOBA Assassin',col:'#c026d3',hair:'#4a044e',acc:'mask',hp:90,sp:255,s:{
 a:{k:'cone',r:60,arc:1.6,dmg:7,cd:.28,nm:'Quick Slash'},
 q:{k:'dash',dist:280,nova:{r:60,dmg:16},cd:4,nm:'Phantom Cut'},
 e:{k:'orbit',n:2,rad:50,dur:3,dmg:10,cd:7,nm:'Twin Blades'},
-r:{k:'dash',dist:340,nova:{r:90,dmg:40,st:.5},cd:14,nm:'Death Mark Rush'}}},
+r:{k:'dash',dist:340,nova:{r:90,dmg:40,st:.5},cd:14,nm:'Death Mark Rush'},
+ c:{k:'strike',cd:22,rng:560,r:160,dmg:170,delay:0.35,st:1.2,hl:1,nm:'Assassination'}
+}},
 {n:'Lyra',t:'MOBA Marksman',col:'#22d3ee',hair:'#164e63',acc:'bow',hp:85,sp:215,s:{
 a:{k:'proj',spd:760,r:6,dmg:7,life:.7,cd:.3,nm:'Rapid Arrow'},
 q:{k:'proj',n:3,spread:.3,spd:700,r:6,dmg:8,life:.7,cd:5,nm:'Triple Volley'},
 e:{k:'blink',dist:220,cd:5,nm:'Evade Roll'},
-r:{k:'beam',len:620,w:16,dur:.15,dmg:42,cd:15,nm:'Sniper Shot'}}},
+r:{k:'beam',len:620,w:16,dur:.15,dmg:42,cd:15,nm:'Sniper Shot'},
+ c:{k:'beam',cd:22,len:900,w:56,dur:1.5,dmg:22,nm:'Farsight Barrage'}
+}},
 {n:'Gorm',t:'MOBA Tank',col:'#94a3b8',hair:'#334155',acc:'horn',hp:150,sp:190,s:{
 a:{k:'cone',r:70,arc:1.8,dmg:9,kb:30,cd:.5,nm:'Shield Strike'},
 q:{k:'dash',dist:240,nova:{r:70,dmg:14,st:.6},cd:6,nm:'Charge Bash'},
 e:{k:'shield',dur:2.5,cd:9,nm:'Iron Guard'},
-r:{k:'nova',r:170,dmg:30,delay:.5,kb:-80,st:.8,cd:16,nm:'Earthshaker'}}},
+r:{k:'nova',r:170,dmg:30,delay:.5,kb:-80,st:.8,cd:16,nm:'Earthshaker'},
+ c:{k:'nova',cd:22,r:265,dmg:70,delay:0.5,kb:-110,st:1,form:{dur:8,mul:1.5,hp:0.6,sh:1.2},nm:'Unbreakable Earth'}
+}},
 {n:'Elara',t:'MOBA Mage',col:'#a78bfa',hair:'#4c1d95',acc:'crown',hp:80,sp:210,s:{
 a:{k:'proj',spd:520,r:8,dmg:8,life:.8,cd:.5,nm:'Arcane Orb'},
 q:{k:'proj',spd:800,r:14,dmg:20,life:.8,pierce:1,cd:5,nm:'Piercing Bolt'},
 e:{k:'shield',dur:2,cd:9,nm:'Mana Shield'},
-r:{k:'rain',cur:1,n:6,rad:140,r:46,dmg:18,gap:.12,cd:15,nm:'Meteor Shower'}}},
+r:{k:'rain',cur:1,n:6,rad:140,r:46,dmg:18,gap:.12,cd:15,nm:'Meteor Shower'},
+ c:{k:'rain',cd:22,cur:1,n:18,rad:245,r:64,dmg:32,gap:0.05,nm:'Meteor Cataclysm'}
+}},
 {n:'Veyra',t:'MOBA Support',col:'#fcd34d',hair:'#92400e',acc:'halo',hp:90,sp:215,s:{
 a:{k:'proj',spd:540,r:7,dmg:6,life:.8,home:1,cd:.5,nm:'Light Bolt'},
 q:{k:'zone',cur:1,r:90,dur:3,dps:9,sl:.8,cd:6,nm:'Holy Ground'},
 e:{k:'haste',dur:3,cd:9,nm:'Swift Wind'},
-r:{k:'heal',amt:50,cd:16,nm:'Mending Light'}}},
+r:{k:'heal',amt:50,cd:16,nm:'Mending Light'},
+ c:{k:'zone',cd:22,cur:1,r:180,dur:7,heal:0.16,dps:16,nm:'Sanctuary'}
+}},
 {n:'Brakk',t:'MOBA Warrior',col:'#f87171',hair:'#7f1d1d',acc:'band',hp:120,sp:225,s:{
 a:{k:'cone',r:75,arc:2,dmg:9,cd:.4,nm:'Axe Swing'},
 q:{k:'dash',dist:220,nova:{r:70,dmg:15},cd:5,nm:'Leap Strike'},
 e:{k:'nova',r:100,dmg:16,delay:.2,cd:5,nm:'Whirlwind'},
-r:{k:'cone',r:130,arc:2.6,dmg:46,kb:140,cd:14,nm:'Executioner'}}},
+r:{k:'cone',r:130,arc:2.6,dmg:46,kb:140,cd:14,nm:'Executioner'},
+ c:{k:'cone',cd:22,r:245,arc:3.2,dmg:84,kb:180,st:0.6,nm:'Execution'}
+}},
 {n:'Ilsa',t:'MOBA Frost Mage',col:'#7dd3fc',hair:'#e0f2fe',acc:'bow',hp:80,sp:210,s:{
 a:{k:'proj',spd:480,r:8,dmg:7,life:.8,sl:.5,cd:.5,nm:'Frost Shard'},
 q:{k:'nova',cur:1,r:100,dmg:14,delay:.5,sl:1.5,cd:6,nm:'Ice Burst'},
 e:{k:'blink',dist:220,cd:6,nm:'Frost Step'},
-r:{k:'beam',len:500,w:26,dur:1,dmg:7,sl:1.5,cd:14,nm:'Blizzard Ray'}}},
+r:{k:'beam',len:500,w:26,dur:1,dmg:7,sl:1.5,cd:14,nm:'Blizzard Ray'},
+ c:{k:'nova',cd:22,cur:1,r:235,dmg:28,delay:0.5,sl:3,nm:'Absolute Blizzard'}
+}},
 {n:'Kade',t:'MOBA Thief',col:'#4ade80',hair:'#14532d',acc:'mask',hp:85,sp:260,s:{
 a:{k:'cone',r:55,arc:1.4,dmg:6,cd:.22,nm:'Dagger Flurry'},
 q:{k:'blink',dist:260,to:1,cd:4,nm:'Shadow Hop'},
 e:{k:'mine',r:70,dmg:20,st:.4,cd:5,nm:'Smoke Bomb'},
-r:{k:'chain',n:5,rng:380,dmg:11,cd:13,nm:'Blade Storm'}}},
+r:{k:'chain',n:5,rng:380,dmg:11,cd:13,nm:'Blade Storm'},
+ c:{k:'chain',cd:22,n:12,rng:430,dmg:24,st:0.4,nm:'Blade Tempest'}
+}},
 {n:'Rovan',t:'Wandering Swordsman',col:'#60a5fa',hair:'#1e3a8a',acc:'band',hp:115,sp:235,pas:{x3:1.8,n:8,heal:.1},s:{
 a:{k:'cone',r:72,arc:1.7,dmg:9,cd:.33,nm:'Roaring Edge'},
 q:{k:'dash',dist:230,nova:{r:78,dmg:20,st:.7},cd:6,nm:'Skyward Slash'},
 e:{k:'dash',dist:250,path:{w:46,dmg:15,sl:1.2},hst:1.6,fa:3,chg:2,cd:5.5,nm:'Moon Step'},
-r:{k:'strike',cur:1,rng:420,r:105,dmg:58,delay:1.1,st:.5,hl:.14,cd:16,nm:'Final Verdict'}}},
+r:{k:'strike',cur:1,rng:420,r:105,dmg:58,delay:1.1,st:.5,hl:.14,cd:16,nm:'Final Verdict'},
+ c:{k:'dash',cd:22,dist:420,path:{w:70,dmg:40,sl:2},hst:2,fa:6,chg:2,nm:'Moonlit Finish'}
+}},
 // ---- raid bosses (not selectable)
 {boss:1,n:'Gluttony Maw',t:'Cursed Spirit',col:'#8b5cf6',hair:'#2a0a4a',acc:'horn',hp:520,sp:150,s:{
 a:{k:'proj',n:3,spread:.5,spd:380,r:10,dmg:7,life:1.4,home:1,cd:1.1,nm:'Curse Bolts'},
 q:{k:'rain',cur:1,n:5,rad:140,r:50,dmg:14,gap:.15,cd:6,nm:'Cursed Rain'},
 e:{k:'dash',dist:260,nova:{r:80,dmg:16,kb:90},cd:7,nm:'Maw Lunge'},
-r:{k:'zone',cur:1,r:150,dur:5,dps:12,sl:1,cd:12,nm:'Domain Field'}}},
+r:{k:'zone',cur:1,r:150,dur:5,dps:12,sl:1,cd:12,nm:'Domain Field'},
+ c:{k:'zone',cd:22,cur:1,r:210,dur:8,dps:24,sl:1.5,pull:120,nm:'Abyssal Feast'}
+}},
 {boss:1,n:'Iron Brute',t:'Golem',col:'#94a3b8',hair:'#334155',acc:'band',hp:680,sp:130,s:{
 a:{k:'cone',r:90,arc:2,dmg:14,kb:40,cd:1.2,nm:'Slam'},
 q:{k:'nova',r:130,dmg:20,delay:.7,kb:100,cd:6,nm:'Quake'},
 e:{k:'proj',spd:300,r:30,dmg:22,life:1.6,cd:7,nm:'Boulder'},
-r:{k:'beam',len:520,w:28,dur:1,dmg:10,cd:11,nm:'Eye Laser'}}},
+r:{k:'beam',len:520,w:28,dur:1,dmg:10,cd:11,nm:'Eye Laser'},
+ c:{k:'nova',cd:22,r:230,dmg:70,delay:0.7,kb:150,st:0.9,nm:'Seismic Titan'}
+}},
 {boss:1,n:'Ember Tyrant',t:'Fire Dragon',col:'#f97316',hair:'#7c2d12',acc:'horn',hp:620,sp:140,s:{
 a:{k:'proj',n:2,spread:.3,spd:420,r:9,dmg:6,life:.9,dot:{d:4,t:2},cd:.9,nm:'Fire Spit'},
 q:{k:'cone',r:130,arc:2.4,dmg:18,cd:5,nm:'Fire Breath'},
 e:{k:'blink',dist:240,to:1,cd:6,nm:'Flame Step'},
-r:{k:'rain',cur:1,n:8,rad:170,r:46,dmg:14,gap:.1,cd:12,nm:'Meteor Shower'}}},
+r:{k:'rain',cur:1,n:8,rad:170,r:46,dmg:14,gap:.1,cd:12,nm:'Meteor Shower'},
+ c:{k:'rain',cd:22,cur:1,n:16,rad:225,r:62,dmg:28,gap:0.06,dot:{d:8,t:3},fs:'fire',nm:'Cataclysm Pyre'}
+}},
 {boss:1,n:'Void Sovereign',t:'Domain Lord',col:'#a855f7',hair:'#3b0764',acc:'crown',hp:820,sp:135,s:{
 a:{k:'chain',n:3,rng:300,dmg:8,cd:1.3,nm:'Void Lash'},
 q:{k:'zone',cur:1,r:130,dur:4,dps:10,pull:140,cd:7,nm:'Gravity Well'},
 e:{k:'blink',dist:300,to:1,cd:6,nm:'Rift Step'},
-r:{k:'proj',spd:150,r:46,dmg:42,life:4,sl:2,pierce:1,cd:12,nm:'Black Sun'}}},
+r:{k:'proj',spd:150,r:46,dmg:42,life:4,sl:2,pierce:1,cd:12,nm:'Black Sun'},
+ c:{k:'proj',cd:22,spd:140,r:58,dmg:70,life:4.5,sl:3,pierce:1,nm:'True Black Sun'}
+}},
 {boss:1,n:'Mad Giant',t:'Rampage Titan',col:'#ef4444',hair:'#450a0a',acc:'band',hp:920,sp:145,s:{
 a:{k:'cone',r:100,arc:2.4,dmg:16,kb:60,cd:1,nm:'Wild Swing'},
 q:{k:'orbit',n:4,rad:80,dur:4,dmg:10,cd:7,nm:'Fist Storm'},
 e:{k:'dash',dist:300,nova:{r:90,dmg:22},cd:6,nm:'Charge'},
-r:{k:'nova',r:220,dmg:40,delay:1.1,cd:13,nm:'Final Smash'}}});
+r:{k:'nova',r:220,dmg:40,delay:1.1,cd:13,nm:'Final Smash'},
+ c:{k:'nova',cd:22,r:265,dmg:88,delay:1,kb:190,st:1,nm:'World Ender'}
+}});
 CH.push(
 {foe:1,ai:'rush',n:'Goblin',t:'Rusher',col:'#65a30d',hair:'#365314',acc:'ears',hp:38,sp:155,s:{a:{k:'cone',r:55,arc:1.8,dmg:6,cd:.9,nm:'Stab'},e:{k:'dash',dist:200,nova:{r:50,dmg:6},cd:4,nm:'Charge'}}},
 {foe:1,ai:'range',n:'Imp Archer',t:'Archer',col:'#f59e0b',hair:'#78350f',acc:'horn',hp:28,sp:120,s:{a:{k:'proj',spd:380,r:6,dmg:5,life:1.2,cd:1.1,nm:'Arrow'},q:{k:'proj',n:3,spread:.5,spd:340,r:6,dmg:4,life:1.2,cd:4,nm:'Triple Shot'}}},
@@ -355,33 +461,45 @@ CH.push(
 a:{k:'proj',spd:900,r:8,dmg:12,life:.6,pierce:1,cd:.36,ps:'lance',nm:'Star Lance'},
 q:{k:'rain',cur:1,n:8,rad:130,r:40,dmg:17,gap:.08,cd:5,nm:'Starfall'},
 e:{k:'blink',dist:300,to:1,cd:3.5,nm:'Comet Step'},
-r:{k:'beam',len:640,w:46,dur:1.3,dmg:10,st:.2,cd:13,nm:'Heaven Piercer'}}},
+r:{k:'beam',len:640,w:46,dur:1.3,dmg:10,st:.2,cd:13,nm:'Heaven Piercer'},
+ c:{k:'beam',cd:22,len:900,w:80,dur:1.8,dmg:26,st:0.3,nm:'Starlight Sever'}
+}},
 {n:'Omen',t:'Void Reaper',sec:'chest',col:'#8b5cf6',hair:'#e9d5ff',acc:'none',hp:120,sp:235,s:{
 a:{k:'cone',r:96,arc:2.6,dmg:14,ls:.15,cd:.42,nm:'Reap'},
 q:{k:'chain',n:5,rng:320,dmg:16,st:.35,cd:4.5,nm:'Soul Harvest'},
 e:{k:'blink',dist:300,to:1,cd:3.5,nm:'Grave Step'},
-r:{k:'zone',cur:1,r:190,dur:5,dps:22,pull:190,sl:1.5,cd:14,nm:'Abyssal Maw'}}},
+r:{k:'zone',cur:1,r:190,dur:5,dps:22,pull:190,sl:1.5,cd:14,nm:'Abyssal Maw'},
+ c:{k:'cone',cd:22,r:270,arc:6.3,dmg:60,ls:0.25,nm:'Reapers Toll'}
+}},
 {n:'Kaiser',t:'Arena Champion',sec:'quest',col:'#f59e0b',hair:'#7c2d12',acc:'crown',hp:165,sp:225,s:{
 a:{k:'cone',r:84,arc:2.1,dmg:14,kb:30,cd:.4,nm:'Champion Cleave'},
 q:{k:'dash',dist:270,nova:{r:85,dmg:26,st:.7},cd:4.5,nm:'Lion Charge'},
 e:{k:'haste',dur:3,sh:2,cd:8,nm:'Unbreakable'},
-r:{k:'nova',r:210,dmg:66,delay:.6,kb:200,st:1.1,cd:14,nm:'Coliseum Quake'}}},
+r:{k:'nova',r:210,dmg:66,delay:.6,kb:200,st:1.1,cd:14,nm:'Coliseum Quake'},
+ c:{k:'nova',cd:22,r:265,dmg:92,delay:0.6,kb:240,st:1.2,form:{dur:8,mul:1.65,hp:0.5,sh:1},nm:'Champion Ascendant'}
+}},
 {n:'Drakon',t:'Dragon Sovereign',sec:'quest',col:'#ef4444',hair:'#450a0a',acc:'horn',hp:150,sp:225,s:{
 a:{k:'proj',n:2,spread:.18,spd:640,r:10,dmg:8,life:.6,dot:{d:5,t:2},cd:.38,ps:'fire',nm:'Dragon Fang'},
 q:{k:'cone',r:160,arc:1.5,dmg:26,dot:{d:8,t:3},cd:4.5,nm:'Inferno Breath'},
 e:{k:'dash',dist:320,nova:{r:95,dmg:24,dot:{d:6,t:2},kb:80},cd:4.5,nm:'Wyvern Dive'},
-r:{k:'rain',cur:1,n:10,rad:185,r:52,dmg:22,gap:.09,cd:14,nm:'Meteor Cataclysm'}}},
+r:{k:'rain',cur:1,n:10,rad:185,r:52,dmg:22,gap:.09,cd:14,nm:'Meteor Cataclysm'},
+ c:{k:'cone',cd:22,r:280,arc:1.9,dmg:72,dot:{d:14,t:4},nm:'Cataclysm Breath'}
+}},
 {n:'Eon',t:'Timeless Sage',sec:'quest',col:'#22d3ee',hair:'#f1f5f9',acc:'wizhat',hp:115,sp:225,s:{
 a:{k:'proj',spd:640,r:9,dmg:11,life:.9,home:1,pierce:1,cd:.4,nm:'Chrono Bolt'},
 q:{k:'zone',cur:1,r:135,dur:4,dps:15,sl:2,cd:5.5,nm:'Slow Field'},
 e:{k:'blink',dist:320,cd:3,nm:'Rewind'},
-r:{k:'nova',cur:1,r:210,dmg:58,delay:.9,st:1.8,cd:14,nm:'Time Stop'}}},
+r:{k:'nova',cur:1,r:210,dmg:58,delay:.9,st:1.8,cd:14,nm:'Time Stop'},
+ c:{k:'zone',cd:22,cur:1,r:225,dur:7,dps:34,sl:3,nm:'Stasis Field'}
+}},
 {n:'Nyx',t:'Night Empress',sec:'quest',col:'#ec4899',hair:'#1e1b4b',acc:'crown',hp:120,sp:245,s:{
 a:{k:'proj',n:3,spread:.3,spd:700,r:7,dmg:7,life:.7,home:1,cd:.34,ps:'dark',nm:'Moon Shards'},
 q:{k:'mine',r:100,dmg:34,st:.9,cd:4.5,nm:'Eclipse Seal'},
 e:{k:'blink',dist:320,to:1,cd:3.5,nm:'Umbra Step'},
-r:{k:'orbit',n:6,rad:82,dur:7,dmg:14,cd:13,nm:'Lunar Halo'}}});
-for(const c of CH)if(c.foe)for(const k of['a','q','e','r'])if(!c.s[k])c.s[k]={k:'shield',dur:.01,cd:999,nm:'-'};
+r:{k:'orbit',n:6,rad:82,dur:7,dmg:14,cd:13,nm:'Lunar Halo'},
+ c:{k:'orbit',cd:22,n:12,rad:120,dur:8.5,dmg:27,ls:0.2,nm:'Total Eclipse'}
+}});
+for(const c of CH)if(c.foe)for(const k of['a','q','e','r','c'])if(!c.s[k])c.s[k]={k:'shield',dur:.01,cd:999,nm:'-'};
 const NORM=[...CH.keys()].filter(i=>!CH[i].boss&&!CH[i].foe),BASE=NORM.filter(i=>!CH[i].sec),BOSS=[...CH.keys()].filter(i=>CH[i].boss),FOE=[...CH.keys()].filter(i=>CH[i].foe);
 // run buffs: d/dv = description (en/vi); run:1 = only offered inside a run, never sold as a pre-run buff
 const BUFFS=[{n:'Power Up',ic:'⚔️',d:'+18% damage',dv:'+18% sát thương',f:r=>{r.dm*=1.18}},
@@ -456,7 +574,7 @@ CH.forEach(c=>{const m=MOD[c.n];if(m)for(const k in m)Object.assign(c.s[k],m[k])
 const KIT={Sakura:{a:{home:0,cd:.55}},Arashi:{a:{home:0,cd:.45}}};
 for(const n in KIT){const c=CH.find(x=>x.n==n);for(const k in KIT[n])Object.assign(c.s[k],KIT[n][k])}
 const BAL={"Rovan":[1.02,1.03],"Zann":[1.19,1.4],"Lyra":[1.11,1.22],"Gorm":[0.92,0.85],"Elara":[1.04,1.08],"Veyra":[0.9,0.8],"Brakk":[0.97,0.94],"Ilsa":[1.09,1.18],"Kade":[1.28,1.62],"Ren":[1.18,1.37],"Monko":[0.96,0.93],"Kuro":[0.94,0.88],"Nara":[1.02,1.03],"Kaen":[0.96,0.92],"Yuki":[1.03,1.06],"Raiden":[0.95,0.91],"Sakura":[0.98,0.96],"Shion":[1.22,1.47],"Aoi":[0.99,0.98],"Gaia":[0.94,0.89],"Hikari":[0.92,0.84],"Noir":[0.94,0.89],"Neko":[0.8,0.65],"Bram":[0.96,0.92],"Dex":[1.12,1.24],"Vesper":[1.21,1.44],"Tusk":[0.87,0.75],"Pip":[0.9,0.81],"Vex":[1.02,1.04],"Rook":[0.99,0.97],"Zig":[1.12,1.25],"Pyra":[0.95,0.9],"Riku":[0.81,0.65],"Kaito":[1.17,1.34],"Mei":[1.04,1.08],"Toru":[0.9,0.8],"Aya":[0.89,0.79],"Nao":[0.97,0.94],"Oren":[0.94,0.88],"Rex":[0.97,0.94],"Sora":[1.34,1.76],"Arashi":[0.89,0.78]};
-function balScale(c,hf,df){c.hp=Math.round(c.hp*hf);for(const k of['a','q','e','r']){const s=c.s[k];for(const f of['dmg','dps']){if(s[f]!=null)s[f]=+(s[f]*df).toFixed(3)}if(s.nova&&s.nova.dmg!=null)s.nova.dmg=+(s.nova.dmg*df).toFixed(3);if(s.path)s.path.dmg=+(s.path.dmg*df).toFixed(3);if(s.dot)s.dot.d=+(s.dot.d*df).toFixed(3)}}
+function balScale(c,hf,df){c.hp=Math.round(c.hp*hf);for(const k of['a','q','e','r','c']){const s=c.s[k];for(const f of['dmg','dps']){if(s[f]!=null)s[f]=+(s[f]*df).toFixed(3)}if(s.nova&&s.nova.dmg!=null)s.nova.dmg=+(s.nova.dmg*df).toFixed(3);if(s.path)s.path.dmg=+(s.path.dmg*df).toFixed(3);if(s.dot)s.dot.d=+(s.dot.d*df).toFixed(3)}}
 // Auto-balance layer, applied on top of the hand-tuned BAL above. Generated by
 // tools/measure-balance.js from a 30s-duel model over the whole roster, so every tier is a
 // deliberate step apart: common 44, rare 47, epic 50, legendary 53, secret 58 (power units).
