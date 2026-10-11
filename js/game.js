@@ -38,13 +38,24 @@ function leave(t){if(R){try{R.leave()}catch(e){}}R=null;run=0;paused=0;raid=null
 function sendPres(){if(R)R.presence({ch:me.ch,x:Math.round(me.x),y:Math.round(me.y),hp:Math.round(me.hp),sd:Math.round(me.sd),sm:me.sm,mp:MAP,k:me.k,al:me.al,aw:me.awt>0?1:0,sh:me.sh>0?1:0,a:+me.a.toFixed(2),nm:me.nm,gq:me.gq,gc:me.gc,ga:me.ga,t:joinT})}
 function dest(e,s,tx,ty){let d=s.dist;if(s.to)d=Math.min(d,Math.hypot(tx-e.x,ty-e.y));
  return[Math.max(20,Math.min(W-20,e.x+Math.cos(e.a)*d)),Math.max(20,Math.min(H-20,e.y+Math.sin(e.a)*d))]}
+// ---- combo chain. Casting a DIFFERENT ability before the window lapses builds the chain; holding
+// one button never does. Each stack adds 6% damage, so a clean Q-E-R-Q chain hits far harder than
+// the same four casts mashing. Kept modest because it applies in PvP too, where both sides get it.
+const CBW=2.8,CMX=5,CBON=.06;   // CMX, not CMAX: meta.js already declares CMAX for hero level
+const comboMul=e=>1+(e.ck>1?(e.ck-1)*CBON:0);
+function bumpCombo(e,key){
+ const keep=e.ckt>0&&e.ckk!==key;
+ e.ck=keep?Math.min(CMX,(e.ck||0)+1):1;
+ e.ckk=key;e.ckt=CBW;
+ if(e.ck>1&&e.ckm!==e.ck){e.ckm=e.ck;if(key=='a'||e.al)say(e.x,e.y-46-e.ck*4,'×'+e.ck,e.ck>=CMAX?'#ffd84d':'#c7d2fe')}
+ return e.ck}
 function tryCast(e,id,key,tx,ty){const s=CH[e.ch].s[key];if(!e.al||e.dash||e.stn>0||e.van>0||s.nm=='-')return;
  // chg = stored charges that refill one at a time; fa = quickened basic attacks left
  if(s.chg){if(!(e.cg&&e.cg[key]>0)||tm<(e.cgt||0))return;e.cg[key]--;e.cgt=tm+.3;if(e.cd[key]<=0)e.cd[key]=s.cd}else{if(e.cd[key]>0)return;e.cd[key]=s.cd;if(key=='a'&&e.fa>0){e.fa--;e.cd.a=s.cd*.55}}
  if(s.k=='strike'){const dd=Math.hypot(tx-e.x,ty-e.y);if(dd>s.rng){tx=e.x+(tx-e.x)/dd*s.rng;ty=e.y+(ty-e.y)/dd*s.rng}}
  const d={c:e.ch,s:key,x:e.x,y:e.y,a:e.a,tx:s.cur?tx:e.x,ty:s.cur?ty:e.y};
  if(s.k=='dash'||s.k=='blink'){[d.tx,d.ty]=dest(e,s,tx,ty)}
- cast(e,id,d,true);if(R&&id=='me')R.emit('fx',d)}
+ cast(e,id,d,true);bumpCombo(e,key);if(R&&id=='me')R.emit('fx',d)}
 // same side: raid enemies with each other, or teammates in 2v2
 const ally=(o,e)=>raid?!!(e.raidE&&raid.fid[o]):tmode?!!(ent(o)&&ent(o)!==e&&ent(o).tm===e.tm):false;
 function cast(e,o,d,local){const c=CH[d.c],s=c.s[d.s],ba=d.s=='a'?1:0;if(e){e.rv=tm+1.2;e.at=tm;e.atn=(e.atn||0)+1}if(local&&o=='me')sfx(d.s=='a'?'atk':d.s=='r'?'ult':'skl');
@@ -81,7 +92,7 @@ function cast(e,o,d,local){const c=CH[d.c],s=c.s[d.s],ba=d.s=='a'?1:0;if(e){e.rv
 // d lands on armor first; returns what reached health. q = quiet (burn / zone ticks)
 function dmgTo(e,d,q){e.sdt=SHD;let a=0;if(e.sd>0){a=Math.min(e.sd,d);e.sd-=a;if(e.sd<=0){e.sd=0;if(!q||e===me){burst(e.x,e.y-6,'#9fd8ff',16);say(e.x,e.y-58,'SHIELD BREAK','#9fd8ff');if(e===me)sfx('brk')}}}e.hp-=d-a;return d-a}
 function hurt(id,e,dmg,sl,o,x){if(!e.al||(dmg<=0&&!x))return;if(raid&&e.raidE&&raid.fid[o])return;if(tmode){const o1=ent(o);if(o1&&o1!==e&&o1.tm===e.tm)return}
- const ow=ent(o);let mul=1,crit=0;if(ow&&ow.awt>0)mul*=1.6;if(ow&&ow.dmgMul)mul*=ow.dmgMul;if(ow&&ow.tn)mul*=ow.tn;if(o=='me'&&raid)mul*=raid.dm;
+ const ow=ent(o);let mul=1,crit=0;if(ow&&ow.awt>0)mul*=1.6;if(ow&&ow.dmgMul)mul*=ow.dmgMul;if(ow&&ow.tn)mul*=ow.tn;if(ow&&ow.ck>1)mul*=comboMul(ow);if(o=='me'&&raid)mul*=raid.dm;
  // the attacker's own client settles what a landed hit gives back: passive combo heal, per-skill lifesteal
  if(ow&&ow.al&&x&&dmg>0&&!(e.sh>0)&&(o=='me'||ow.bot||ow.loc)){const pc=CH[ow.ch].pas;if(pc&&x.ba){ow.hc=(ow.hc||0)+1;if(ow.hc>=pc.n){ow.hc=0;heal(ow,ow.mx*pc.heal)}}if(x.ls)heal(ow,dmg*mul*x.ls)}
  if(!(id=='me'||e.bot||e.loc)){if(dmg>0&&!(e.sh>0)){num(e.x,e.y-20,dmg*mul);FX('hit',e.x,e.y-6,14,'#ffffff',.18,Math.random()*6)}return}if(e.sh>0)return;dmg*=mul;
@@ -133,6 +144,7 @@ function decal(x,y,r,col,g){const big=r>=40;decals.push({x,y,r:r*(.8+Math.random
  for(let i=0;i<Math.min(14,r/5);i++){const a=Math.random()*6.283,d=Math.random()*r*.8;P(x+Math.cos(a)*d,y+Math.sin(a)*d,(Math.random()-.5)*14,-18-Math.random()*30,1.1+Math.random()*1.2,col,2+Math.random()*3)}}
 function awaken(){if(!me||!me.al||me.awt>0||(me.aw||0)<100)return;me.aw=0;me.awt=15;shake=.45;say(me.x,me.y-64,'AWAKENING!','#ffe14d');burst(me.x,me.y,'#ffe14d',40);burst(me.x,me.y,'#ffffff',20);sendPres()}
 function tick(id,e,dt){e.stn=Math.max(0,(e.stn||0)-dt);e.hst=Math.max(0,(e.hst||0)-dt);if(id=='me')e.awt=Math.max(0,(e.awt||0)-dt);
+ if(e.ckt>0){e.ckt-=dt;if(e.ckt<=0){e.ckt=0;e.ck=0;e.ckk='';e.ckm=0}}
  // Titan form (s.form): damage multiplier while active, base stats restored when it runs out
  if(e.tn>0){e.tn-=dt;if(e.tn<=0){e.tn=0;if(e.tb){e.mx=e.tb.mx;e.sm=e.tb.sm;e.tb=0}e.hp=Math.min(e.hp,e.mx);burst(e.x,e.y,'#fff',14)}}
  if(e.sm>0&&e.al){const k=id=='me'&&raid?raid.sr:1;e.sdt-=dt*k;if(e.sdt<=0&&e.sd<e.sm)e.sd=Math.min(e.sm,e.sd+e.sm*SHR*k*dt)}
@@ -228,6 +240,14 @@ function skillBtns(){const sk=CH[me.ch].s;
   if(cg>=0){ctx.fillStyle='#7fe4ff';ctx.strokeStyle='#1b1030';ctx.lineWidth=3;ctx.beginPath();ctx.arc(x+r*.72,y-r*.72,9,0,7);ctx.fill();ctx.stroke();ctx.fillStyle='#1b1030';ctx.font='900 11px system-ui';ctx.fillText(cg,x+r*.72,y-r*.72+4)}
   ctx.font='900 10px system-ui';ctx.lineWidth=3;ctx.strokeStyle='#1b1030';const lb=k=='a'?'MOUSE':k.toUpperCase();ctx.strokeText(lb,x,y+r+13);ctx.fillStyle='#fff';ctx.fillText(lb,x,y+r+13);
   if(k!='a'){ctx.font='bold 9px system-ui';ctx.strokeText(s.nm.slice(0,13),x,y-r-5);ctx.fillStyle='#d7e8ff';ctx.fillText(s.nm.slice(0,13),x,y-r-5)}}
+  // combo counter, beside the ability cluster; the ring drains with the window
+  if(me.ck>1){const cx2=cw-232,cy2=chh-108,max=me.ck>=CMX;
+   ctx.fillStyle='rgba(8,4,22,.55)';ctx.beginPath();ctx.arc(cx2,cy2,26,0,7);ctx.fill();
+   ctx.strokeStyle='rgba(255,255,255,.16)';ctx.lineWidth=3;ctx.beginPath();ctx.arc(cx2,cy2,26,0,7);ctx.stroke();
+   ctx.strokeStyle=max?'#ffd84d':'#c7d2fe';ctx.lineWidth=3.5;ctx.beginPath();ctx.arc(cx2,cy2,26,-Math.PI/2,-Math.PI/2+Math.PI*2*Math.max(0,me.ckt/CBW));ctx.stroke();
+   ctx.fillStyle=max?'#ffd84d':'#eef2ff';ctx.font='900 21px system-ui';ctx.textAlign='center';
+   ctx.strokeStyle='#1b1030';ctx.lineWidth=3;ctx.strokeText('×'+me.ck,cx2,cy2+8);ctx.fillText('×'+me.ck,cx2,cy2+8);
+   ctx.font='900 8px system-ui';ctx.fillStyle='#cbd5e1';ctx.strokeText('COMBO',cx2,cy2+18);ctx.fillText('COMBO',cx2,cy2+18)}
  const ax=cw-214,ay=chh-98,ar=25,on=me.awt>0,pc=on?me.awt/15:Math.min(1,(me.aw||0)/100),ready=me.aw>=100&&!on;
  ctx.fillStyle='rgba(0,0,0,.35)';ctx.beginPath();ctx.arc(ax,ay+4,ar+3,0,7);ctx.fill();ctx.fillStyle=ready?'#d99a00':'#2b2250';ctx.beginPath();ctx.arc(ax,ay,ar,0,7);ctx.fill();ctx.strokeStyle='#1b1030';ctx.lineWidth=4;ctx.stroke();
  ctx.strokeStyle=on?'#fff3a0':'#ffd84d';ctx.lineWidth=6;ctx.beginPath();ctx.arc(ax,ay,ar-1,-Math.PI/2,-Math.PI/2+Math.PI*2*pc);ctx.stroke();
