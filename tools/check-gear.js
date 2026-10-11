@@ -5,8 +5,22 @@ const m=src.match(/const GEAR=\[([\s\S]*?)\];\r?\nconst GBY/);
 if(!m){console.error('could not find the GEAR table in js/data.js');process.exit(1)}
 const GEAR=eval('['+m[1]+']');
 const lib=fs.readFileSync(path.join(root,'api','_lib.js'),'utf8');
-const gm=lib.match(/GEARID=\/\^\(hb\|ch\|au\)_\[a-z\]\{(\d+),(\d+)\}\$\//);
-const GEARID=gm?new RegExp('^(hb|ch|au)_[a-z]{'+gm[1]+','+gm[2]+'}$'):null;
+// the server is the authority on gear ids; mirror its exact pattern instead of guessing
+const gm=lib.match(/GEARID=(\/\^.*?\$\/[^,]*)/);
+const GEARID=gm?eval(gm[1]):null;
+
+// signature pieces are pushed at runtime from CH, so they are not in the literal above.
+// Re-derive them from the roster files and check the same rules the game applies.
+const dsrc=fs.readFileSync(path.join(root,'js','data.js'),'utf8');
+const rsrc=fs.readFileSync(path.join(root,'js','roster.js'),'utf8');
+const heroes=new Set();
+for(const m2 of dsrc.matchAll(/\{n:'([A-Za-z]{2,12})',t:'/g))heroes.add(m2[1]);
+for(const m2 of rsrc.matchAll(/\{n:'([A-Za-z]{2,12})',t:'/g))heroes.add(m2[1]);
+if(!dsrc.includes("id:'sg_'+c.n")){console.error('signature generator line is gone from data.js');bad++}
+const sigRejected=[...heroes].filter(n=>GEARID&&!GEARID.test('sg_'+n));
+if(sigRejected.length){console.error('server regex rejects '+sigRejected.length+' signature ids, e.g. sg_'+sigRejected[0]);bad++}
+if(GEAR.some(g=>String(g.id).startsWith('sg_')))console.error('signature pieces must not be in the static table (they are generated)');
+console.log('signature pieces derived: '+heroes.size+' (ids accepted by the server: '+(heroes.size-sigRejected.length)+')');
 
 let bad=0;
 const ids=new Set();

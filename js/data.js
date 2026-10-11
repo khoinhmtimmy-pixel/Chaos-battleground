@@ -1,9 +1,9 @@
 const CH=[
-{n:'Ren',t:'Wall Scout',col:'#8fd18a',hair:'#2b4a2a',acc:'scarf',hp:95,sp:235,s:{
+{n:'Ren',t:'Wall Scout',col:'#8fd18a',hair:'#2b4a2a',acc:'scarf',hp:95,sp:245,pas:{x3:1.8,n:8,heal:.1},s:{
 a:{k:'proj',cd:.35,spd:600,r:7,dmg:7,life:.35,nm:'Twin Blades'},
 q:{k:'proj',cd:4,n:3,spread:.6,spd:560,r:10,dmg:12,life:.4,nm:'Blade Fan'},
-e:{k:'dash',cd:4.5,dist:320,nova:{r:60,dmg:14},nm:'Grapple Dash'},
-r:{k:'nova',cd:14,r:150,dmg:42,delay:.6,nm:'Serum Slam'}}},
+e:{k:'dash',cd:4,dist:360,nova:{r:70,dmg:16,st:.3},hst:.7,nm:'Grapple Hook'},
+r:{k:'nova',cd:15,r:165,dmg:44,delay:.5,form:{dur:9,mul:1.7,hp:.9,sh:.5,hst:9},nm:'Titan Form'}}},
 {n:'Monko',t:'Rubber Pirate',col:'#ff5a4d',hair:'#3a1f1f',acc:'hat',hp:120,sp:205,s:{
 a:{k:'proj',cd:.45,spd:850,r:9,dmg:9,life:.25,nm:'Stretch Punch'},
 q:{k:'proj',cd:4,n:7,spread:.7,spd:720,r:7,dmg:6,life:.3,nm:'Fist Barrage'},
@@ -80,6 +80,13 @@ q:{k:'proj',cd:4,n:3,spread:.4,spd:460,r:12,dmg:14,life:.7,nm:'Dragon Fire'},
 e:{k:'dash',cd:5,dist:240,nova:{r:65,dmg:16},nm:'Dragon Leap'},
 r:{k:'proj',cd:14,spd:520,r:34,dmg:40,life:1.1,sl:.8,nm:'Dragon Roar'}}}];
 CH.push(...ROSTER);
+// Vaen: relentless close-range skirmisher. Fastest basic attack in the game, grapples and
+// gas bursts for repositioning, and an ultimate that surrounds him with a ring of blades.
+CH.push({n:'Vaen',t:'Blade Captain',col:'#cbd5e1',hair:'#0f172a',acc:'mask',hp:90,sp:265,pas:{ba:1,n:10,heal:.12},s:{
+ a:{k:'cone',cd:.22,r:68,arc:1.5,dmg:7,nm:'Whirl Cut'},
+ q:{k:'dash',cd:3.5,dist:330,nova:{r:60,dmg:18},hst:.5,nm:'Cable Rush'},
+ e:{k:'blink',cd:3,dist:340,to:1,hst:1.6,nm:'Gas Burst'},
+ r:{k:'orbit',cd:13,n:7,rad:92,dur:7,dmg:13,nm:'Blade Cyclone'}}});
 const MOD={Ren:{a:{kb:20},q:{n:1,spread:0,spd:820,dmg:8,life:.5,nm:'Grapple Pull',kb:-90},r:{st:.8}},
 Monko:{a:{kb:25},r:{kb:170}},Kuro:{q:{kb:70},r:{pierce:1}},Nara:{q:{st:.6},r:{kb:-60}},
 Kaen:{a:{dot:{d:4,t:2}},q:{dot:{d:4,t:2}},e:{nova:{r:70,dmg:16,dot:{d:5,t:2}}},r:{dot:{d:8,t:3}}},
@@ -90,7 +97,7 @@ Zephyr:{e:{k:'haste',dur:3,nm:'Wind Rush'},q:{kb:60},r:{kb:-130}},
 Noir:{a:{dot:{d:3,t:2}},q:{kb:-110},r:{pierce:1,dot:{d:6,t:3}}},
 Neko:{q:{home:1},r:{k:'haste',dur:4,sh:1.5,nm:'Wild Rush'}},Ryuu:{a:{kb:30},q:{dot:{d:4,t:2}},r:{pierce:1,kb:110}}};
 Object.entries({
-Ren:{a:{k:'cone',r:75,arc:1.7,dmg:9,cd:.35,nm:'Twin Blades'},r:{k:'orbit',n:3,rad:55,dur:3.5,dmg:8,cd:14,nm:'Blade Storm'}},
+Ren:{a:{k:'cone',r:75,arc:1.7,dmg:9,cd:.35,nm:'Twin Blades'}},
 Monko:{q:{k:'cone',r:135,arc:.7,dmg:16,kb:60,cd:4,nm:'Gum Whip'}},
 Kuro:{a:{k:'cone',r:80,arc:1.4,dmg:8,cd:.4,nm:'Slash'},q:{k:'cone',r:105,arc:6.3,dmg:22,kb:70,cd:5,nm:'Demon Cyclone'}},
 Nara:{q:{k:'rain',cur:1,n:5,rad:90,r:34,dmg:11,gap:.25,cd:6,nm:'Thunder Rain'}},
@@ -210,11 +217,11 @@ a:{k:'cone',r:65,arc:1.8,dmg:10,cd:.3,nm:'Rapid Strikes'},
 q:{k:'dash',dist:300,nova:{r:70,dmg:20,kb:60},cd:4,nm:'Burst Rush'},
 e:{k:'haste',dur:4,cd:9,nm:'Overdrive'},
 r:{k:'cone',r:120,arc:2.8,dmg:44,kb:140,cd:13,nm:'Fatal Combo'}}},
-{n:'Aya',t:'Domain Sorceress',col:'#38bdf8',hair:'#e0f2fe',acc:'halo',hp:90,sp:210,s:{
-a:{k:'proj',spd:620,r:8,dmg:7,life:.7,home:1,cd:.45,nm:'Spirit Orb'},
-q:{k:'zone',cur:1,r:100,dur:3,dps:12,sl:1,cd:6,nm:'Binding Mist'},
-e:{k:'shield',dur:2.2,cd:8,nm:'Barrier'},
-r:{k:'zone',r:210,dur:6,dps:16,sl:1.5,pull:60,cd:16,nm:'Domain Expansion'}}},
+{n:'Aya',t:'Limitless Sorceress',col:'#818cf8',hair:'#f8fafc',acc:'blind',hp:90,sp:225,pas:{inf:78},s:{
+a:{k:'proj',spd:600,r:9,dmg:9,life:.8,home:1,cd:.45,nm:'Limitless Orb'},
+q:{k:'cone',r:130,arc:1.9,dmg:20,st:.3,cd:5,nm:'Cursed Technique'},
+e:{k:'blink',cd:6,dist:300,to:1,nm:'Void Step'},
+r:{k:'zone',cur:1,r:250,dur:7,dps:26,pull:120,sl:2,cd:17,nm:'Domain Expansion'}}},
 {n:'Nao',t:'Cursed Speech',col:'#facc15',hair:'#713f12',acc:'mask',hp:85,sp:215,s:{
 a:{k:'proj',n:3,spread:.4,spd:560,r:7,dmg:6,life:.5,cd:.5,nm:'Whisper Shot'},
 q:{k:'nova',r:130,dmg:8,delay:.3,st:1,cd:7,nm:'Halt!'},
@@ -409,7 +416,7 @@ const GBY=Object.fromEntries(GEAR.map(g=>[g.id,g])),GSLOTS=['head','charm','aura
 const IC={proj:'➶',cone:'⚔',beam:'═',orbit:'◎',rain:'☔',mine:'●',chain:'⚡',zone:'◉',nova:'✸',dash:'⇢',blink:'✧',shield:'◍',heal:'✚',haste:'≫'};
 CH.forEach(c=>{const m=MOD[c.n];if(m)for(const k in m)Object.assign(c.s[k],m[k])});
 // ---- balance pass (tuned with 1v1 duel simulations): kit fixes, then per-character [health x, damage x]
-const KIT={Aya:{a:{dmg:6,cd:.5},q:{r:90,dps:10,sl:.8,cd:7},r:{r:180,dur:5,dps:14,sl:1,pull:35,cd:18}},Sakura:{a:{home:0,cd:.55}},Arashi:{a:{home:0,cd:.45}}};
+const KIT={Sakura:{a:{home:0,cd:.55}},Arashi:{a:{home:0,cd:.45}}};
 for(const n in KIT){const c=CH.find(x=>x.n==n);for(const k in KIT[n])Object.assign(c.s[k],KIT[n][k])}
 const BAL={"Rovan":[1.02,1.03],"Zann":[1.19,1.4],"Lyra":[1.11,1.22],"Gorm":[0.92,0.85],"Elara":[1.04,1.08],"Veyra":[0.9,0.8],"Brakk":[0.97,0.94],"Ilsa":[1.09,1.18],"Kade":[1.28,1.62],"Ren":[1.18,1.37],"Monko":[0.96,0.93],"Kuro":[0.94,0.88],"Nara":[1.02,1.03],"Kaen":[0.96,0.92],"Yuki":[1.03,1.06],"Raiden":[0.95,0.91],"Sakura":[0.98,0.96],"Shion":[1.22,1.47],"Aoi":[0.99,0.98],"Gaia":[0.94,0.89],"Hikari":[0.92,0.84],"Noir":[0.94,0.89],"Neko":[0.8,0.65],"Bram":[0.96,0.92],"Dex":[1.12,1.24],"Vesper":[1.21,1.44],"Tusk":[0.87,0.75],"Pip":[0.9,0.81],"Vex":[1.02,1.04],"Rook":[0.99,0.97],"Zig":[1.12,1.25],"Pyra":[0.95,0.9],"Riku":[0.81,0.65],"Kaito":[1.17,1.34],"Mei":[1.04,1.08],"Toru":[0.9,0.8],"Aya":[0.89,0.79],"Nao":[0.97,0.94],"Oren":[0.94,0.88],"Rex":[0.97,0.94],"Sora":[1.34,1.76],"Arashi":[0.89,0.78]};
 function balScale(c,hf,df){c.hp=Math.round(c.hp*hf);for(const k of['a','q','e','r']){const s=c.s[k];for(const f of['dmg','dps']){if(s[f]!=null)s[f]=+(s[f]*df).toFixed(3)}if(s.nova&&s.nova.dmg!=null)s.nova.dmg=+(s.nova.dmg*df).toFixed(3);if(s.path)s.path.dmg=+(s.path.dmg*df).toFixed(3);if(s.dot)s.dot.d=+(s.dot.d*df).toFixed(3)}}
@@ -452,6 +459,7 @@ Bat:[0,0,0,{sh:'bat',h:40}],Slime:[0,0,0,{sh:'slime',h:30}],'Fire Imp':['orb','r
 'Skeleton Knight':['sword','armor','bald',{sk:'#eef0e6',face:'skull',off:'shield',acc:'none',sc:1.22}],Necromancer:['bstaff','robe+hood','bald',{sk:'#e8e2d0',face:'skull',sc:1.2}],
 'Gluttony Maw':[0,0,0,{sh:'maw',h:56,ps:.8}],'Iron Brute':[0,0,0,{sh:'golem',h:50,ps:.85}],'Ember Tyrant':[0,0,0,{sh:'dragon',h:62,ps:.76}],'Void Sovereign':[0,0,0,{sh:'lord',h:72,ps:.74}],
 'Mad Giant':['fist','bare','wild',{sk:'#e8a07a',face:'rage',sc:1.85,fc:'#e8a07a',fr:7.5,acc:'none'}]};
+LOOK.Vaen=['katana','coat+cape','short',{acc:'mask',cc:'#334155',pair:1}];
 Object.assign(LOOK,LOOK_R);
 for(const c of CH){const l=LOOK[c.n];c.lk=l?Object.assign({wp:l[0]||'none',gr:l[1]||'light',hs:l[2]||'bald'},l[3]):{wp:'sword',gr:'light',hs:'spiky'}}
 // what a shot looks like (ps) and how a rained strike arrives (fs), guessed from the weapon and the skill's name unless the skill says otherwise
@@ -460,5 +468,15 @@ for(const c of CH){const l=LOOK[c.n];c.lk=l?Object.assign({wp:l[0]||'none',gr:l[
   if(s.k=='proj'&&!s.ps)s.ps=/boulder|rock/i.test(s.nm)?'rock':/needle|nail/i.test(s.nm)?'needle':/note/i.test(s.nm)?'note':/blade|slash|wave|cut/i.test(s.nm)?'wave':w=='fist'&&elem(s)!='fire'?'fist':elem(s)=='fire'?'fire':s.r>30?'vortex':w=='bow'?'arrow':/gun|rifle|cannon/.test(w)?'bullet':w=='kunai'?'star':w=='dagger'?'kunai':/sword|katana|axe|scythe|claws/.test(w)?'wave':w=='lance'||w=='spear'?'lance':w=='flamer'?'fire':elem(s);
   if(s.k=='rain'&&!s.fs)s.fs=w=='bomb'||/bomb|barrage/i.test(s.nm)?'bomb':/thunder|storm|lightning/i.test(s.nm)?'bolt':'orb';
   if(w=='fist')s.fc=c.lk.fc}}}
+// ---- signature accessories: every playable hero gets ONE exclusive trinket, built from its own
+// look and stats rather than hand-listed. art follows the weapon, the bonus follows the build,
+// and ex pins the piece to that single hero (see fixGear / ACT.gearDo in js/meta.js).
+const WART={fist:'gblood',claws:'gshur',dagger:'gshur',katana:'gshur',sword:'gshur',kunai:'gshur',scythe:'gvoid',
+ flamer:'gfire',bomb:'gfire',bow:'gprism',spear:'grelic',lance:'grelic',axe:'gbell',hammer:'gbell',gsword:'gbell',
+ club:'gbell',cannon:'gbell',gun:'grune',rifle:'grune',shotgun:'grune',staff:'grune',bstaff:'grune',wand:'grune',orb:'grune',tome:'grune',mega:'grune'};
+GEAR.push(...NORM.map(i=>{const c=CH[i],b=c.hp>=130?{hp:.08}:c.sp>=248?{sp:.07}:{dm:.08};
+ if(c.pas&&c.pas.inf)b.sh=.05;if(c.pas&&c.pas.ba)b.ls=.03;
+ return{id:'sg_'+c.n,sl:'charm',rar:3,n:c.n+"'s Sigil",v:'Dấu ấn '+c.n,p:0,art:WART[c.lk.wp]||'gorb',ex:c.n,b}}));
+Object.assign(GBY,Object.fromEntries(GEAR.map(g=>[g.id,g])));
 // ground / obstacle / weather set per map, in MAPS order (TH in js/art.js)
 ['sand','sand','stone','stone','stone','lava','ice','grass','sand','night','sand','stone','stone'].forEach((t,i)=>{MAPS[i].th=t});

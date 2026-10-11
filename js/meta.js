@@ -10,7 +10,7 @@ const TX={vi:{tapStart:'NHẤN ĐỂ BẮT ĐẦU',login:'Đăng nhập',registe
  nHome:'Sảnh',nStages:'Màn chơi',nHeroes:'Nhân vật',nStats:'Nâng cấp',nShop:'Cửa hàng',nGear:'Trang bị',
   gearSub:'3 chỗ: đầu · vùi người · hào quang. Chỉ áp dụng cho Màn chơi và Raid, đấu PvP luôn cân bằng.',
   slHead:'Đầu',slCharm:'Vùi người',slAura:'Hào quang',gearOwned:'Đã sở hữu',gearWear:'Trang bị',gearTakeOff:'Tháo ra',
-  gearEquip:'Mặc',gearEquipped:'✔ Đang mặc',gearAll:'Đã có hết phụ kiện!',gearBon:'Cộng thêm',
+  gearEquip:'Mặc',gearEquipped:'✔ Đang mặc',gearAll:'Đã có hết phụ kiện!',gearBon:'Cộng thêm',gearOther:'Dấu ấn riêng của {0} — bạn phải chọn nhân vật đó',
  campaign:'CHIẾN DỊCH',raid:'RAID VÔ TẬN',arena:'ĐẤU TRƯỜNG',play:'CHƠI ▶',open:'MỞ ▶',stage:'Màn',campDone:'Đã phá đảo! Chơi lại để cày vàng và XP',raidSub:'Kỷ lục: tầng {0} · phòng {1}',raidNew:'Leo tầng không giới hạn, boss mỗi 5 phòng',raidLock:'🔒 Qua màn 1-3 để mở khoá',arenaCard:'Đấu bot · 2v2 · Online PvP',change:'Đổi nhân vật',
  daily:'Quà hằng ngày',dailyd:'Đăng nhập mỗi ngày để nhận vàng. Chuỗi ngày càng dài, quà càng lớn (tối đa 7 ngày).',claim:'Nhận 🪙 {0}',claimed:'Đã nhận hôm nay · chuỗi {0} ngày',nextBuffs:'Buff cho lượt kế',noBuff:'Chưa có, mua ở Cửa hàng',
  rar0:'Cơ bản',rar1:'Hiếm',rar2:'Sử thi',rar3:'Huyền thoại',rar4:'BÍ ẨN',nQuests:'Nhiệm vụ',locked:'Chưa mở khoá',start:'BẮT ĐẦU',stInfo:'{0} phòng',first:'lần đầu ×2',stars3:'3★: không hồi sinh và còn từ 50% máu',
@@ -33,7 +33,7 @@ en:{tapStart:'TAP TO START',login:'Log in',register:'Sign up',username:'Username
  nHome:'Lobby',nStages:'Stages',nHeroes:'Heroes',nStats:'Upgrade',nShop:'Shop',nGear:'Gear',
   gearSub:'3 slots: head · charm · aura. Applies to Stages and Raid only; PvP is always even.',
   slHead:'Head',slCharm:'Charm',slAura:'Aura',gearOwned:'Owned',gearWear:'Wear',gearTakeOff:'Take off',
-  gearEquip:'Equip',gearEquipped:'✔ Equipped',gearAll:'You own every accessory!',gearBon:'Bonus',
+  gearEquip:'Equip',gearEquipped:'✔ Equipped',gearAll:'You own every accessory!',gearBon:'Bonus',gearOther:"{0}'s own sigil — pick that hero to wear it",
  campaign:'CAMPAIGN',raid:'ENDLESS RAID',arena:'ARENA',play:'PLAY ▶',open:'OPEN ▶',stage:'Stage',campDone:'Campaign cleared! Replay to farm gold and XP',raidSub:'Best: floor {0} · room {1}',raidNew:'Climb forever, a boss every 5 rooms',raidLock:'🔒 Clear stage 1-3 to unlock',arenaCard:'Bots · 2v2 · Online PvP',change:'Change hero',
  daily:'Daily gift',dailyd:'Log in every day for gold. Longer streaks pay more (up to 7 days).',claim:'Claim 🪙 {0}',claimed:'Claimed today · {0} day streak',nextBuffs:'Buffs for next run',noBuff:'None yet, buy in the Shop',
  rar0:'Basic',rar1:'Rare',rar2:'Epic',rar3:'Legendary',rar4:'SECRET',nQuests:'Quests',locked:'Locked',start:'START',stInfo:'{0} rooms',first:'first clear ×2',stars3:'3★: no revive and at least 50% health left',
@@ -66,13 +66,20 @@ function sfx(n){const d=SND[n];if(!d||SFX.vol<=0)return;const now=performance.no
   for(const [type,f0,f1,dur,vol,dly] of d.v){const o=ac.createOscillator(),g=ac.createGain(),s=t0+(dly||0);o.type=type;o.frequency.setValueAtTime(f0,s);o.frequency.exponentialRampToValueAtTime(Math.max(20,f1),s+dur);g.gain.setValueAtTime(vol*SFX.vol,s);g.gain.exponentialRampToValueAtTime(.0001,s+dur);o.connect(g);g.connect(ac.destination);o.start(s);o.stop(s+dur+.03)}}catch(e){}}
 
 // ---- progression rules
-const MAXL=50,SMAX=20,CMAX=10,RICH=9999999,BON={hp:.05,sh:.06,dm:.04,sp:.015},CHEST=[{cost:300,w:[0,70,24.5,5,.5],sec:3},{cost:900,w:[0,0,68,30,2],sec:10}],PRICE=[0,700,1400,2800],LUCKY=120,RESPEC=100;
-const need=l=>50+30*l+4*l*l,upCost=l=>100*l,reviveCost=r=>r.mode=='stage'?40+6*r.stage:60+40*r.floor;
+// MAXL 100 needs SMAX 25 (4x25=100 covers the 99 points a level-100 account owns).
+// BON is scaled by 0.8 from the old 20-point values on purpose: 25*.04 == 20*.05, so the
+// maximum power a stat can reach is unchanged, only spread over twice as many levels.
+const MAXL=100,SMAX=25,CMAX=10,RICH=9999999,BON={hp:.04,sh:.048,dm:.032,sp:.012},CHEST=[{cost:300,w:[0,70,24.5,5,.5],sec:3},{cost:900,w:[0,0,68,30,2],sec:10}],PRICE=[0,700,1400,2800],LUCKY=120,RESPEC=100;
+// XP curve. Levels 1-50 keep the original curve exactly so early pacing is unchanged;
+// 51-100 switches to a much flatter one, because the old 4*l^2 asked 42,224 XP at level 99
+// (roughly 7x everything level 1-50 costs, and ~32 stage-50 replays for a single level).
+const need=l=>l<=50?50+30*l+4*l*l:3800+100*(l-50)+3*(l-50)*(l-50),upCost=l=>100*l,reviveCost=r=>r.mode=='stage'?40+6*r.stage:60+40*r.floor;
 const fresh=()=>({v:1,lvl:1,xp:0,gold:200,st:{hp:0,sh:0,dm:0,sp:0},own:{Ren:1,Kaen:1,Yuki:1,Sakura:1},sel:'Ren',stage:1,stars:{},raid:0,rb:0,kills:0,q:{},pb:[],gw:{},eq:{},daily:'',streak:0,wins:0,ts:0});
 // quests: k = which counter, n = target, g = gold reward or hero = the secret hero it unlocks
 const QUESTS=[{id:'w1',ic:'⚔️',k:'wins',n:1,g:100},{id:'w10',ic:'⚔️',k:'wins',n:10,g:400},{id:'w30',ic:'⚔️',k:'wins',n:30,g:1000},{id:'w100',ic:'👑',k:'wins',n:100,hero:'Kaiser'},
  {id:'r2',ic:'🏰',k:'rf',n:2,g:300},{id:'r3',ic:'🏰',k:'rf',n:3,g:700},{id:'r5',ic:'🐲',k:'rb',n:5,hero:'Drakon'},
  {id:'l10',ic:'⭐',k:'lvl',n:10,g:300},{id:'l25',ic:'⭐',k:'lvl',n:25,g:900},{id:'l50',ic:'⏳',k:'lvl',n:50,hero:'Eon'},
+ {id:'l100',ic:'👑',k:'lvl',n:100,g:6000},
  {id:'c10',ic:'🗺️',k:'cleared',n:10,g:300},{id:'c30',ic:'🗺️',k:'cleared',n:30,g:1000},{id:'c50',ic:'🌙',k:'cleared',n:50,hero:'Nyx'},
  {id:'k100',ic:'💀',k:'kills',n:100,g:150},{id:'k1000',ic:'💀',k:'kills',n:1000,g:700},{id:'k5000',ic:'💀',k:'kills',n:5000,g:2500},
  {id:'h10',ic:'🦸',k:'heroes',n:10,g:400},{id:'h25',ic:'🦸',k:'heroes',n:25,g:1500},{id:'h44',ic:'🦸',k:'heroes',n:44,g:6000},
@@ -88,7 +95,10 @@ function fix(s){s=Object.assign(fresh(),s&&typeof s=='object'?s:{});s.lvl=clamp(
  s.pb=(Array.isArray(s.pb)?s.pb:[]).filter(n=>BUFFS.some(b=>b.n==n&&!b.run)).slice(0,3);s.daily=String(s.daily||'').slice(0,10);s.streak=Math.max(0,s.streak|0);s.wins=Math.max(0,s.wins|0);s.ts=+s.ts||0;fixGear(s);return s}
 // accessories: drop unknown ids, and only keep an equipped piece if it is actually owned in that slot
 function fixGear(s){const gw={},g=s.gw;if(g&&typeof g=='object')for(const k in GBY)if(g[k])gw[k]=1;s.gw=gw;
-  const eq={},e=s.eq;if(e&&typeof e=='object')for(const sl of GSLOTS){const p=GBY[e[sl]];if(p&&p.sl==sl&&gw[p.id])eq[sl]=p.id}s.eq=eq}
+  const eq={},e=s.eq,who=CH.find(c=>c.n==s.sel)||CH[NORM[0]];
+ if(e&&typeof e=='object')for(const sl of GSLOTS){const p=GBY[e[sl]];if(p&&p.sl==sl&&gw[p.id]&&(!p.ex||p.ex===who.n))eq[sl]=p.id}s.eq=eq}
+// a signature trinket is bound to one hero: only that hero can carry it
+const wearable=g=>!g.ex||g.ex===CH[sel].n;
 function adminSave(old){const s=fresh();s.lvl=MAXL;s.gold=RICH;s.st={hp:SMAX,sh:SMAX,dm:SMAX,sp:SMAX};for(const i of NORM)s.own[CH[i].n]=CMAX;s.stage=NSTAGE+1;for(let i=1;i<=NSTAGE;i++)s.stars[i]=3;
  if(old){if(s.own[old.sel])s.sel=old.sel;s.raid=old.raid|0;s.rb=old.rb|0;s.kills=old.kills|0;s.wins=old.wins|0;if(old.q&&typeof old.q=='object')s.q=old.q;s.daily=old.daily||'';s.streak=old.streak|0;s.pb=Array.isArray(old.pb)?old.pb.slice(0,3):[];if(old.gw)s.gw=old.gw;if(old.eq)s.eq=old.eq}return s}
 const pts=()=>Math.max(0,S.lvl-1-(S.st.hp+S.st.sh+S.st.dm+S.st.sp));
@@ -186,15 +196,15 @@ stats(){const p=pts(),c=CH[sel],cur=curStats(sel),used=S.lvl-1-p,rows=[['hp','�
  ${rows.map(([k,ic,nm,col])=>{const v=S.st[k];return`<div class="srow" style="--sc:${col}"><span class="si">${ic}</span><div class="sn"><span>${t(nm)} <small>${v}/${SMAX}</small></span><small>+${Math.round(v*BON[k]*100)}%${v<SMAX?' → +'+Math.round((v+1)*BON[k]*100)+'%':''}</small></div><div class="pips">${Array.from({length:SMAX},(_,i)=>`<i${i<v?' class="f"':''}></i>`).join('')}</div><button class="btn sm green${p>0&&v<SMAX?'':' off'}" data-a="stat" data-v="${k}">+</button></div>`}).join('')}
  <div class="hact"><button class="btn sm ghost${used?'':' off'}" data-a="respec">${t('respec',RESPEC)}</button></div><p class="mut" style="margin-top:8px">${t('statNote')}</p></div>
  <div class="card"><h3 style="color:${c.col}">${c.n} · Lv.${S.own[c.n]||1}</h3><div class="kv" style="margin-top:8px"><span></span><i>${t('base')}</i><i>${t('now')}</i><span>❤️ ${t('sHp')}</span><i>${c.hp}</i><b>${cur.hp}</b><span>🛡️ ${t('sSh')}</span><i>${shOf(c)}</i><b>${cur.sh}</b><span>⚔️ ${t('sDm')}</span><i>100%</i><b>${100+cur.dm}%</b><span>👟 ${t('sSp')}</span><i>${c.sp}</i><b>${cur.sp}</b></div><p class="mut" style="margin-top:10px">${t('charNote')}</p></div></div>`},
-gear(){const slName={head:'slHead',charm:'slCharm',aura:'slAura'},cur=gearMul();
+gear(){const slName={head:'slHead',charm:'slCharm',aura:'slAura'},cur=gearMul(),writable=g=>!g.ex||g.ex===CH[sel].n;
   const bonus=b=>['hp','sh','dm','sp'].filter(k=>b[k]).map(k=>t({'hp':'sHp','sh':'sSh','dm':'sDm','sp':'sSp'}[k])+' +'+Math.round(b[k]*100)+'%').concat(b.ls?'🩸 +'+Math.round(b.ls*100)+'%':[],b.cd&&b.cd<1?'⏱ −'+Math.round((1-b.cd)*100)+'%':[]).join(' · ');
   const sec=GSLOTS.map(sl=>{const eq=S.eq[sl],e2=eq?GBY[eq]:null;
    return`<div class="card" style="margin-bottom:10px"><h3>${t(slName[sl])} — ${e2?(LANG=='vi'?e2.v:e2.n):'—'}</h3><div class="hgrid">`+
     GEAR.filter(x=>x.sl==sl).map(x=>{const o=S.gw[x.id],on=eq==x.id;
      const img=portrait(sel,128,eq==x.id?x.art:(eq?GBY[eq].art:''),x.sl=='charm'?x.art:(x.sl=='charm'&&S.eq.charm?GBY[S.eq.charm].art:''),x.sl=='aura'?x.art:(x.sl=='aura'&&S.eq.aura?GBY[S.eq.aura].art:''));
-     return`<button class="hc ${o?'':'glock'} ${on?'on':''}" style="--rc:var(--r${x.rar})" data-a="gearDo" data-v="${x.id}">
+     return`<button class="hc ${o?'':'glock'} ${on?'on':''} ${!writable(x)?'ex':''}" style="--rc:var(--r${x.rar})" data-a="gearDo" data-v="${x.id}">
       <img loading="lazy" src="${img}" alt=""><span>${LANG=='vi'?x.v:x.n}</span><small>${bonus(x.b)}</small>
-      ${on?`<span class="lvb">${t('gearEquipped')}</span>`:o?`<span class="lvb">${t('gearWear')}</span>`:`<span class="lvb">🪙 ${fmt(x.p)}</span>`}</button>`}).join('')+'</div></div>'}).join('');
+      ${x.ex?`<span class="lvb sig">${x.ex===CH[sel].n?(on?'✔':'Dấu ấn'):'🔒 '+x.ex}</span>`:on?`<span class="lvb">${t('gearEquipped')}</span>`:o?`<span class="lvb">${t('gearWear')}</span>`:`<span class="lvb">🪙 ${fmt(x.p)}</span>`}</button>`}).join('')+'</div></div>'}).join('');
   return`<div><p class="mut" style="margin-bottom:10px">${t('gearSub')}</p>${sec}
    <p class="mut" style="margin-top:6px">${Object.keys(S.gw).length}/${GEAR.length} ${t('gearOwned')}</p></div>`},
 shop(){const all=!chestPool().length,os=onlySecret();
@@ -242,7 +252,8 @@ upChar(){const n=CH[heroSel].n,lv=S.own[n];if(!lv||lv>=CMAX||!spend(upCost(lv)))
 buyChar(){const c=CH[heroSel];if(S.own[c.n]||c.sec||!spend(PRICE[c.rar]))return;S.own[c.n]=1;persist();render();reveal(heroSel)},
  // one button per piece: buy it (buying also equips), tap again to take it off
  gearDo(id){const g=GBY[id];if(!g)return;
-  if(!S.gw[id]){if(!spend(g.p))return;S.gw[id]=1;sfx('buy');toast(t('got',LANG=='vi'?g.v:g.n))}
+  if(g.ex&&g.ex!==CH[sel].n){toast(t('gearOther',g.ex),1);sfx('err');return}
+  if(!S.gw[id]){if(g.p&&!spend(g.p))return;S.gw[id]=1;sfx('buy');if(g.p)toast(t('got',LANG=='vi'?g.v:g.n))}
   if(S.eq[g.sl]==id)delete S.eq[g.sl];else S.eq[g.sl]=id;
   fixGear(S);persist();render()},
 stat(k){if(!(k in BON))return;if(pts()<=0){toast(t('noPts'),1);sfx('err');return}if(S.st[k]>=SMAX)return;S.st[k]++;persist();sfx('buy');render()},

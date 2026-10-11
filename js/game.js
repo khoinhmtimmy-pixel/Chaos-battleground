@@ -17,7 +17,7 @@ $('mpsel').innerHTML=MAPS.map((m,i)=>'<option value="'+i+'">'+m.n+'</option>').j
 $('rc').value=Math.random().toString(36).slice(2,6);
 // armor (sd of sm) soaks hits first and recharges SHD seconds after the last hit; health never regenerates on its own
 const SHD=3.5,SHR=.22,shOf=c=>(c.boss||c.foe)?0:Math.round(15+c.hp*.3);
-const mk=(ch,x,y,nm,bot)=>{const c=CH[ch],f=bot?.8:1,sm=Math.round(shOf(c)*f);let cg=null;for(const k in c.s)if(c.s[k].chg)(cg=cg||{})[k]=c.s[k].chg;return{cg,x,y,ch,hp:c.hp*f,mx:c.hp*f,sd:sm,sm,sdt:0,k:0,al:1,nm,bot,cd:{a:0,q:0,e:0,r:0},sh:0,sl:0,a:0,dash:null,rt:0,tx:x,ty:y}};
+const mk=(ch,x,y,nm,bot)=>{const c=CH[ch],f=bot?.8:1,sm=Math.round(shOf(c)*f);let cg=null;for(const k in c.s)if(c.s[k].chg)(cg=cg||{})[k]=c.s[k].chg;return{cg,x,y,ch,hp:c.hp*f,mx:c.hp*f,sd:sm,sm,sdt:0,k:0,al:1,nm,bot,cd:{a:0,q:0,e:0,r:0},sh:0,sl:0,a:0,dash:null,rt:0,tn:0,tb:0,tx:x,ty:y}};
 const rs=()=>SP[Math.random()*4|0];
 const all=()=>allC||(allC=[['me',me],...Object.entries(others)]);
 // how far from its centre a fighter can be hit (bosses and big elites are easier to hit, as they look)
@@ -65,6 +65,9 @@ function cast(e,o,d,local){const c=CH[d.c],s=c.s[d.s],ba=d.s=='a'?1:0;if(e){e.rv
  else if(s.k=='blink'){ents.push({t:'a',o,x:d.x,y:d.y,r:28,dmg:0,delay:0,sl:0,col:c.col,age:0,done:0});if(local&&e){e.x=d.tx;e.y=d.ty}
   ents.push({t:'a',o,x:d.tx,y:d.ty,r:28,dmg:0,delay:0,sl:0,col:c.col,age:0,done:0})}
  else if(s.k=='shield'&&local&&e)e.sh=s.dur;else if(s.k=='heal'){if(local&&e)e.hp=Math.min(e.mx,e.hp+s.amt);burst(d.x,d.y,'#7dffb0',26)}else if(s.k=='haste'){if(local&&e){e.hst=s.dur;if(s.sh)e.sh=s.sh}burst(d.x,d.y,c.col,20)}
+  // Titan form: swap in boosted stats, remember the base so tick() can put them back
+  if(s.form&&local&&e){if(!e.tb)e.tb={mx:e.mx,sm:e.sm};e.tn=s.form.dur;e.mx=Math.round(e.mx*(1+(s.form.hp||0)));e.sm=Math.round(e.sm*(1+(s.form.sh||0)));e.sd=Math.min(e.sd,e.sm);e.hp=e.mx;
+   if(s.form.hst)e.hst=s.form.dur;shake=.5;burst(d.x,d.y,c.col,50);burst(d.x,d.y,'#ffffff',30);ann(c.n.toUpperCase()+" FORM!",c.col)}
  else if(s.k=='cone'){let dm=s.dmg,r=s.r,arc=s.arc,emp=0;
   // passive combo: every third basic swing is a bigger, harder cut
   if(c.pas&&ba&&e){e.cmb=(e.cmb||0)%3+1;if(e.cmb==3){dm*=c.pas.x3;r*=1.25;arc=Math.min(6.3,arc*1.35);emp=1}}
@@ -78,7 +81,7 @@ function cast(e,o,d,local){const c=CH[d.c],s=c.s[d.s],ba=d.s=='a'?1:0;if(e){e.rv
 // d lands on armor first; returns what reached health. q = quiet (burn / zone ticks)
 function dmgTo(e,d,q){e.sdt=SHD;let a=0;if(e.sd>0){a=Math.min(e.sd,d);e.sd-=a;if(e.sd<=0){e.sd=0;if(!q||e===me){burst(e.x,e.y-6,'#9fd8ff',16);say(e.x,e.y-58,'SHIELD BREAK','#9fd8ff');if(e===me)sfx('brk')}}}e.hp-=d-a;return d-a}
 function hurt(id,e,dmg,sl,o,x){if(!e.al||(dmg<=0&&!x))return;if(raid&&e.raidE&&raid.fid[o])return;if(tmode){const o1=ent(o);if(o1&&o1!==e&&o1.tm===e.tm)return}
- const ow=ent(o);let mul=1,crit=0;if(ow&&ow.awt>0)mul*=1.6;if(ow&&ow.dmgMul)mul*=ow.dmgMul;if(o=='me'&&raid)mul*=raid.dm;
+ const ow=ent(o);let mul=1,crit=0;if(ow&&ow.awt>0)mul*=1.6;if(ow&&ow.dmgMul)mul*=ow.dmgMul;if(ow&&ow.tn)mul*=ow.tn;if(o=='me'&&raid)mul*=raid.dm;
  // the attacker's own client settles what a landed hit gives back: passive combo heal, per-skill lifesteal
  if(ow&&ow.al&&x&&dmg>0&&!(e.sh>0)&&(o=='me'||ow.bot||ow.loc)){const pc=CH[ow.ch].pas;if(pc&&x.ba){ow.hc=(ow.hc||0)+1;if(ow.hc>=pc.n){ow.hc=0;heal(ow,ow.mx*pc.heal)}}if(x.ls)heal(ow,dmg*mul*x.ls)}
  if(!(id=='me'||e.bot||e.loc)){if(dmg>0&&!(e.sh>0)){num(e.x,e.y-20,dmg*mul);FX('hit',e.x,e.y-6,14,'#ffffff',.18,Math.random()*6)}return}if(e.sh>0)return;dmg*=mul;
@@ -130,6 +133,8 @@ function decal(x,y,r,col,g){const big=r>=40;decals.push({x,y,r:r*(.8+Math.random
  for(let i=0;i<Math.min(14,r/5);i++){const a=Math.random()*6.283,d=Math.random()*r*.8;P(x+Math.cos(a)*d,y+Math.sin(a)*d,(Math.random()-.5)*14,-18-Math.random()*30,1.1+Math.random()*1.2,col,2+Math.random()*3)}}
 function awaken(){if(!me||!me.al||me.awt>0||(me.aw||0)<100)return;me.aw=0;me.awt=15;shake=.45;say(me.x,me.y-64,'AWAKENING!','#ffe14d');burst(me.x,me.y,'#ffe14d',40);burst(me.x,me.y,'#ffffff',20);sendPres()}
 function tick(id,e,dt){e.stn=Math.max(0,(e.stn||0)-dt);e.hst=Math.max(0,(e.hst||0)-dt);if(id=='me')e.awt=Math.max(0,(e.awt||0)-dt);
+ // Titan form (s.form): damage multiplier while active, base stats restored when it runs out
+ if(e.tn>0){e.tn-=dt;if(e.tn<=0){e.tn=0;if(e.tb){e.mx=e.tb.mx;e.sm=e.tb.sm;e.tb=0}e.hp=Math.min(e.hp,e.mx);burst(e.x,e.y,'#fff',14)}}
  if(e.sm>0&&e.al){const k=id=='me'&&raid?raid.sr:1;e.sdt-=dt*k;if(e.sdt<=0&&e.sd<e.sm)e.sd=Math.min(e.sm,e.sd+e.sm*SHR*k*dt)}
  if(e.brn>0&&e.al){e.brn-=dt;dmgTo(e,e.bd*dt,1);if(Math.random()<dt*14)P(e.x+(Math.random()-.5)*14,e.y-6,0,-50,.4,'#ff8a3c',4);
   if(e.hp<=0){if(id=='me'){lastHit=e.bo;die()}else slay(e,e.bo)}}}
@@ -169,7 +174,7 @@ function update(dt){if(choice)return;allC=null;matchT+=dt;
   if(e.cg)for(const k in e.cg){const sk=CH[e.ch].s[k];if(e.cg[k]<sk.chg&&e.cd[k]<=0){e.cg[k]++;if(e.cg[k]<sk.chg)e.cd[k]=sk.cd}}
   if(id=='me'||e.bot||e.loc)tick(id,e,dt);if(e.awt>0&&e.al&&Math.random()<dt*40)P(e.x+(Math.random()-.5)*24,e.y+10,(Math.random()-.5)*20,-90,.5,'#ffe14d',3)}
  if(me.al){if(me.dash){const d=me.dash;d.t+=dt/.15;const u=Math.min(1,d.t);me.x=d.x0+(d.x1-d.x0)*u;me.y=d.y0+(d.y1-d.y0)*u;if(u>=1)me.dash=null}
-  else if(!(me.stn>0)&&!(me.van>0)){let dx=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0)+joy.x,dy=(keys.s||keys.arrowdown?1:0)-(keys.w||keys.arrowup?1:0)+joy.y;const l=Math.max(1,Math.hypot(dx,dy)),sp=CH[me.ch].sp*(me.sl>0?.5:1)*(me.hst>0?1.6:1)*(me.awt>0?1.3:1)*(raid?raid.sp:1);move(me,dx/l*sp*dt,dy/l*sp*dt)}
+  else if(!(me.stn>0)&&!(me.van>0)){let dx=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0)+joy.x,dy=(keys.s||keys.arrowdown?1:0)-(keys.w||keys.arrowup?1:0)+joy.y;const l=Math.max(1,Math.hypot(dx,dy)),sp=CH[me.ch].sp*(me.sl>0?.5:1)*(me.hst>0?1.6:1)*(me.awt>0?1.3:1)*(me.tn>0?1.35:1)*(raid?raid.sp:1);move(me,dx/l*sp*dt,dy/l*sp*dt)}
   if(mouse.down||keys.f)tryCast(me,'me','a',mouse.x,mouse.y)}
  else if(!raid){me.rt-=dt;if(me.rt<=0)respawn(me)}
  for(const id in others){const e=others[id];
@@ -190,7 +195,13 @@ function update(dt){if(choice)return;allC=null;matchT+=dt;
   if(bd<380){if(Math.random()<dt*1.6)tryCast(e,id,'a',t.x,t.y);if(Math.random()<dt*.18)tryCast(e,id,'q',t.x,t.y);if(Math.random()<dt*.08)tryCast(e,id,'r',t.x,t.y)}
   if(Math.random()<dt*.12||(e.hp<30&&Math.random()<dt*.5))tryCast(e,id,'e',t.x,t.y)}
  for(const q of ents){if(q.t!='p'&&q.t!='a'){upd2(q,dt);continue}if(q.t=='p'){if(q.home){let t=null,bd=1e9;for(const [i2,o] of all())if(i2!=q.o&&o.al&&!ally(q.o,o)){const d=Math.hypot(o.x-q.x,o.y-q.y);if(d<bd){bd=d;t=o}}if(t){const sp=Math.hypot(q.vx,q.vy),a=Math.atan2(q.vy,q.vx);let da=Math.atan2(t.y-q.y,t.x-q.x)-a;da=Math.atan2(Math.sin(da),Math.cos(da));const na=a+Math.max(-1,Math.min(1,da))*4*dt;q.vx=Math.cos(na)*sp;q.vy=Math.sin(na)*sp}}
-   q.x+=q.vx*dt;q.y+=q.vy*dt;q.life-=dt;if(Math.random()<Q.tr)P(q.x,q.y,(Math.random()-.5)*50,(Math.random()-.5)*50,.3,q.col,q.r*.6);if(q.x<0||q.x>W||q.y<0||q.y>H||hitPil(q.x,q.y,q.r))q.life=0;
+   q.x+=q.vx*dt;q.y+=q.vy*dt;
+    // Infinity (pas.inf): incoming shots converge and stall as they close in on the caster
+    for(const [id,e] of all()){if(id==q.o||!e.al||ally(q.o,e))continue;const inf=CH[e.ch].pas&&CH[e.ch].pas.inf;if(!inf)continue;
+     const d=Math.hypot(e.x-q.x,e.y-q.y);if(d>inf)continue;
+     const k=Math.max(0,Math.min(1,(d-22)/inf));q.vx*=k;q.vy*=k;
+     if(Math.random()<dt*14)P(q.x,q.y,0,0,.3,'#c7d2fe',q.r*.5)}
+    q.life-=dt;if(Math.random()<Q.tr)P(q.x,q.y,(Math.random()-.5)*50,(Math.random()-.5)*50,.3,q.col,q.r*.6);if(q.x<0||q.x>W||q.y<0||q.y>H||hitPil(q.x,q.y,q.r))q.life=0;
    if(q.life>0)for(const [id,e] of all()){if(id==q.o||!e.al||ally(q.o,e))continue;if(Math.hypot(e.x-q.x,e.y-q.y)<q.r+hr(e)){if(q.h&&q.h[id])continue;if(q.pierce)(q.h=q.h||{})[id]=1;else q.life=0;burst(q.x,q.y,q.col,12);decal(q.x,q.y,10,q.col);hurt(id,e,q.dmg,q.sl,q.o,q);if(!q.pierce)break}}}
   else{q.age+=dt;if(q.fol&&!q.done){const t=ent(q.fol);if(t&&t.al){q.x=t.x;q.y=t.y}}if(q.mine&&!q.done&&q.age>.7)for(const [id,e] of all())if(id!=q.o&&e.al&&!ally(q.o,e)&&Math.hypot(e.x-q.x,e.y-q.y)<q.r*.8+hr(e))q.delay=q.age;if(!q.done&&q.age>=q.delay){q.done=1;if(q.dmg>0){burst(q.x,q.y,q.col,q.r>60?32:14);if(q.dmg>30)shake=.35;decal(q.x,q.y,q.r,q.col)}else burst(q.x,q.y,q.col,8);for(const [id,e] of all())if(id!=q.o&&e.al&&Math.hypot(e.x-q.x,e.y-q.y)<q.r+hr(e)){if(q.dmg>0)hurt(id,e,q.dmg,q.sl,q.o,q)}
     if(q.tp){const oe=ent(q.o);if(oe){oe.van=0;if(q.o=='me'||oe.bot||oe.loc){const a=Math.atan2(q.y-oe.y,q.x-oe.x);oe.x=q.x-Math.cos(a)*34;oe.y=q.y-Math.sin(a)*34;move(oe,0,0);if(q.hl)heal(oe,oe.mx*q.hl)}FX('tp',q.x,q.y,30,q.col,.45)}}}
