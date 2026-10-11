@@ -11,6 +11,8 @@ const TX={vi:{tapStart:'NHẤN ĐỂ BẮT ĐẦU',login:'Đăng nhập',registe
   gearSub:'3 chỗ: đầu · vùi người · hào quang. Chỉ áp dụng cho Màn chơi và Raid, đấu PvP luôn cân bằng.',
   slHead:'Đầu',slCharm:'Vùi người',slAura:'Hào quang',gearOwned:'Đã sở hữu',gearWear:'Trang bị',gearTakeOff:'Tháo ra',
   gearEquip:'Mặc',gearEquipped:'✔ Đang mặc',gearAll:'Đã có hết phụ kiện!',gearBon:'Cộng thêm',gearOther:'Dấu ấn riêng của {0} — bạn phải chọn nhân vật đó',
+  dark:'Bóng tối Halloween',darkNote:'Chỉ trong Màn chơi và Raid. Quái vẫn gây sát thương khi bạn không nhìn thấy.',
+  evOver:'Halloween đã kết thúc',evDays:'Halloween còn {0} ngày',candy:'Kẹo',hChest:'Rương Halloween',hLeft:'Rương Halloween còn {0} ngày',hOver:'Rương Halloween đã đóng',
  campaign:'CHIẾN DỊCH',raid:'RAID VÔ TẬN',arena:'ĐẤU TRƯỜNG',play:'CHƠI ▶',open:'MỞ ▶',stage:'Màn',campDone:'Đã phá đảo! Chơi lại để cày vàng và XP',raidSub:'Kỷ lục: tầng {0} · phòng {1}',raidNew:'Leo tầng không giới hạn, boss mỗi 5 phòng',raidLock:'🔒 Qua màn 1-3 để mở khoá',arenaCard:'Đấu bot · 2v2 · Online PvP',change:'Đổi nhân vật',
  daily:'Quà hằng ngày',dailyd:'Đăng nhập mỗi ngày để nhận vàng. Chuỗi ngày càng dài, quà càng lớn (tối đa 7 ngày).',claim:'Nhận 🪙 {0}',claimed:'Đã nhận hôm nay · chuỗi {0} ngày',nextBuffs:'Buff cho lượt kế',noBuff:'Chưa có, mua ở Cửa hàng',
  rar0:'Cơ bản',rar1:'Hiếm',rar2:'Sử thi',rar3:'Huyền thoại',rar4:'BÍ ẨN',nQuests:'Nhiệm vụ',locked:'Chưa mở khoá',start:'BẮT ĐẦU',stInfo:'{0} phòng',first:'lần đầu ×2',stars3:'3★: không hồi sinh và còn từ 50% máu',
@@ -34,6 +36,8 @@ en:{tapStart:'TAP TO START',login:'Log in',register:'Sign up',username:'Username
   gearSub:'3 slots: head · charm · aura. Applies to Stages and Raid only; PvP is always even.',
   slHead:'Head',slCharm:'Charm',slAura:'Aura',gearOwned:'Owned',gearWear:'Wear',gearTakeOff:'Take off',
   gearEquip:'Equip',gearEquipped:'✔ Equipped',gearAll:'You own every accessory!',gearBon:'Bonus',gearOther:"{0}'s own sigil — pick that hero to wear it",
+  dark:'Halloween darkness',darkNote:'Stages and Raid only. Enemies still hit you when you cannot see them.',
+  evOver:'Halloween has ended',evDays:'Halloween: {0} days left',candy:'Candy',hChest:'Halloween Chest',hLeft:'Halloween Chest: {0} days left',hOver:'The Halloween Chest is closed',
  campaign:'CAMPAIGN',raid:'ENDLESS RAID',arena:'ARENA',play:'PLAY ▶',open:'OPEN ▶',stage:'Stage',campDone:'Campaign cleared! Replay to farm gold and XP',raidSub:'Best: floor {0} · room {1}',raidNew:'Climb forever, a boss every 5 rooms',raidLock:'🔒 Clear stage 1-3 to unlock',arenaCard:'Bots · 2v2 · Online PvP',change:'Change hero',
  daily:'Daily gift',dailyd:'Log in every day for gold. Longer streaks pay more (up to 7 days).',claim:'Claim 🪙 {0}',claimed:'Claimed today · {0} day streak',nextBuffs:'Buffs for next run',noBuff:'None yet, buy in the Shop',
  rar0:'Basic',rar1:'Rare',rar2:'Epic',rar3:'Legendary',rar4:'SECRET',nQuests:'Quests',locked:'Locked',start:'START',stInfo:'{0} rooms',first:'first clear ×2',stars3:'3★: no revive and at least 50% health left',
@@ -74,7 +78,7 @@ const MAXL=100,SMAX=25,CMAX=10,RICH=9999999,BON={hp:.04,sh:.048,dm:.032,sp:.012}
 // 51-100 switches to a much flatter one, because the old 4*l^2 asked 42,224 XP at level 99
 // (roughly 7x everything level 1-50 costs, and ~32 stage-50 replays for a single level).
 const need=l=>l<=50?50+30*l+4*l*l:3800+100*(l-50)+3*(l-50)*(l-50),upCost=l=>100*l,reviveCost=r=>r.mode=='stage'?40+6*r.stage:60+40*r.floor;
-const fresh=()=>({v:1,lvl:1,xp:0,gold:200,st:{hp:0,sh:0,dm:0,sp:0},own:{Ren:1,Kaen:1,Yuki:1,Sakura:1},sel:'Ren',stage:1,stars:{},raid:0,rb:0,kills:0,q:{},pb:[],gw:{},eq:{},daily:'',streak:0,wins:0,ts:0});
+const fresh=()=>({v:1,lvl:1,xp:0,gold:200,st:{hp:0,sh:0,dm:0,sp:0},own:{Ren:1,Kaen:1,Yuki:1,Sakura:1},sel:'Ren',stage:1,stars:{},raid:0,rb:0,kills:0,q:{},pb:[],gw:{},eq:{},candy:0,dk:0,daily:'',streak:0,wins:0,ts:0});
 // quests: k = which counter, n = target, g = gold reward or hero = the secret hero it unlocks
 const QUESTS=[{id:'w1',ic:'⚔️',k:'wins',n:1,g:100},{id:'w10',ic:'⚔️',k:'wins',n:10,g:400},{id:'w30',ic:'⚔️',k:'wins',n:30,g:1000},{id:'w100',ic:'👑',k:'wins',n:100,hero:'Kaiser'},
  {id:'r2',ic:'🏰',k:'rf',n:2,g:300},{id:'r3',ic:'🏰',k:'rf',n:3,g:700},{id:'r5',ic:'🐲',k:'rb',n:5,hero:'Drakon'},
@@ -91,7 +95,8 @@ function fix(s){s=Object.assign(fresh(),s&&typeof s=='object'?s:{});s.lvl=clamp(
  const st=s.st||{};s.st={hp:clamp(st.hp|0,0,SMAX),sh:clamp(st.sh|0,0,SMAX),dm:clamp(st.dm|0,0,SMAX),sp:clamp(st.sp|0,0,SMAX)};if(s.st.hp+s.st.sh+s.st.dm+s.st.sp>s.lvl-1)s.st={hp:0,sh:0,dm:0,sp:0};
  const own={},o=s.own||{};for(const i of NORM){const n=CH[i].n;if(o[n])own[n]=clamp(o[n]|0,1,CMAX)}for(const n of START)own[n]=own[n]||1;s.own=own;if(!own[s.sel])s.sel=START[0];
  s.stage=clamp(s.stage|0,1,NSTAGE+1);const sr={};for(let i=1;i<=NSTAGE;i++){const v=s.stars&&s.stars[i]|0;if(v>0)sr[i]=Math.min(3,v)}s.stars=sr;s.raid=Math.max(0,s.raid|0);
- s.rb=clamp(s.rb|0,0,99);s.kills=Math.max(0,s.kills|0);const q={};if(s.q&&typeof s.q=='object')for(const x of QUESTS)if(s.q[x.id])q[x.id]=1;s.q=q;
+ s.candy=clamp(Math.round(+s.candy||0),0,9999999);s.dk=s.dk?1:0;
+s.rb=clamp(s.rb|0,0,99);s.kills=Math.max(0,s.kills|0);const q={};if(s.q&&typeof s.q=='object')for(const x of QUESTS)if(s.q[x.id])q[x.id]=1;s.q=q;
  s.pb=(Array.isArray(s.pb)?s.pb:[]).filter(n=>BUFFS.some(b=>b.n==n&&!b.run)).slice(0,3);s.daily=String(s.daily||'').slice(0,10);s.streak=Math.max(0,s.streak|0);s.wins=Math.max(0,s.wins|0);s.ts=+s.ts||0;fixGear(s);return s}
 // accessories: drop unknown ids, and only keep an equipped piece if it is actually owned in that slot
 function fixGear(s){const gw={},g=s.gw;if(g&&typeof g=='object')for(const k in GBY)if(g[k])gw[k]=1;s.gw=gw;
@@ -208,9 +213,11 @@ gear(){const slName={head:'slHead',charm:'slCharm',aura:'slAura'},cur=gearMul(),
       ${x.ex?`<span class="lvb sig">${x.ex===CH[sel].n?(on?'✔':'Dấu ấn'):'🔒 '+x.ex}</span>`:on?`<span class="lvb">${t('gearEquipped')}</span>`:o?`<span class="lvb">${t('gearWear')}</span>`:`<span class="lvb">🪙 ${fmt(x.p)}</span>`}</button>`}).join('')+'</div></div>'}).join('');
   return`<div><p class="mut" style="margin-bottom:10px">${t('gearSub')}</p>${sec}
    <p class="mut" style="margin-top:6px">${Object.keys(S.gw).length}/${GEAR.length} ${t('gearOwned')}</p></div>`},
-shop(){const all=!chestPool().length,os=onlySecret();
+shop(){const all=!chestPool().length,os=onlySecret(),hv=evOn(),hl=HLEFT();
  return`<div><div class="shop">${[0,1].map(k=>`<div class="card item c${k+1}"><div class="big">${k?'💎':'🎁'}</div><h3>${t('chest'+(k+1))}</h3><p class="mut">${all?t('allOwned'):os?t('chestLeft',CHEST[k].sec,Math.round(CHEST[k].cost*.6)):t('chest'+(k+1)+'d')}</p><button class="btn${all||S.gold<CHEST[k].cost?' off':''}" data-a="chest" data-v="${k}">🪙 ${CHEST[k].cost}</button></div>`).join('')}
- <div class="card item"><div class="big">🎲</div><h3>${t('lucky')}</h3><p class="mut">${t('luckyd')}</p>${buffRow()}<button class="btn purple${S.gold<LUCKY||S.pb.length>=3?' off':''}" data-a="lucky">🪙 ${LUCKY}</button></div>
+ <div class="card item${hv?'':' evoff'}"><div class="big">🎃</div><h3>${t('hChest')}</h3><p class="mut">${hv?(hl.length?t('chestLeft',hl.length,HCHEST.cost):t('allOwned')):t('hOver')}</p><button class="btn${hv&&hl.length&&S.gold>=HCHEST.cost?'':' off'}" data-a="hchest">🪙 ${HCHEST.cost}</button></div>
+  <div class="card item"><div class="big">${EV.candyIc}</div><h3>${t('candy')}</h3><p class="mut">${S.candy} 🍬 · ${t('lucky')}</p>${buffRow()}<button class="btn purple${S.candy<HCHEST.buff||S.pb.length>=3?' off':''}" data-a="candy">${EV.candyIc} ${HCHEST.buff}</button></div>
+  <div class="card item"><div class="big">🎲</div><h3>${t('lucky')}</h3><p class="mut">${t('luckyd')}</p>${buffRow()}<button class="btn purple${S.gold<LUCKY||S.pb.length>=3?' off':''}" data-a="lucky">🪙 ${LUCKY}</button></div>
  <div class="card item"><div class="big">📅</div><h3>${t('daily')}</h3><p class="mut">${t('dailyd')}</p>${dailyCard()}</div></div><p class="mut" style="margin-top:10px">${t('owned',Object.keys(S.own).length,NORM.length)}</p></div>`},
 quests(){const l=QUESTS.map(q=>{const v=Math.min(q.n,qVal(q.k)),done=S.q[q.id],ok=v>=q.n,h=q.hero&&CH[chi(q.hero)];return[done?2:ok?0:1,`<div class="card qrow${h?' qsec':''}${done?' qdone':''}">${h?`<img data-p="${chi(q.hero)}|96" alt=""${S.own[q.hero]?'':' style="filter:brightness(0) opacity(.6)"'}>`:`<span class="qi">${q.ic}</span>`}
  <div class="qm"><b>${questText(q)}</b><div class="xp"><i style="width:${v/q.n*100}%"></i><span>${fmt(v)} / ${fmt(q.n)}</span></div><span class="mut">${h?`<span class="rar r4">${t('rar4')}</span> · ${S.own[q.hero]?h.n+' · '+h.t:'???'}`:'🪙 '+fmt(q.g)}</span></div>
@@ -220,7 +227,7 @@ quests(){const l=QUESTS.map(q=>{const v=Math.min(q.n,qVal(q.k)),done=S.q[q.id],o
 function enterHub(){sel=chi(S.sel);if(sel<0||!NORM.includes(sel))sel=NORM[0];heroSel=sel;$('nm').value=ACC.name;chapSel=clamp((Math.min(S.stage,NSTAGE)-1)/10|0,0,CHAP.length-1);stSel=Math.min(S.stage,NSTAGE);page='home';show('s-hub');render();if(!LS.get('cb_seen',0)){LS.set('cb_seen',1);ACT.howto()}}
 function spend(n){if(S.gold<n){toast(t('noGold'),1);sfx('err');return false}S.gold-=n;return true}
 // heroes a chest can still give: the regular roster plus the chest-only secrets
-const chestPool=()=>NORM.filter(i=>!S.own[CH[i].n]&&CH[i].sec!='quest'),onlySecret=()=>{const p=chestPool();return p.length>0&&p.every(i=>CH[i].sec)};
+const chestPool=()=>NORM.filter(i=>!S.own[CH[i].n]&&CH[i].sec!='quest'&&CH[i].sec!='halloween'),onlySecret=()=>{const p=chestPool();return p.length>0&&p.every(i=>CH[i].sec)};
 function roll(k){const un=chestPool();if(!un.length)return-1;if(un.every(i=>CH[i].sec))return Math.random()*100<CHEST[k].sec?un[Math.random()*un.length|0]:-2;
  const w=CHEST[k].w.map((x,r)=>un.some(i=>CH[i].rar==r)?x:0),tot=w.reduce((a,b)=>a+b,0);let x=Math.random()*tot,r=0;while(x>=w[r]&&r<w.length-1){x-=w[r];r++}const pool=un.filter(i=>CH[i].rar==r);return pool[Math.random()*pool.length|0]}
 function reveal(i){const c=CH[i],b=$('md-x-body');b.className='sheet reveal'+(c.rar==4?' s4':'');b.style.setProperty('--rc','var(--r'+c.rar+')');b.innerHTML=`<div class="ray"></div><div class="rar r${c.rar}">${t('newHero')} · ${t('rar'+c.rar)}</div><img src="${portrait(i,300)}" alt=""><h3>${c.n}</h3><div class="mut">${c.t}</div><div class="hact"><button class="btn green" data-a="useNew" data-v="${i}">${t('useNow')}</button><button class="btn ghost" data-a="close">OK</button></div>`;modal('md-x');sfx('win')}
@@ -239,6 +246,7 @@ authtab(v){authMode=v;document.querySelectorAll('#authf .tab').forEach(b=>b.clas
 guest(){ACC={name:'Guest'+(100+Math.random()*900|0),role:'user',mode:'guest'};const old=LS.get('cb_gname',null);if(old)ACC.name=old;else LS.set('cb_gname',ACC.name);LS.set('cb_acc',ACC);loadSave(null);enterHub()},
 go(v){page=v;render();$('page').scrollTop=0},lang(){setLang(LANG=='vi'?'en':'vi')},close(){modal(null)},arena(){modal('md-arena')},
 settings(){$('st-lang').value=LANG;$('st-vol').value=Math.round(SFX.vol*100);$('st-q').value=qset;$('st-admin').hidden=ACC.role!='admin';
+  const row=$('st-darkrow');if(row){row.hidden=!evOn();$('st-dark').checked=!!S.dk}
  $('st-acc').innerHTML=`<b>${esc(ACC.name)}</b> · ${t(ACC.mode=='cloud'?'accCloud':ACC.mode=='device'?'accDev':'accGuest')}${ACC.mode=='guest'?`<br><button class="btn sm green" data-a="toAuth" style="margin-top:6px">${t('mkAcc')}</button>`:''}`;modal('md-set')},
 toAuth(){modal(null);ACT.authtab('register');show('s-auth')},
 logout(){push(1);ACC=null;S=null;LS.del('cb_acc');modal(null);$('au').value=$('ap').value=$('ap2').value='';ACT.authtab('login');show('s-auth')},
@@ -251,7 +259,18 @@ pick(){if(S.own[CH[heroSel].n]&&heroSel!=sel){setSel(heroSel);render()}},
 useNew(v){setSel(+v);modal(null);render()},
 upChar(){const n=CH[heroSel].n,lv=S.own[n];if(!lv||lv>=CMAX||!spend(upCost(lv)))return;S.own[n]=lv+1;persist();sfx('buy');toast(t('upDone',n,lv+1));render()},
 buyChar(){const c=CH[heroSel];if(S.own[c.n]||c.sec||!spend(PRICE[c.rar]))return;S.own[c.n]=1;persist();render();reveal(heroSel)},
- // one button per piece: buy it (buying also equips), tap again to take it off
+ // Trick-or-Treat chest. Gated on the window, but anything already owned stays yours.
+ hchest(){if(!evOn()){toast(t('hOver'),1);sfx('err');return}
+  if(!HLEFT().length||!spend(HCHEST.cost))return;
+  const got=[];const c=HCHEST.lo+Math.round(Math.random()*(HCHEST.hi-HCHEST.lo));
+  S.candy+=c;got.push(c+' 🍬');
+  const pool=HLEFT();
+  if(pool.length&&Math.random()<HCHEST.chance){const i=pool[Math.floor(Math.random()*pool.length)];
+   S.own[CH[i].n]=1;got.push(CH[i].n);persist();render();reveal(i);return}
+  persist();render();toast(t('got',got.join(' · ')));sfx('buy')},
+ candy(){if(S.candy<HCHEST.buff||S.pb.length>=3)return;S.candy-=HCHEST.buff;
+  const pool=BUFFS.filter(b=>!b.run&&S.pb.indexOf(b.n)<0);if(!pool.length)return;
+  S.pb.push(pool[Math.floor(Math.random()*pool.length)].n);persist();render();sfx('buy')},
  gearDo(id){const g=GBY[id];if(!g)return;
   if(g.ex&&g.ex!==CH[sel].n){toast(t('gearOther',g.ex),1);sfx('err');return}
   if(!S.gw[id]){if(g.p&&!spend(g.p))return;S.gw[id]=1;sfx('buy');if(g.p)toast(t('got',LANG=='vi'?g.v:g.n))}
@@ -322,6 +341,7 @@ $('st-lang').onchange=e=>{setLang(e.target.value);ACT.settings()};
 $('st-vol').oninput=e=>{SFX.vol=e.target.value/100;LS.set('cb_vol',SFX.vol)};$('st-vol').onchange=()=>sfx('coin');
 $('st-q').onchange=e=>{qset=+e.target.value;LS.set('cb_q',qset);qa.lock=qa.trial=0;setQ(qset<0?(touch?1:0):qset)};
 $('aa').onchange=e=>LS.set('cb_aa',e.target.checked?1:0);
+$('st-dark').onchange=e=>{S.dk=e.target.checked?1:0;persist();};
 // boot
 qset=LS.get('cb_q',-1);setQ(qset<0?(touch?1:0):qset);$('aa').checked=!!LS.get('cb_aa',1);setLang(LANG);
 $('parade').innerHTML=BASE.slice().sort(()=>Math.random()-.5).slice(0,innerWidth<520?3:5).map(i=>`<img src="${portrait(i,168)}" alt="">`).join('');

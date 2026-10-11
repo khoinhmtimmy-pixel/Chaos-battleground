@@ -237,6 +237,40 @@ function scoreboard(){const t0=teamScore(me.tm),t1=teamScore(1-me.tm),mm=Math.fl
  ctx.fillStyle='#fff';ctx.textAlign='center';ctx.font='900 22px system-ui';ctx.fillText(t0,cx-61,y+22);ctx.fillText(t1,cx+61,y+22);ctx.font='900 14px system-ui';ctx.fillText(tt,cx,y+20);ctx.font='bold 9px system-ui';ctx.fillStyle='#ccd';ctx.fillText('FIRST TO 10 KOs',cx,y+45)}
 function hudFeed(){let y=54;ctx.textAlign='right';for(const f of kf){ctx.globalAlpha=Math.min(1,f.l);ctx.font='bold 12px system-ui';const t=f.a+'  ⚔  '+f.b,w=t.length*6.6+18;ctx.fillStyle='rgba(27,16,48,.85)';ctx.beginPath();ctx.roundRect(cw-w-8,y-13,w,21,8);ctx.fill();ctx.fillStyle=tmode?(f.ta===me.tm?'#9ccbff':'#ff9a9a'):'#fff';ctx.fillText(t,cw-17,y+2);y+=25}ctx.globalAlpha=1;
  let ay=chh*.22;for(const a of an){const age=a.m-a.l,sc=age<.2?1.7-age*3.5:1;ctx.save();ctx.translate(cw/2,ay);ctx.scale(sc,sc);ctx.globalAlpha=Math.min(1,a.l*2);ctx.font='900 32px system-ui';ctx.textAlign='center';ctx.lineWidth=8;ctx.lineJoin='round';ctx.strokeStyle='#1b1030';ctx.strokeText(a.s,0,0);ctx.fillStyle=a.c;ctx.fillText(a.s,0,0);ctx.restore();ay+=40}ctx.globalAlpha=1}
+// ---- Halloween darkness. Off unless the player turns it on, and only while the event window
+// is open. The hero keeps a small bubble of light plus a cone along the aim, so anything that
+// can hit you from the dark is always at least a few steps inside your bubble.
+let DK=null;
+const darkOn=()=>!!(evOn()&&S.dk&&run&&!R&&!tmode);
+function drawDark(){
+ if(!darkOn())return;
+ const dw=Math.max(1,Math.ceil(cw*dpr)),dh=Math.max(1,Math.ceil(chh*dpr));
+ if(!DK||DK.width!=dw||DK.height!=dh){DK=document.createElement('canvas');DK.width=dw;DK.height=dh}
+ const x=DK.getContext('2d');
+ x.setTransform(1,0,0,1,0,0);x.clearRect(0,0,dw,dh);
+ x.fillStyle='rgba(3,2,10,.95)';x.fillRect(0,0,dw,dh);
+ x.globalCompositeOperation='destination-out';
+ const S2=dpr*K,pw=(v)=>(v-cam.x)*S2;
+ const hole=(cx,cy,r,a)=>{if(r<=0)return;const g=x.createRadialGradient(cx,cy,0,cx,cy,r);
+  g.addColorStop(0,'rgba(0,0,0,'+a+')');g.addColorStop(.55,'rgba(0,0,0,'+(a*.72)+')');g.addColorStop(1,'rgba(0,0,0,0)');
+  x.fillStyle=g;x.beginPath();x.arc(cx,cy,r,0,7);x.fill()};
+ const px=pw(me.x),py=(me.y-cam.y)*S2;
+ hole(px,py,88*S2,1);
+ const cl=320*S2,ha=.58;
+ x.save();x.beginPath();x.moveTo(px,py);x.arc(px,py,cl,me.a-ha,me.a+ha);x.closePath();x.clip();
+ const cg=x.createRadialGradient(px,py,0,px,py,cl);
+ cg.addColorStop(0,'rgba(0,0,0,1)');cg.addColorStop(.7,'rgba(0,0,0,.8)');cg.addColorStop(1,'rgba(0,0,0,0)');
+ x.fillStyle=cg;x.fillRect(px-cl,py-cl,cl*2,cl*2);x.restore();
+ for(const L of LIGHTS){const lx=pw(L[0]),ly=(L[1]-cam.y)*S2;
+  if(lx<-140||lx>dw+140||ly<-140||ly>dh+140)continue;
+  hole(lx,ly,L[2]*S2,.9);
+  const fl=.86+.14*Math.sin(tm*7+L[0]*.1);
+  x.globalCompositeOperation='source-over';
+  x.fillStyle='rgba(255,170,60,'+(.1*fl)+')';x.beginPath();x.arc(lx,ly,L[2]*S2*.7,0,7);x.fill();
+  x.globalCompositeOperation='destination-out';}
+ x.globalCompositeOperation='source-over';
+ ctx.drawImage(DK,0,0,cw,chh);
+}
 function draw(){
  allC=null;drawWorld();
  ctx.setTransform(dpr,0,0,dpr,0,0);
@@ -244,6 +278,7 @@ function draw(){
   VR=ctx.createRadialGradient(cw/2,chh/2,Math.min(cw,chh)*.3,cw/2,chh/2,Math.max(cw,chh)*.7);VR.addColorStop(0,'rgba(255,0,0,0)');VR.addColorStop(1,'rgba(255,20,40,.75)');
   VB=ctx.createRadialGradient(cw/2,chh/2,Math.min(cw,chh)*.35,cw/2,chh/2,Math.max(cw,chh)*.7);VB.addColorStop(0,'rgba(120,200,255,0)');VB.addColorStop(1,'rgba(120,200,255,.6)')}
  ctx.fillStyle=VG;ctx.fillRect(0,0,cw,chh);
+  drawDark();
  if(me.al&&me.hp<me.mx*.3){ctx.globalAlpha=(.45+.25*Math.sin(tm*7))*(1-me.hp/(me.mx*.3)*.6);ctx.fillStyle=VR;ctx.fillRect(0,0,cw,chh);ctx.globalAlpha=1}
  if(raid)hudRun();else hudPvp();
  const sk=CH[me.ch].s;

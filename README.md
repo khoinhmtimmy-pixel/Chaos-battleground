@@ -36,6 +36,17 @@ Khi chưa làm bước này game vẫn chạy bình thường, nhưng tài kho�
 
 Sau đó màn hình đăng nhập ghi "☁️ Lưu cloud": người chơi đăng ký một lần, đăng nhập ở máy nào cũng giữ nguyên tiến trình.
 
+## Sự kiện Halloween (có thời hạn)
+
+Toàn bộ nội dung theo mùa nằm sau cổng thời gian `EV` trong `js/data.js` (`s` / `e`, mặc định 20/10 – 02/11). Hết hạn thì các nút biến mất và chế độ tự ngủ — **nhưng không xoá gì cả**: kẹo đã kiếm, dấu ấn, nhân vật đã sở hữu và bóng tối đã bật vẫn giữ nguyên, không ai bị mất tiến trình giữa chừng.
+
+- **Bóng tối**: bật trong ⚙️ Cài đặt (mặc định **tắt**), chỉ có tác dụng ở Màn chơi và Raid. Nhân vật luôn có một bong bóng sáng nhỏ quanh mình cộng hình nón đèn pin theo hướng ngắm; đèn lồng tĩnh rải khắp bản đồ. Quái trong bóng tối **vẫn gây sát thương** — đó là chủ ý, nhưng mọi thứ đứng sát bạn đều nằm trong bong bóng sáng nên không có ẩn cấp bất công. Vẽ bằng một canvas phụ, khoét lỗ bằng `destination-out`.
+- **Rương Trick-or-Treat**: 2.000 vàng ở Cửa hàng, ra 300–800 🍬 kẹo và 5% cơ hội rơi nhân vật Halloween. Rương dừng bán khi đã sở hữu đủ cả ba, và không mở được nếu cửa sổ đã đóng.
+- **Kẹo**: 250 🍬 đổi một Buff May Mắn ngẫu nhiên cho lượt sau, dùng lại đúng cơ chế buff có sẵn.
+- **Ba nhân vật giới hạn** — Marrow, Sallow, Nettle — độ hiến 4 (Bí ẩn), đánh dấu `sec:'halloween'` nên **không** rơi từ rương thường cũng không lấy được từ nhiệm vụ; chỉ rơi từ rương Trick-or-Treat. Là nhân vật nguyên tác, không phải bản cosplay nhân vật có thật. Cả ba đều có dấu ấn riêng như mọi nhân vật khác.
+
+Muốn đổi sang năm sau chỉ cần sửa `EV.s` và `EV.e`.
+
 ## Tài khoản admin
 
 Đăng nhập bằng tên `admin`. Admin có sẵn cấp 50, đủ 4 chỉ số tối đa, toàn bộ nhân vật cấp 10, mở hết các màn, vàng không giới hạn, và có nút **🛠 Quản trị** trong ⚙️ Cài đặt để xem danh sách người chơi, cộng vàng, mở nhân vật, đặt lại mật khẩu, reset hoặc xoá tài khoản.

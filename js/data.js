@@ -1,4 +1,4 @@
-const CH=[
+﻿const CH=[
 {n:'Ren',t:'Wall Scout',col:'#8fd18a',hair:'#2b4a2a',acc:'scarf',hp:95,sp:245,pas:{x3:1.8,n:8,heal:.1},s:{
 a:{k:'proj',cd:.35,spd:600,r:7,dmg:7,life:.35,nm:'Twin Blades'},
 q:{k:'proj',cd:4,n:3,spread:.6,spd:560,r:10,dmg:12,life:.4,nm:'Blade Fan'},
@@ -87,6 +87,24 @@ CH.push({n:'Vaen',t:'Blade Captain',col:'#cbd5e1',hair:'#0f172a',acc:'mask',hp:9
  q:{k:'dash',cd:3.5,dist:330,nova:{r:60,dmg:18},hst:.5,nm:'Cable Rush'},
  e:{k:'blink',cd:3,dist:340,to:1,hst:1.6,nm:'Gas Burst'},
  r:{k:'orbit',cd:13,n:7,rad:92,dur:7,dmg:13,nm:'Blade Cyclone'}}});
+// ---- Halloween heroes. sec:'halloween' keeps them out of the normal chests and out of the
+// quest pool; they only ever drop from the Trick-or-Treat chest, and only inside the EV window.
+// Original characters, not costumes of anything existing.
+CH.push({n:'Marrow',t:'Bone Warden',col:'#e7e5e4',sec:'halloween',hair:'#1c1917',acc:'skull',hp:150,sp:190,s:{
+ a:{k:'proj',cd:.5,spd:420,r:14,dmg:11,life:.3,nm:'Bone Chip'},
+ q:{k:'nova',cd:5,r:130,dmg:24,delay:.35,kb:60,nm:'Rib Slam'},
+ e:{k:'shield',cd:8,dur:3.2,nm:'Carapace'},
+ r:{k:'nova',cd:15,r:175,dmg:52,delay:.6,kb:130,nm:'Graveyard Crash'}}});
+CH.push({n:'Sallow',t:'Hollow Shade',col:'#84cc16',sec:'halloween',hair:'#1a2e05',acc:'mask',hp:95,sp:255,pas:{ba:1,n:9,heal:.14},s:{
+ a:{k:'proj',cd:.26,spd:640,r:6,dmg:6,life:.3,nm:'Wisp Cut'},
+ q:{k:'cone',cd:4,r:100,arc:2.2,dmg:16,ls:.2,nm:'Sickly Sweep'},
+ e:{k:'blink',cd:3.2,dist:320,to:1,nm:'Fade Out'},
+ r:{k:'orbit',cd:13,n:6,rad:96,dur:6,dmg:15,nm:'Cursed Ring'}}});
+CH.push({n:'Nettle',t:'Candle Witch',col:'#fb923c',sec:'halloween',hair:'#3b0764',acc:'wizhat',hp:92,sp:220,s:{
+ a:{k:'proj',cd:.42,spd:540,r:9,dmg:8,life:.6,ps:'fire',nm:'Wick Bolt'},
+ q:{k:'zone',cur:1,r:150,dur:5,dps:17,sl:1.5,pull:50,cd:6,nm:'Hex Cauldron'},
+ e:{k:'blink',cd:5,dist:300,to:1,nm:'Sweep Away'},
+ r:{k:'rain',cd:14,n:12,rad:190,r:46,dmg:24,gap:.08,fs:'bomb',nm:'Candy Storm'}}});
 const MOD={Ren:{a:{kb:20},q:{n:1,spread:0,spd:820,dmg:8,life:.5,nm:'Grapple Pull',kb:-90},r:{st:.8}},
 Monko:{a:{kb:25},r:{kb:170}},Kuro:{q:{kb:70},r:{pierce:1}},Nara:{q:{st:.6},r:{kb:-60}},
 Kaen:{a:{dot:{d:4,t:2}},q:{dot:{d:4,t:2}},e:{nova:{r:70,dmg:16,dot:{d:5,t:2}}},r:{dot:{d:8,t:3}}},
@@ -178,7 +196,7 @@ const MAPS=[
 {n:'Jungle Ruins',sea:['#1f7a5a','#0a3a30'],rim:'#5a7a3a',sand:['#a8c868','#7aa048'],rock:['#9aa88a','#3a4a3a'],pil:[...wl(230,230,370,370),...wl(530,370,670,230),[450,300,26]]},
 {n:'Sunset Dunes',sea:['#e8764a','#8a2a5a'],rim:'#a8602f',sand:['#ffd9a0','#e8a869'],rock:['#c9a07a','#6a4a3a'],pil:[[200,200,30],[700,200,30],[200,400,30],[700,400,30],[450,300,40]]},
 {n:'Moonlit Night',sea:['#10163a','#05071a'],rim:'#2a3a6a',sand:['#4a5a8a','#2c3a66'],rock:['#8a9ac8','#2a3050'],pil:[...wl(300,130,300,230),...wl(600,370,600,470),...wl(150,300,250,300),...wl(650,300,750,300),[450,300,30]]}];
-function setMap(i){const m=MAPS[i];MAP=i;PIL=m.pil;W=m.w||900;H=m.h||600;SP=m.sp||[[70,70],[830,70],[70,530],[830,530]];BUSH=genBush(i)}
+function setMap(i){const m=MAPS[i];MAP=i;PIL=m.pil;W=m.w||900;H=m.h||600;SP=m.sp||[[70,70],[830,70],[70,530],[830,530]];BUSH=genBush(i);genLights(i)}
 function genBush(i){const m=MAPS[i],w=m.w||900,h=m.h||600,sp=m.sp||[[70,70],[830,70],[70,530],[830,530]],out=[],n=m.w?18:9;let sd=i*977+13;const rnd=()=>(sd=(sd*9301+49297)%233280)/233280;
  for(let k=0;k<n*14&&out.length<n;k++){const x=110+rnd()*(w-220),y=90+rnd()*(h-180),r=30+rnd()*14;
   if(!m.pil.some(p=>Math.hypot(x-p[0],y-p[1])<p[2]+r+26)&&!sp.some(p=>Math.hypot(x-p[0],y-p[1])<150)&&!out.some(b=>Math.hypot(x-b[0],y-b[1])<r+b[2]+30))out.push([x,y,r])}return out}
@@ -366,54 +384,73 @@ r:{k:'orbit',n:6,rad:82,dur:7,dmg:14,cd:13,nm:'Lunar Halo'}}});
 for(const c of CH)if(c.foe)for(const k of['a','q','e','r'])if(!c.s[k])c.s[k]={k:'shield',dur:.01,cd:999,nm:'-'};
 const NORM=[...CH.keys()].filter(i=>!CH[i].boss&&!CH[i].foe),BASE=NORM.filter(i=>!CH[i].sec),BOSS=[...CH.keys()].filter(i=>CH[i].boss),FOE=[...CH.keys()].filter(i=>CH[i].foe);
 // run buffs: d/dv = description (en/vi); run:1 = only offered inside a run, never sold as a pre-run buff
-const BUFFS=[{n:'Power Up',ic:'⚔️',d:'+18% damage',dv:'+18% sát thương',f:r=>{r.dm*=1.18}},
-{n:'Rapid Fire',ic:'⏱️',d:'Skills recharge 20% faster',dv:'Hồi chiêu nhanh hơn 20%',f:r=>{r.cd*=1.2}},
-{n:'Swift Boots',ic:'👟',d:'+10% move speed',dv:'+10% tốc độ chạy',f:r=>{r.sp*=1.1}},
-{n:'Vitality',ic:'❤️',d:'+20% max HP and heal that much',dv:'+20% máu tối đa và hồi lượng đó',f:r=>{const a=Math.round(me.mx*.2);me.mx+=a;me.hp+=a}},
-{n:'Vampirism',ic:'🩸',d:'Heal 5% of damage dealt',dv:'Hút 5% sát thương gây ra thành máu',f:r=>{r.ls+=.05}},
-{n:'Critical Eye',ic:'🎯',d:'+12% crit chance (x2 damage)',dv:'+12% tỉ lệ chí mạng (x2 sát thương)',f:r=>{r.cr+=.12}},
-{n:'Soul Charge',ic:'⭐',d:'Awakening fills 60% faster',dv:'Thức tỉnh nạp nhanh hơn 60%',f:r=>{r.mg*=1.6}},
-{n:'Bulwark',ic:'🛡️',d:'+35% max shield',dv:'+35% khiên tối đa',f:r=>{me.sm=Math.round(me.sm*1.35);me.sd=me.sm}},
-{n:'Quick Guard',ic:'🔋',d:'Shield recharges 40% sooner and faster',dv:'Khiên hồi sớm và nhanh hơn 40%',f:r=>{r.sr*=1.4}},
-{n:'Gold Rush',ic:'🪙',d:'+50% gold from this run',dv:'+50% vàng trong lượt này',f:r=>{r.gm*=1.5}},
-{n:'Field Medic',ic:'🧪',run:1,d:'Restore 40% HP right now',dv:'Hồi ngay 40% máu',f:r=>{me.hp=Math.min(me.mx,me.hp+me.mx*.4)}}];
+const BUFFS=[{n:'Power Up',ic:'âš”ï¸',d:'+18% damage',dv:'+18% sÃ¡t thÆ°Æ¡ng',f:r=>{r.dm*=1.18}},
+{n:'Rapid Fire',ic:'â±ï¸',d:'Skills recharge 20% faster',dv:'Há»“i chiÃªu nhanh hÆ¡n 20%',f:r=>{r.cd*=1.2}},
+{n:'Swift Boots',ic:'ðŸ‘Ÿ',d:'+10% move speed',dv:'+10% tá»‘c Ä‘á»™ cháº¡y',f:r=>{r.sp*=1.1}},
+{n:'Vitality',ic:'â¤ï¸',d:'+20% max HP and heal that much',dv:'+20% mÃ¡u tá»‘i Ä‘a vÃ  há»“i lÆ°á»£ng Ä‘Ã³',f:r=>{const a=Math.round(me.mx*.2);me.mx+=a;me.hp+=a}},
+{n:'Vampirism',ic:'ðŸ©¸',d:'Heal 5% of damage dealt',dv:'HÃºt 5% sÃ¡t thÆ°Æ¡ng gÃ¢y ra thÃ nh mÃ¡u',f:r=>{r.ls+=.05}},
+{n:'Critical Eye',ic:'ðŸŽ¯',d:'+12% crit chance (x2 damage)',dv:'+12% tá»‰ lá»‡ chÃ­ máº¡ng (x2 sÃ¡t thÆ°Æ¡ng)',f:r=>{r.cr+=.12}},
+{n:'Soul Charge',ic:'â­',d:'Awakening fills 60% faster',dv:'Thá»©c tá»‰nh náº¡p nhanh hÆ¡n 60%',f:r=>{r.mg*=1.6}},
+{n:'Bulwark',ic:'ðŸ›¡ï¸',d:'+35% max shield',dv:'+35% khiÃªn tá»‘i Ä‘a',f:r=>{me.sm=Math.round(me.sm*1.35);me.sd=me.sm}},
+{n:'Quick Guard',ic:'ðŸ”‹',d:'Shield recharges 40% sooner and faster',dv:'KhiÃªn há»“i sá»›m vÃ  nhanh hÆ¡n 40%',f:r=>{r.sr*=1.4}},
+{n:'Gold Rush',ic:'ðŸª™',d:'+50% gold from this run',dv:'+50% vÃ ng trong lÆ°á»£t nÃ y',f:r=>{r.gm*=1.5}},
+{n:'Field Medic',ic:'ðŸ§ª',run:1,d:'Restore 40% HP right now',dv:'Há»“i ngay 40% mÃ¡u',f:r=>{me.hp=Math.min(me.mx,me.hp+me.mx*.4)}}];
 
 // ---- accessories. 3 slots (head/charm/aura), bought with gold in the Gear screen.
 // b = PvE-only stat bonuses as fractions (cd < 1 means skills recharge faster), p = gold price, art = draw key in js/art.js
 const GEAR=[
- {id:'hb_bnd',sl:'head',rar:0,n:'Red Ribbon',v:'Lụa Đỏ',p:300,art:'gband',b:{dm:.03}},
- {id:'hb_vis',sl:'head',rar:1,n:'Battle Visor',v:'Kính Chiến',p:650,art:'gvisor',b:{sp:.05}},
- {id:'hb_hod',sl:'head',rar:1,n:'Shadow Hood',v:'Mũ Trùm',p:650,art:'ghood',b:{sh:.06}},
- {id:'hb_hrn',sl:'head',rar:2,n:'Ram Horns',v:'Sừng Cuồng',p:1400,art:'ghorn',b:{dm:.07}},
- {id:'hb_ant',sl:'head',rar:2,n:'Signal Antennae',v:'Ăng-ten',p:1400,art:'gant',b:{cd:.94}},
- {id:'hb_gog',sl:'head',rar:2,n:'Scout Goggles',v:'Kính Quan Sát',p:1400,art:'ggoggles',b:{cd:.95,sp:.03}},
- {id:'hb_crn',sl:'head',rar:3,n:'Gilded Crown',v:'Vương Miện',p:2600,art:'gcrown',b:{hp:.09}},
- {id:'hb_hlm',sl:'head',rar:3,n:'Steel Helm',v:'Mũ Giáp',p:2600,art:'ghelm',b:{sh:.10}},
- {id:'hb_hal',sl:'head',rar:3,n:'Sun Halo',v:'Hào Quang',p:2600,art:'ghalo',b:{sp:.08}},
- {id:'hb_msk',sl:'head',rar:3,n:'Oni Mask',v:'Mặt Nạ Oni',p:2600,art:'gmask',b:{hp:.07,sh:.06}},
- {id:'hb_ast',sl:'head',rar:4,n:'Astral Diadem',v:'Vương Miện Sư Phạm',p:5200,art:'gastral',b:{hp:.07,dm:.07,sp:.07,cd:.92}},
- {id:'ch_orb',sl:'charm',rar:0,n:'Star Bead',v:'Hạt Tinh',p:300,art:'gorb',b:{dm:.03}},
- {id:'ch_fir',sl:'charm',rar:1,n:'Ember Seed',v:'Hạt Lửa',p:650,art:'gfire',b:{dm:.06}},
- {id:'ch_frz',sl:'charm',rar:1,n:'Frost Crystal',v:'Tinh Băng',p:650,art:'gice',b:{sh:.06}},
- {id:'ch_shu',sl:'charm',rar:2,n:'Shuriken Charm',v:'Phi Nhẫn',p:1400,art:'gshur',b:{cd:.93}},
- {id:'ch_bel',sl:'charm',rar:2,n:'Silver Bell',v:'Chuông Bạc',p:1400,art:'gbell',b:{ls:.03}},
- {id:'ch_run',sl:'charm',rar:3,n:'Rune Tablet',v:'Bảng Rune',p:2600,art:'grune',b:{hp:.08}},
- {id:'ch_bld',sl:'charm',rar:3,n:'Blood Drop',v:'Giọt Máu',p:2600,art:'gblood',b:{ls:.05}},
- {id:'ch_prs',sl:'charm',rar:3,n:'Prism Lens',v:'Lăng Kính',p:2600,art:'gprism',b:{sp:.07}},
- {id:'ch_vod',sl:'charm',rar:4,n:'Void Seed',v:'Hạt Hư Không',p:5200,art:'gvoid',b:{dm:.11}},
- {id:'ch_rel',sl:'charm',rar:4,n:'Sacred Relic',v:'Thánh Vật',p:5200,art:'grelic',b:{hp:.05,sh:.05,dm:.05,sp:.05}},
- {id:'au_ear',sl:'aura',rar:0,n:'Stone Circle',v:'Vòng Đất',p:300,art:'gaur',b:{hp:.04}},
- {id:'au_emb',sl:'aura',rar:1,n:'Ember Aura',v:'Hơi Than',p:650,art:'gaurf',b:{dm:.06}},
- {id:'au_frz',sl:'aura',rar:1,n:'Frost Aura',v:'Hơi Băng',p:650,art:'gaura',b:{sp:.06}},
- {id:'au_thu',sl:'aura',rar:2,n:'Storm Aura',v:'Hơi Lôi',p:1400,art:'gaurt',b:{cd:.94}},
- {id:'au_nat',sl:'aura',rar:2,n:'Forest Aura',v:'Hơi Rừng',p:1400,art:'gaurn',b:{ls:.03}},
- {id:'au_gld',sl:'aura',rar:3,n:'Golden Aura',v:'Hào Quang Vàng',p:2600,art:'gaurg',b:{hp:.10}},
- {id:'au_drk',sl:'aura',rar:3,n:'Shadow Aura',v:'Hào Quang Tối',p:2600,art:'gaurd',b:{dm:.08}},
- {id:'au_holy',sl:'aura',rar:3,n:'Halo Aura',v:'Hào Quang Thánh',p:2600,art:'gaurh',b:{sh:.09}},
- {id:'au_vod',sl:'aura',rar:4,n:'Void Aura',v:'Hào Quang Hư Vô',p:5200,art:'gaurv',b:{hp:.05,sh:.05,dm:.05,sp:.05}},
- {id:'au_drg',sl:'aura',rar:4,n:'Dragon Aura',v:'Hơi Rồng',p:5200,art:'gaurdr',b:{dm:.12}}];
+ {id:'hb_bnd',sl:'head',rar:0,n:'Red Ribbon',v:'Lá»¥a Äá»',p:300,art:'gband',b:{dm:.03}},
+ {id:'hb_vis',sl:'head',rar:1,n:'Battle Visor',v:'KÃ­nh Chiáº¿n',p:650,art:'gvisor',b:{sp:.05}},
+ {id:'hb_hod',sl:'head',rar:1,n:'Shadow Hood',v:'MÅ© TrÃ¹m',p:650,art:'ghood',b:{sh:.06}},
+ {id:'hb_hrn',sl:'head',rar:2,n:'Ram Horns',v:'Sá»«ng Cuá»“ng',p:1400,art:'ghorn',b:{dm:.07}},
+ {id:'hb_ant',sl:'head',rar:2,n:'Signal Antennae',v:'Ä‚ng-ten',p:1400,art:'gant',b:{cd:.94}},
+ {id:'hb_gog',sl:'head',rar:2,n:'Scout Goggles',v:'KÃ­nh Quan SÃ¡t',p:1400,art:'ggoggles',b:{cd:.95,sp:.03}},
+ {id:'hb_crn',sl:'head',rar:3,n:'Gilded Crown',v:'VÆ°Æ¡ng Miá»‡n',p:2600,art:'gcrown',b:{hp:.09}},
+ {id:'hb_hlm',sl:'head',rar:3,n:'Steel Helm',v:'MÅ© GiÃ¡p',p:2600,art:'ghelm',b:{sh:.10}},
+ {id:'hb_hal',sl:'head',rar:3,n:'Sun Halo',v:'HÃ o Quang',p:2600,art:'ghalo',b:{sp:.08}},
+ {id:'hb_msk',sl:'head',rar:3,n:'Oni Mask',v:'Máº·t Náº¡ Oni',p:2600,art:'gmask',b:{hp:.07,sh:.06}},
+ {id:'hb_ast',sl:'head',rar:4,n:'Astral Diadem',v:'VÆ°Æ¡ng Miá»‡n SÆ° Pháº¡m',p:5200,art:'gastral',b:{hp:.07,dm:.07,sp:.07,cd:.92}},
+ {id:'ch_orb',sl:'charm',rar:0,n:'Star Bead',v:'Háº¡t Tinh',p:300,art:'gorb',b:{dm:.03}},
+ {id:'ch_fir',sl:'charm',rar:1,n:'Ember Seed',v:'Háº¡t Lá»­a',p:650,art:'gfire',b:{dm:.06}},
+ {id:'ch_frz',sl:'charm',rar:1,n:'Frost Crystal',v:'Tinh BÄƒng',p:650,art:'gice',b:{sh:.06}},
+ {id:'ch_shu',sl:'charm',rar:2,n:'Shuriken Charm',v:'Phi Nháº«n',p:1400,art:'gshur',b:{cd:.93}},
+ {id:'ch_bel',sl:'charm',rar:2,n:'Silver Bell',v:'ChuÃ´ng Báº¡c',p:1400,art:'gbell',b:{ls:.03}},
+ {id:'ch_run',sl:'charm',rar:3,n:'Rune Tablet',v:'Báº£ng Rune',p:2600,art:'grune',b:{hp:.08}},
+ {id:'ch_bld',sl:'charm',rar:3,n:'Blood Drop',v:'Giá»t MÃ¡u',p:2600,art:'gblood',b:{ls:.05}},
+ {id:'ch_prs',sl:'charm',rar:3,n:'Prism Lens',v:'LÄƒng KÃ­nh',p:2600,art:'gprism',b:{sp:.07}},
+ {id:'ch_vod',sl:'charm',rar:4,n:'Void Seed',v:'Háº¡t HÆ° KhÃ´ng',p:5200,art:'gvoid',b:{dm:.11}},
+ {id:'ch_rel',sl:'charm',rar:4,n:'Sacred Relic',v:'ThÃ¡nh Váº­t',p:5200,art:'grelic',b:{hp:.05,sh:.05,dm:.05,sp:.05}},
+ {id:'au_ear',sl:'aura',rar:0,n:'Stone Circle',v:'VÃ²ng Äáº¥t',p:300,art:'gaur',b:{hp:.04}},
+ {id:'au_emb',sl:'aura',rar:1,n:'Ember Aura',v:'HÆ¡i Than',p:650,art:'gaurf',b:{dm:.06}},
+ {id:'au_frz',sl:'aura',rar:1,n:'Frost Aura',v:'HÆ¡i BÄƒng',p:650,art:'gaura',b:{sp:.06}},
+ {id:'au_thu',sl:'aura',rar:2,n:'Storm Aura',v:'HÆ¡i LÃ´i',p:1400,art:'gaurt',b:{cd:.94}},
+ {id:'au_nat',sl:'aura',rar:2,n:'Forest Aura',v:'HÆ¡i Rá»«ng',p:1400,art:'gaurn',b:{ls:.03}},
+ {id:'au_gld',sl:'aura',rar:3,n:'Golden Aura',v:'HÃ o Quang VÃ ng',p:2600,art:'gaurg',b:{hp:.10}},
+ {id:'au_drk',sl:'aura',rar:3,n:'Shadow Aura',v:'HÃ o Quang Tá»‘i',p:2600,art:'gaurd',b:{dm:.08}},
+ {id:'au_holy',sl:'aura',rar:3,n:'Halo Aura',v:'HÃ o Quang ThÃ¡nh',p:2600,art:'gaurh',b:{sh:.09}},
+ {id:'au_vod',sl:'aura',rar:4,n:'Void Aura',v:'HÃ o Quang HÆ° VÃ´',p:5200,art:'gaurv',b:{hp:.05,sh:.05,dm:.05,sp:.05}},
+ {id:'au_drg',sl:'aura',rar:4,n:'Dragon Aura',v:'HÆ¡i Rá»“ng',p:5200,art:'gaurdr',b:{dm:.12}}];
 const GBY=Object.fromEntries(GEAR.map(g=>[g.id,g])),GSLOTS=['head','charm','aura'];
-const IC={proj:'➶',cone:'⚔',beam:'═',orbit:'◎',rain:'☔',mine:'●',chain:'⚡',zone:'◉',nova:'✸',dash:'⇢',blink:'✧',shield:'◍',heal:'✚',haste:'≫'};
+// ---- Halloween event. Every seasonal thing is gated on this window and simply goes dormant
+// afterwards. Nothing is ever deleted: whatever you already own stays owned, so nobody gets
+// locked out of progress the moment the clock runs out.
+const EV={s:'2026-10-20',e:'2026-11-02',candy:800,candyName:'Pumpkin Candy',candyIc:'ðŸ¬'};
+const evDay=(now)=>{const d=new Date(now==null?Date.now():now);
+ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const evOn=(now)=>{const a=evDay(now);return a>=EV.s&&a<=EV.e};
+const evDaysLeft=(now)=>Math.max(0,Math.round((new Date(EV.e+'T23:59:59')-new Date(now==null?Date.now():now))/864e5));
+// Trick-or-Treat chest: costs gold, pays out candy, and is the only source of the three
+// Halloween heroes. Candy itself buys Lucky-style buffs, so the chest has a use even once
+// every limited hero is already owned.
+const HCHEST={cost:2000,lo:300,hi:800,chance:.05,buff:250};
+const HLEFT=()=>NORM.filter(i=>CH[i].sec=='halloween'&&!S.own[CH[i].n]);
+// static lanterns placed once per map, used only by the Halloween darkness overlay
+const LIGHTS=[];
+function genLights(i){LIGHTS.length=0;const M=MAPS[i],w=M.w||900,h=M.h||600;
+ let sd=i*733+7;const rnd=()=>{sd=(sd*9301+49297)%233280;return sd/233280};
+ const n=M.w?14:8;
+ for(let j=0;j<n;j++)LIGHTS.push([40+rnd()*(w-80),40+rnd()*(h-80),26+rnd()*15])}
+const IC={proj:'âž¶',cone:'âš”',beam:'â•',orbit:'â—Ž',rain:'â˜”',mine:'â—',chain:'âš¡',zone:'â—‰',nova:'âœ¸',dash:'â‡¢',blink:'âœ§',shield:'â—',heal:'âœš',haste:'â‰«'};
 CH.forEach(c=>{const m=MOD[c.n];if(m)for(const k in m)Object.assign(c.s[k],m[k])});
 // ---- balance pass (tuned with 1v1 duel simulations): kit fixes, then per-character [health x, damage x]
 const KIT={Sakura:{a:{home:0,cd:.55}},Arashi:{a:{home:0,cd:.45}}};
@@ -431,11 +468,11 @@ for(const c of CH){const b=BAL2[c.n];if(b&&!c.boss&&!c.foe)balScale(c,b[0],b[1])
 const START=['Ren','Kaen','Yuki','Sakura'],RARE=[...RARE_R,'Monko','Kuro','Nara','Raiden','Shion','Aoi','Gaia','Hikari','Zephyr','Noir','Neko','Ryuu'],LEGEND=[...LEGEND_R,'Riku','Kaito','Mei','Toru','Aya','Nao','Oren','Rex','Sora','Arashi'];
 for(const i of NORM){const c=CH[i];c.rar=c.sec?4:START.includes(c.n)?0:RARE.includes(c.n)?1:LEGEND.includes(c.n)?3:2}
 // ---- campaign: 5 chapters x 10 stages, a boss closes every chapter
-const CHAP=[{n:'Tide Coast',v:'Bờ Biển Sóng',maps:[1,0,8],foes:['Goblin','Imp Archer','Bat'],boss:'Gluttony Maw',col:'#38bdf8'},
-{n:'Jungle Ruins',v:'Phế Tích Rừng',maps:[7,2,3],foes:['Goblin','Imp Archer','Bomb Imp','Slime','Bat','Ogre'],boss:'Iron Brute',col:'#4ade80'},
-{n:'Ember Pit',v:'Hố Dung Nham',maps:[5,8,4],foes:['Fire Imp','Bomb Imp','Goblin','Hex Mage','Slime','Ogre'],boss:'Ember Tyrant',col:'#fb923c'},
-{n:'Frozen Lake',v:'Hồ Băng',maps:[6,9,2],foes:['Frost Shaman','Wraith','Hex Mage','Bat','Skeleton Knight','Ogre'],boss:'Void Sovereign',col:'#7dd3fc'},
-{n:'Chaos Citadel',v:'Thành Hỗn Mang',maps:[9,4,3,5],foes:['Wraith','Fire Imp','Frost Shaman','Hex Mage','Bomb Imp','Goblin','Skeleton Knight','Necromancer','Ogre'],boss:'Mad Giant',col:'#c084fc'}];
+const CHAP=[{n:'Tide Coast',v:'Bá» Biá»ƒn SÃ³ng',maps:[1,0,8],foes:['Goblin','Imp Archer','Bat'],boss:'Gluttony Maw',col:'#38bdf8'},
+{n:'Jungle Ruins',v:'Pháº¿ TÃ­ch Rá»«ng',maps:[7,2,3],foes:['Goblin','Imp Archer','Bomb Imp','Slime','Bat','Ogre'],boss:'Iron Brute',col:'#4ade80'},
+{n:'Ember Pit',v:'Há»‘ Dung Nham',maps:[5,8,4],foes:['Fire Imp','Bomb Imp','Goblin','Hex Mage','Slime','Ogre'],boss:'Ember Tyrant',col:'#fb923c'},
+{n:'Frozen Lake',v:'Há»“ BÄƒng',maps:[6,9,2],foes:['Frost Shaman','Wraith','Hex Mage','Bat','Skeleton Knight','Ogre'],boss:'Void Sovereign',col:'#7dd3fc'},
+{n:'Chaos Citadel',v:'ThÃ nh Há»—n Mang',maps:[9,4,3,5],foes:['Wraith','Fire Imp','Frost Shaman','Hex Mage','Bomb Imp','Goblin','Skeleton Knight','Necromancer','Ogre'],boss:'Mad Giant',col:'#c084fc'}];
 const NSTAGE=CHAP.length*10,chi=n=>CH.findIndex(c=>c.n==n),ELITE=FOE.filter(i=>CH[i].elite);
 function stagePlan(s){const c=(s-1)/10|0,i=(s-1)%10+1,cp=CHAP[c],pool=cp.foes.map(chi),nr=i<4?2:i<8?3:4,rooms=[];
  for(let k=0;k<nr;k++){const last=k==nr-1,map=cp.maps[(i+k)%cp.maps.length];
@@ -466,6 +503,9 @@ Bat:[0,0,0,{sh:'bat',h:40}],Slime:[0,0,0,{sh:'slime',h:30}],'Fire Imp':['orb','r
 'Gluttony Maw':[0,0,0,{sh:'maw',h:56,ps:.8}],'Iron Brute':[0,0,0,{sh:'golem',h:50,ps:.85}],'Ember Tyrant':[0,0,0,{sh:'dragon',h:62,ps:.76}],'Void Sovereign':[0,0,0,{sh:'lord',h:72,ps:.74}],
 'Mad Giant':['fist','bare','wild',{sk:'#e8a07a',face:'rage',sc:1.85,fc:'#e8a07a',fr:7.5,acc:'none'}]};
 LOOK.Vaen=['katana','coat+cape','short',{acc:'mask',cc:'#334155',pair:1}];
+LOOK.Marrow=['hammer','armor','bald',{acc:'none',fc:'#e7e5e4',fr:8,bc:'#57534e'}];
+LOOK.Sallow=['claws','light+tail','long',{acc:'none',tc:'#84cc16',fc:'#a3e635'}];
+LOOK.Nettle=['staff','robe+cape','long',{acc:'wizhat',cc:'#7e22ce',bc:'#fbbf24'}];
 Object.assign(LOOK,LOOK_R);
 for(const c of CH){const l=LOOK[c.n];c.lk=l?Object.assign({wp:l[0]||'none',gr:l[1]||'light',hs:l[2]||'bald'},l[3]):{wp:'sword',gr:'light',hs:'spiky'}}
 // what a shot looks like (ps) and how a rained strike arrives (fs), guessed from the weapon and the skill's name unless the skill says otherwise
@@ -482,7 +522,7 @@ const WART={fist:'gblood',claws:'gshur',dagger:'gshur',katana:'gshur',sword:'gsh
  club:'gbell',cannon:'gbell',gun:'grune',rifle:'grune',shotgun:'grune',staff:'grune',bstaff:'grune',wand:'grune',orb:'grune',tome:'grune',mega:'grune'};
 GEAR.push(...NORM.map(i=>{const c=CH[i],b=c.hp>=130?{hp:.08}:c.sp>=248?{sp:.07}:{dm:.08};
  if(c.pas&&c.pas.inf)b.sh=.05;if(c.pas&&c.pas.ba)b.ls=.03;
- return{id:'sg_'+c.n,sl:'charm',rar:3,n:c.n+"'s Sigil",v:'Dấu ấn '+c.n,p:0,art:WART[c.lk.wp]||'gorb',ex:c.n,b}}));
+ return{id:'sg_'+c.n,sl:'charm',rar:3,n:c.n+"'s Sigil",v:'Dáº¥u áº¥n '+c.n,p:0,art:WART[c.lk.wp]||'gorb',ex:c.n,b}}));
 Object.assign(GBY,Object.fromEntries(GEAR.map(g=>[g.id,g])));
 // ground / obstacle / weather set per map, in MAPS order (TH in js/art.js)
 ['sand','sand','stone','stone','stone','lava','ice','grass','sand','night','sand','stone','stone'].forEach((t,i)=>{MAPS[i].th=t});

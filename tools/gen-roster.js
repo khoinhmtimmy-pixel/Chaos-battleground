@@ -275,6 +275,49 @@ for(const r of ROSTER){
 }
 if(ROSTER.length!==100)err.push('roster must hold exactly 100 characters, has '+ROSTER.length);
 
+// ---- every character in js/data.js, not just the generated ones. A missing cd is silent:
+// the engine compares e.cd[k]>0, so an undefined cd makes the skill castable every frame.
+// That shipped once (Nettle's Q) before this check existed.
+const dsrc=fs.readFileSync(path.join(root,'js','data.js'),'utf8');
+// Depth-aware scan: a skill key must sit directly inside s:{...}, otherwise r: inside
+// skill "a" (e.g. r:9) gets mistaken for the ultimate. Returns {a:'...',q:'...',...}
+function skillsOf(src,from){
+ const sAt=src.indexOf('s:{',from); if(sAt<0)return null;
+ let i=sAt+2,d=1,out={};
+ while(i<src.length&&d>0){
+  const c=src[i];
+  if(c==='{'){d++;i++;continue}
+  if(c==='}'){d--;i++;continue}
+  if(/[aqer]/.test(c)&&src[i+1]==':'&&i+2<src.length&&src[i+2]=='{'){
+   const k=c,start=i+2;let dd=0,j=start;
+   for(;j<src.length;j++){if(src[j]==='{')dd++;else if(src[j]==='}'){dd--;if(!dd)break}}
+   if(!out[k])out[k]=src.slice(start,j+1);
+   i=j+1;continue}
+  i++}
+ return out}
+const HALL=new Set();
+for(const m of dsrc.matchAll(/\{n:'([A-Za-z]+)',t:'[^']*'/g))HALL.add(m[1]);
+const uniq=[...HALL];
+let checked=0;
+for(const n of uniq){
+  const at=dsrc.indexOf("{n:'"+n+"',t:");
+  if(at<0)continue;
+  const sk=skillsOf(dsrc,at);
+  if(!sk||!sk.a)continue;          // monsters and stubs are skipped
+  checked++;
+  for(const k of ['a','q','e','r']){
+   const body=sk[k];
+   if(!body||body.length<4){err.push(n+'.'+k+': no skill object found');continue}
+   const cd=body.match(/\bcd:([\d.]+)/);
+   if(!cd){err.push(n+'.'+k+': missing cd (would be castable every frame)');continue}
+   if(+cd[1]<.15)err.push(n+'.'+k+': cd '+cd[1]+' is unusable');
+   if(!/\bnm:'/.test(body))err.push(n+'.'+k+': missing nm');
+   if(!/\bk:'/.test(body))err.push(n+'.'+k+': missing k');
+   if(!/dmg:|dps:|amt:|dur:|dist:|n:/.test(body))err.push(n+'.'+k+': no payload at all');
+  }
+}
+console.log('characters deep-checked: '+checked+' of '+uniq.length+' named entries');
+
 // a name collision is silent and nasty: chi() returns the first match, so the later
 // character becomes unreachable and both share one LOOK entry. Catch it against the
 // hand-written roster that data.js defines before CH.push(...ROSTER).
