@@ -146,9 +146,17 @@ async function doAuth(act,name,pass){await probe();
   ACC={name:j.name,role:j.role,mode:'cloud',tok:j.token};LS.set('cb_acc',ACC);loadSave(j.save)}
  else{const r=await devAuth(act,name,pass);if(r.err)return r.err;ACC={name:r.name,role:r.role,mode:'device'};LS.set('cb_acc',ACC);loadSave(act=='register'?carry():null)}
  if(act=='register')LS.del('cb_sv_guest');return null}
-function loadSave(remote){const local=LS.get(svKey(),null);let s=remote||null;
- if(ACC.mode=='cloud'){if(local&&(!s||(local.ts||0)>(s.ts||0))){s=local;dirty=true}}else s=s||local;
- S=ACC.role=='admin'?adminSave(local):fix(s);LS.set(svKey(),S);if(dirty)push()}
+// How much a save is worth. Ownership and accessories only ever grow in this game (there is no
+// way to sell or un-own either), so "fewer" always means something was lost, never that the player
+// chose to reset. Used to refuse a payload that came back thinner than what we already hold.
+const fat=s=>Object.keys((s&&s.own)||{}).length+Object.keys((s&&s.gw)||{}).length;
+function loadSave(remote){const key=svKey(),local=LS.get(key,null);let s=remote||null,fromRemote=false;
+ if(ACC.mode=='cloud'){if(local&&(!s||(local.ts||0)>(s.ts||0))){s=local;dirty=true}else fromRemote=!!s}else s=s||local;
+ // A cloud payload can arrive already truncated, and fix() then overwrites local with it. That is
+ // how one round-trip once deleted 74 heroes and 121 accessories with no error: keep the fuller copy.
+ if(fromRemote&&local&&fat(s)<fat(local))s=local;
+ if(local)LS.set(key+'_bak',local);
+ S=ACC.role=='admin'?adminSave(local):fix(s);LS.set(key,S);if(dirty)push()}
 async function resume(){if(!ACC||!ACC.mode||!ACC.name)return false;await probe();
  if(ACC.mode!='cloud'){loadSave(null);return true}
  if(!cloudOK){loadSave(null);toast(t('offline'),1);return true}

@@ -356,6 +356,28 @@ for(const m of head.matchAll(/\{n:'([^']+)'/g))existing.add(m[1]);
 for(const m of head.matchAll(/^\s*'?([A-Za-z][A-Za-z ]*)'?:\s*\[/gm))existing.add(m[1]);
 for(const r of ROSTER)if(existing.has(r[0]))err.push('name collides with an existing character: '+r[0]+' (chi() would return the wrong index)');
 
+// ---- the server caps in api/_lib.js must stay above what the game can produce. They were written
+// when the roster was 71 heroes and gear was 31 pieces; clean() then truncated saves at 80 / 64 and
+// silently deleted 74 heroes and 121 accessories for anyone who owned everything. Content grows, so
+// this has to be re-checked, not trusted.
+const libSrc=fs.readFileSync(path.join(root,'api','_lib.js'),'utf8');
+const capOf=re=>{const m=libSrc.match(re);return m?+m[1]:NaN};
+const CAPS={own:capOf(/MAXOWN=(\d+)/),gw:capOf(/MAXGW=(\d+)/),q:capOf(/MAXQ=(\d+)/),star:capOf(/MAXSTAR=(\d+)/)};
+// Count playable heroes the same way the running game does. Two traps here: counting only the head
+// of data.js (everything before CH.push(...ROSTER)) finds just 16 of the hand-written heroes, and a
+// bare n:'...' also matches MAPS entries and accessory names, which added 4 phantom heroes. A real
+// character is { ... n:'Name',t:'...' }, and bosses/foes carry boss:1 / foe:1 in that same prefix.
+const heroObjs=[...dataSrc.matchAll(/\{([^{}]{0,80}?)n:'([A-Za-z]+)',t:'/g)];
+const playableNamed=heroObjs.filter(m=>!/\b(boss|foe):1\b/.test(m[1])).length;
+const playable=playableNamed+ROSTER.length;
+// accessories = the universal pieces plus one signature trinket per playable hero
+const gearIds=(dataSrc.match(/\bid:'(?:hb|ch|au)_[a-z]{2,12}'/g)||[]).length+playable;
+if(!isFinite(CAPS.own))err.push('api/_lib.js: MAXOWN not found — the own cap is what truncated saves');
+if(playable>CAPS.own)err.push('playable heroes ('+playable+') exceed server MAXOWN ('+CAPS.own+') — clean() will delete characters from every save');
+if(gearIds>CAPS.gw)err.push('accessory ids ('+gearIds+') exceed server MAXGW ('+CAPS.gw+') — clean() will delete accessories from every save');
+if(!isFinite(CAPS.gw))err.push('api/_lib.js: MAXGW not found');
+console.log('server save caps: own '+CAPS.own+' vs '+playable+' heroes, gw '+CAPS.gw+' vs '+gearIds+' accessories, q '+CAPS.q+', stars '+CAPS.star);
+
 if(err.length){console.error('ROSTER PROBLEMS ('+err.length+'):\n  '+err.join('\n  '));process.exit(1)}
 console.log('roster ok: '+ROSTER.length+' characters, names valid, kits valid, looks within the art vocabulary');
 
