@@ -3,8 +3,8 @@ const CH=[
 a:{k:'proj',cd:.35,spd:600,r:7,dmg:7,life:.35,nm:'Twin Blades'},
 q:{k:'proj',cd:4,n:3,spread:.6,spd:560,r:10,dmg:12,life:.4,nm:'Blade Fan'},
 e:{k:'dash',cd:4,dist:360,nova:{r:70,dmg:16,st:.3},hst:.7,nm:'Grapple Hook'},
-r:{k:'nova',cd:15,r:165,dmg:44,delay:.5,form:{dur:9,mul:1.7,hp:.9,sh:.5,hst:9},nm:'Titan Form'},
- c:{k:'dash',cd:22,dist:560,nova:{r:100,dmg:36},hst:1.4,fa:5,nm:'Skyline Breach'}
+r:{k:'nova',cd:15,r:165,dmg:44,delay:.5,form:{dur:9,mul:1.7,hp:.75,sh:.5,hst:9},nm:'Titan Form'},
+ c:{k:'dash',cd:22,dist:560,nova:{r:100,dmg:36},hst:1.4,fa:4,nm:'Skyline Breach'}
 }},
 {n:'Monko',t:'Rubber Pirate',col:'#ff5a4d',hair:'#3a1f1f',acc:'hat',hp:120,sp:205,s:{
 a:{k:'proj',cd:.45,spd:850,r:9,dmg:9,life:.25,nm:'Stretch Punch'},
@@ -209,10 +209,10 @@ r:{k:'nova',r:150,dmg:36,delay:.6,st:1,cd:15,nm:'Ground Pound'},
 }},
 {n:'Pip',t:'Healer Support',col:'#f9a8d4',hair:'#ff9bd0',acc:'halo',hp:90,sp:220,s:{
 a:{k:'proj',spd:520,r:8,dmg:6,life:.8,home:1,cd:.45,nm:'Magic Note'},
-q:{k:'zone',r:100,dur:4,heal:12,cd:7,nm:'Heal Aura'},
+q:{k:'zone',r:100,dur:4,heal:10,cd:7,nm:'Heal Aura'},
 e:{k:'shield',dur:2,cd:8,nm:'Sparkle Shield'},
-r:{k:'heal',amt:40,cd:15,nm:'Full Heal'},
- c:{k:'zone',cd:22,cur:1,r:185,dur:7,heal:0.15,dps:14,nm:'Everbloom'}
+r:{k:'heal',amt:34,cd:15,nm:'Full Heal'},
+c:{k:'zone',cd:22,cur:1,r:185,dur:6,heal:0.11,dps:14,nm:'Everbloom'}
 }},
 {n:'Vex',t:'Shadow Assassin',col:'#64748b',hair:'#0f172a',acc:'mask',hp:75,sp:265,s:{
 a:{k:'cone',r:55,arc:1.6,dmg:7,cd:.25,nm:'Twin Daggers'},
@@ -305,8 +305,8 @@ r:{k:'cone',r:120,arc:2.8,dmg:44,kb:140,cd:13,nm:'Fatal Combo'},
 a:{k:'proj',spd:600,r:9,dmg:9,life:.8,home:1,cd:.45,nm:'Limitless Orb'},
 q:{k:'cone',r:130,arc:1.9,dmg:20,st:.3,cd:5,nm:'Cursed Technique'},
 e:{k:'blink',cd:6,dist:300,to:1,nm:'Void Step'},
-r:{k:'zone',cur:1,r:250,dur:7,dps:26,pull:120,sl:2,cd:17,nm:'Domain Expansion'},
- c:{k:'nova',cd:22,cur:1,r:280,dmg:78,delay:0.6,st:0.8,form:{dur:8,mul:1.6,hp:0.4},nm:'Unlimited Void'}
+r:{k:'zone',cur:1,r:250,dur:7,dps:24,pull:120,sl:2,cd:17,nm:'Domain Expansion'},
+ c:{k:'nova',cd:22,cur:1,r:280,dmg:78,delay:0.6,st:0.8,form:{dur:7,mul:1.45,hp:0.4},nm:'Unlimited Void'}
 }},
 {n:'Nao',t:'Cursed Speech',col:'#facc15',hair:'#713f12',acc:'mask',hp:85,sp:215,s:{
 a:{k:'proj',n:3,spread:.4,spd:560,r:7,dmg:6,life:.5,cd:.5,nm:'Whisper Shot'},
