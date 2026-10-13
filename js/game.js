@@ -1,4 +1,4 @@
-window.addEventListener('error',e=>{let b=document.getElementById('errb');if(!b){b=document.createElement('div');b.id='errb';b.style.cssText='position:fixed;left:0;right:0;bottom:0;z-index:99;background:#b00020;color:#fff;font:12px monospace;padding:6px;user-select:text';document.body.appendChild(b)}b.textContent='Error: '+e.message+' (line '+e.lineno+')'});
+window.addEventListener('error',e=>{let b=document.getElementById('errb');if(!b){b=document.createElement('div');b.id='errb';b.style.cssText='position:fixed;left:0;right:0;bottom:0;z-index:99;background:#b00020;color:#fff;font:12px monospace;padding:6px;user-select:text';document.body.appendChild(b)}b.textContent='Error: '+e.message+' ('+String(e.filename||'?').split('/').pop().split('?')[0]+':'+e.lineno+')'});
 const cv=document.getElementById('c'),$=id=>document.getElementById(id);let ctx=cv.getContext('2d',{alpha:false});
 let W=900,H=600;
 if(!CanvasRenderingContext2D.prototype.roundRect)CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h){this.rect(x,y,w,h)};
@@ -363,12 +363,12 @@ function loop(t){if(!run)return;const raw=(t-last)/1e3,dt=Math.min(.05,raw);last
   else if(fts>.024){slowT+=raw;if(slowT>2.5&&Q!==QL[2]){qa.prev=fts;qa.trial=3;slowT=0;setQ(QL.indexOf(Q)+1)}}else slowT=Math.max(0,slowT-raw)}
  if(!paused){tm+=dt;update(dt);draw();pd=0}else if(!pd){draw();pd=1}
  raf=requestAnimationFrame(loop)}
-addEventListener('keydown',e=>{const k=e.key.toLowerCase();if(!run||$('m').style.display!='none')return;if(k=='escape'){UI.pause();return}if(choice){if('123'.includes(k)&&k.length==1)pickBuff(+k-1);return}if(paused)return;(loc2&&(k.startsWith('arrow')||k=='enter')?k2:keys)[k]=1;
+addEventListener('keydown',e=>{const k=(e.key||'').toLowerCase();if(!k)return;if(!run||$('m').style.display!='none')return;if(k=='escape'){UI.pause();return}if(choice){if('123'.includes(k)&&k.length==1)pickBuff(+k-1);return}if(paused)return;(loc2&&(k.startsWith('arrow')||k=='enter')?k2:keys)[k]=1;
  if('qerc'.includes(k)&&k.length==1){me.a=Math.atan2(mouse.y-me.y,mouse.x-me.x);hold=0;tryCast(me,'me',k,mouse.x,mouse.y);e.preventDefault()}
  if(loc2&&others.p2&&',./;'.includes(k)&&k.length==1){const p=others.p2;tryCast(p,'p2',{',':'q','.':'e','/':'r',';':'c'}[k],p.x+Math.cos(p.a)*220,p.y+Math.sin(p.a)*220);e.preventDefault()}
  if(k=='enter')e.preventDefault()
  if(k==' ')awaken();if(k==' '||k.startsWith('arrow'))e.preventDefault()});
-addEventListener('keyup',e=>{const k=e.key.toLowerCase();keys[k]=0;k2[k]=0});addEventListener('blur',()=>{keys={};k2={};mouse.down=false});
+addEventListener('keyup',e=>{const k=(e.key||'').toLowerCase();if(!k)return;keys[k]=0;k2[k]=0});addEventListener('blur',()=>{keys={};k2={};mouse.down=false});
 const mp=e=>{const r=cv.getBoundingClientRect();mouse.x=cam.x+(e.clientX-r.left)/K;mouse.y=cam.y+(e.clientY-r.top)/K};
 cv.addEventListener('mousemove',e=>{if(!touch)mp(e)});cv.addEventListener('mousedown',e=>{if(touch)return;mp(e);mouse.down=true});addEventListener('mouseup',()=>{if(!touch)mouse.down=false});
 cv.addEventListener('contextmenu',e=>e.preventDefault());
