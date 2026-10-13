@@ -242,13 +242,99 @@ const PJO=typeof IntersectionObserver=='function'?new IntersectionObserver(es=>{
   PJO.unobserve(im);
   if(a.length)im.src=portrait(+a[0],+a[1],a[2]||0,a[3]||0,a[4]||0)}},{rootMargin:'500px 0px'}):null;
 function scanLazy(root){if(!PJO||!root)return;for(const im of root.querySelectorAll('img[data-p]'))if(!im.getAttribute('src'))PJO.observe(im)}
+
+// ---------------------------------------------------------------- hero showcase
+// A lit, slowly rotating pedestal for the hero screen. The art is still the same 2D figure; what
+// reads as "3D" here is the lighting, not the geometry: a rim light on the far side of the light,
+// a floor reflection, a rotating specular sweep and a pedestal whose highlight tracks the turn.
+// Re-modelling 171 characters as real meshes is not a trade this codebase can make, so the depth
+// is faked where it is cheapest to fake and nothing about the figures themselves changes.
+function figLayer(ch,px,yaw,gq,gc,ga,ph,gy){
+ const c=document.createElement('canvas');c.width=c.height=px;
+ const x=c.getContext('2d'),o=ctx,L=CH[ch].lk||LK0,s=px/108;
+ // drawFig does its own translate(0,20) before it scales, so the feet land 20*s below wherever we
+ // put the origin. Undo that, or the figure sinks off the bottom of the card.
+ x.translate(px/2,gy-20*s);x.scale(s,s);ctx=x;
+ try{drawFig({x:0,y:0,a:yaw,awt:0,gq,gc,ga},CH[ch],1.2*(L.ps||1),1,0,false,false,0)}
+ finally{ctx=o}
+ return c}
+// flatten a drawn layer into a flat colour so it can be used as a silhouette
+function sil(src,col){
+ const c=document.createElement('canvas');c.width=src.width;c.height=src.height;
+ const x=c.getContext('2d');
+ x.drawImage(src,0,0);x.globalCompositeOperation='source-in';
+ x.fillStyle=col;x.fillRect(0,0,c.width,c.height);
+ return c}
+
+function showcaseFrame(cv,ch,yaw,tt,gq,gc,ga){
+ const px=cv.width,x=cv.getContext('2d'),c=CH[ch],col=c.col;
+ x.clearRect(0,0,px,px);
+ // backdrop: a soft pool of light behind the figure, tinted by the hero colour
+ let g=x.createRadialGradient(px/2,px*.44,px*.05,px/2,px*.52,px*.72);
+ g.addColorStop(0,col+'2e');g.addColorStop(.55,'rgba(255,255,255,.05)');g.addColorStop(1,'rgba(6,3,18,.5)');
+ x.fillStyle=g;x.fillRect(0,0,px,px);
+ // dust motes drifting through the key light
+ for(let i=0;i<14;i++){
+  const s=i*2654%997,fx=(Math.sin(s)*.5+.5),fy=((s/997)+tt*.055)%1;
+  const a=(.1+.22*(.5+.5*Math.sin(tt*1.7+i)))*(1-Math.abs(fy-.45)*1.5);
+  if(a<=.01)continue;
+  x.globalAlpha=a;x.fillStyle=i%3?'#ffffff':col;
+  x.beginPath();x.arc(fx*px,px*.16+fy*px*.72,1+fx*1.6,0,7);x.fill()}
+ x.globalAlpha=1;
+ const gy=px*.84,grx=px*.225,gry=px*.058;
+ // pedestal: a dark disc with segments, so the rotation is legible even on a still frame
+ x.save();x.translate(px/2,gy);x.scale(1,gry/grx);
+ let dg=x.createRadialGradient(0,0,grx*.2,0,0,grx);
+ dg.addColorStop(0,'rgba(255,255,255,.3)');dg.addColorStop(.62,'rgba(255,255,255,.12)');dg.addColorStop(1,'rgba(255,255,255,0)');
+ x.fillStyle=dg;x.beginPath();x.arc(0,0,grx,0,7);x.fill();
+ for(let i=0;i<16;i++){const a=i*.3927+yaw;
+  x.globalAlpha=.1+.3*Math.pow(Math.max(0,Math.cos(a-yaw+1.2)),3);
+  x.strokeStyle='#fff';x.lineWidth=3;
+  x.beginPath();x.moveTo(Math.cos(a)*grx*.24,Math.sin(a)*grx*.24);x.lineTo(Math.cos(a)*grx*.93,Math.sin(a)*grx*.93);x.stroke()}
+ x.globalAlpha=1;x.strokeStyle=col;x.lineWidth=4;
+ x.beginPath();x.arc(0,0,grx,0,7);x.stroke();
+ x.strokeStyle='#fff';x.globalAlpha=.45;x.lineWidth=1.6;
+ x.beginPath();x.arc(0,0,grx*.86,0,7);x.stroke();x.globalAlpha=1;
+ // a bright bead runs the rim on the side facing the key light
+ x.strokeStyle='#fff';x.lineWidth=7;x.lineCap='round';
+ x.beginPath();x.arc(0,0,grx,-Math.PI*.5+yaw-1.05,-Math.PI*.5+yaw+.42);x.stroke();
+ x.lineCap='butt';
+ x.restore();
+ softShadow(px/2,gy+px*.012,grx*1.25,gry*1.5,.9);
+
+ const fig=figLayer(ch,px,yaw,gq,gc,ga,tt*2,gy);
+ // floor reflection first, then the character on top of it
+ x.save();
+ x.beginPath();x.rect(0,gy,px,px-gy);x.clip();
+ x.globalAlpha=.2;x.translate(0,gy*2);x.scale(1,-1);x.drawImage(fig,0,0);
+ x.globalCompositeOperation='destination-out';
+ let fg=x.createLinearGradient(0,gy,0,gy+px*.17);
+ fg.addColorStop(0,'rgba(0,0,0,.55)');fg.addColorStop(1,'rgba(0,0,0,1)');
+ x.fillStyle=fg;x.fillRect(0,gy,px,px*.2);
+ x.restore();
+ // rim light: the silhouette nudged away from the key light, lit additively underneath the figure
+ const rim=sil(fig,'#fff6dc');
+ x.save();x.globalCompositeOperation='lighter';x.globalAlpha=.5+.12*Math.sin(tt*1.6);
+ x.drawImage(rim,-LIGHT.x*px*.014,-LIGHT.y*px*.012);
+ x.globalAlpha=.3;x.drawImage(sil(fig,col),LIGHT.x*px*.02,LIGHT.y*px*.014);
+ x.restore();
+ x.drawImage(fig,0,0);
+ // specular sweep travelling across the body as it turns
+ x.save();x.globalCompositeOperation='lighter';x.globalAlpha=.16;
+ const sw=x.createLinearGradient(px*(.5-Math.cos(yaw)*.75)-px*.2,0,px*(.5-Math.cos(yaw)*.75)+px*.2,px);
+ sw.addColorStop(0,'rgba(255,255,255,0)');sw.addColorStop(.5,'rgba(255,255,255,.85)');sw.addColorStop(1,'rgba(255,255,255,0)');
+ x.fillStyle=sw;x.fillRect(0,0,px,px);x.restore();
+ // vignette so the card does not fight the page
+ vg=x.createRadialGradient(px/2,px*.5,px*.3,px/2,px*.5,px*.78);
+ vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(4,2,14,.5)');
+ x.fillStyle=vg;x.fillRect(0,0,px,px);return cv}
 const figScale=(e,c)=>(c.lk&&c.lk.sc)||(e.boss?1.7:1);
 function hiddenE(e){if(raid||!e||e===me||e.dum||e.raidE)return false;if(tmode&&e.tm===me.tm)return false;return BUSH.some(b=>Math.hypot(e.x-b[0],e.y-b[1])<b[2])&&Math.hypot(e.x-me.x,e.y-me.y)>150&&tm>(e.rv||0)&&tm>(e.hft||0)+1}
 function drawChar(e,id){if(e.dum)return drawDummy(e);const c=CH[e.ch],bs=figScale(e,c),cd=c.col,fly=c.lk&&/bat|ghost|lord/.test(c.lk.sh||'');
  const mv=Math.hypot(e.x-(e.px==null?e.x:e.px),e.y-(e.py==null?e.y:e.py));e.px=e.x;e.py=e.y;e.mvs=(e.mvs||0)*.85+mv*.15;const walk=e.mvs>.35;
  const hv=e.hp+(e.sd||0);if(e.lhp!=null&&hv<e.lhp-.4)e.hft=tm+.12;e.lhp=hv;const hit=e.hft&&tm<e.hft,ph=tm*15+e.x*.1,sq=walk?1+Math.sin(ph)*.06:1+Math.sin(tm*3)*.025,bob=walk?-Math.abs(Math.sin(ph))*3:0;
  const mine=id=='me',tc=tmode?(e.tm===me.tm?'#4da3ff':'#ff5a5a'):mine?'#ffffff':e.raidE?'#ff6b6b':cd,fy=e.y+20;
- ctx.fillStyle='rgba(10,5,30,.32)';ctx.beginPath();ctx.ellipse(e.x,fy,(fly?11:15)*bs,(fly?4:5.6)*bs,0,0,7);ctx.fill();
+ castSh(e.x,fy,(fly?13:18)*bs,bs,fly?.5:1);
  if(mine||tmode||e.boss){ctx.strokeStyle=INK;ctx.lineWidth=tmode?7:5;ctx.beginPath();ctx.ellipse(e.x,fy,20*bs,8*bs,0,0,7);ctx.stroke();ctx.strokeStyle=tc;ctx.lineWidth=tmode?3.6:2.4;ctx.stroke()}
  if(c.rar==4){ctx.globalCompositeOperation='lighter';ctx.globalAlpha=.34+.12*Math.sin(tm*4);ctx.drawImage(glow(cd),e.x-34,fy-18,68,30);ctx.globalAlpha=.9;for(let i=0;i<3;i++){const q=tm*2.2+i*2.09;ctx.drawImage(glow('#ffffff'),e.x+Math.cos(q)*23-4,fy-22+Math.sin(q)*8-Math.sin(q*2)*14-4,8,8)}ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over'}
  if(mine&&me.aw>=100&&!(me.awt>0)){ctx.globalAlpha=.5+.4*Math.sin(tm*8);ctx.strokeStyle='#ffd84d';ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(e.x,fy,28,11,0,0,7);ctx.stroke();ctx.globalAlpha=1}
@@ -317,11 +403,26 @@ function ground(M){const sc=Math.min(2,Math.max(1,Math.ceil(K*dpr*2)/2))*(W>1000
 // soft round glow per colour, reused everywhere light is needed
 const GL={};
 function glow(col){let c=GL[col];if(!c){c=GL[col]=document.createElement('canvas');c.width=c.height=64;const h=col.length==4?'#'+col[1]+col[1]+col[2]+col[2]+col[3]+col[3]:col.slice(0,7),x=c.getContext('2d'),g=x.createRadialGradient(32,32,0,32,32,32);g.addColorStop(0,'#fff');g.addColorStop(.4,h);g.addColorStop(1,h+'00');x.fillStyle=g;x.fillRect(0,0,64,64)}return c}
-let DSP=null;
+let DSP=null,SSP=null;
+// Soft ground shadows. The old code filled a hard-edged rgba ellipse, which read as a sticker
+// pasted on the floor rather than anything touching it. A cached radial gradient reads as real
+// contact shadow, and one drawImage is cheaper than the path fill it replaces.
+function softShadow(x,y,rx,ry,al){
+ if(!SSP){SSP=document.createElement('canvas');SSP.width=SSP.height=64;
+  const g=SSP.getContext('2d'),gr=g.createRadialGradient(32,32,0,32,32,32);
+  gr.addColorStop(0,'rgba(8,4,24,.6)');gr.addColorStop(.4,'rgba(8,4,24,.38)');
+  gr.addColorStop(.72,'rgba(8,4,24,.13)');gr.addColorStop(1,'rgba(8,4,24,0)');
+  g.fillStyle=gr;g.fillRect(0,0,64,64)}
+ const old=ctx.globalAlpha;ctx.globalAlpha=old*(al==null?1:al);
+ ctx.drawImage(SSP,x-rx,y-ry,rx*2,ry*2);ctx.globalAlpha=old}
+// One light direction for the whole scene. Shadows fall down-right, so every object lines up and
+// the frame stops looking lit from everywhere at once.
+const LIGHT={x:.66,y:.5};
+const castSh=(x,y,r,bs,al)=>softShadow(x+LIGHT.x*r*bs,y+LIGHT.y*r*bs*.6,r*1.12,r*.62,al);
 function scorch(){if(!DSP){DSP=document.createElement('canvas');DSP.width=DSP.height=64;const x=DSP.getContext('2d'),g=x.createRadialGradient(32,32,0,32,32,32);g.addColorStop(0,'rgba(20,12,10,.45)');g.addColorStop(.7,'rgba(20,12,10,.25)');g.addColorStop(1,'rgba(20,12,10,0)');x.fillStyle=g;x.fillRect(0,0,64,64)}return DSP}
 // obstacles: the collision circle is the footprint, the art rises above it
 function paintObs(kind,r,M,T){const [l,d]=M.rock,rnd=rng(Math.round(r*91)+MAP*13),x=0,y=0;ctx.lineJoin='round';
- ctx.fillStyle='rgba(10,5,30,.3)';ctx.beginPath();ctx.ellipse(r*.25,r*.42,r*1.2,r*.56,0,0,7);ctx.fill();ctx.strokeStyle=INK;ctx.lineWidth=3;
+ softShadow(r*.25,r*.42,r*1.3,r*.62,.85);ctx.strokeStyle=INK;ctx.lineWidth=3;
  if(kind=='pillar'){const ty=-r*.95;ctx.fillStyle=d;ctx.beginPath();ctx.moveTo(-r,ty);ctx.lineTo(-r,0);ctx.ellipse(0,0,r,r*.56,0,Math.PI,0,true);ctx.lineTo(r,ty);ctx.closePath();ctx.fill();ctx.stroke();
   let g=ctx.createLinearGradient(-r,0,r,0);g.addColorStop(0,'rgba(255,255,255,.2)');g.addColorStop(.45,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,0,.34)');ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(-r,ty);ctx.lineTo(-r,0);ctx.ellipse(0,0,r,r*.56,0,Math.PI,0,true);ctx.lineTo(r,ty);ctx.closePath();ctx.fill();
   ctx.strokeStyle='rgba(27,16,48,.45)';ctx.lineWidth=2;for(const f of[.3,.62]){ctx.beginPath();ctx.ellipse(0,ty*f,r,r*.56,0,.15,Math.PI-.15);ctx.stroke()}
@@ -342,7 +443,7 @@ function paintObs(kind,r,M,T){const [l,d]=M.rock,rnd=rng(Math.round(r*91)+MAP*13
 const RC={};
 function drawRock(p){const M=MAPS[MAP],T=TH[M.th]||TH.sand,k=MAP+'|'+p[2];let s=RC[k];if(!s){const r=p[2],w=Math.ceil(r*3.6+12),h=Math.ceil(r*4+12),c=document.createElement('canvas');c.width=w*2;c.height=h*2;const x=c.getContext('2d'),o=ctx;x.scale(2,2);x.translate(w/2,h*.7);ctx=x;try{paintObs(T.obs,r,M,T)}finally{ctx=o}s=RC[k]={c,w,h,ox:w/2,oy:h*.7}}
  ctx.drawImage(s.c,p[0]-s.ox,p[1]-s.oy,s.w,s.h)}
-function paintBush(x,y,r,T,sd){const [l,d,o]=T.bush,rnd=rng(sd);ctx.fillStyle='rgba(10,5,30,.24)';ctx.beginPath();ctx.ellipse(x,y+r*.8,r*1.1,r*.4,0,0,7);ctx.fill();ctx.lineWidth=3;ctx.strokeStyle=o;ctx.lineJoin='round';
+function paintBush(x,y,r,T,sd){const [l,d,o]=T.bush,rnd=rng(sd);softShadow(x+r*.5,y+r*.8,r*1.25,r*.5);ctx.lineWidth=3;ctx.strokeStyle=o;ctx.lineJoin='round';
  for(const [dx,dy,sc] of[[0,.3,.8],[-.7,.1,.7],[.7,.1,.7],[-.35,-.45,.75],[.4,-.45,.75],[0,-.1,.9]]){const gx=x+dx*r,gy=y+dy*r,rad=r*.6*sc+5;ctx.fillStyle=d;ctx.beginPath();ctx.arc(gx,gy,rad,0,7);ctx.fill();ctx.stroke();ctx.fillStyle=l;ctx.beginPath();ctx.arc(gx-rad*.18,gy-rad*.22,rad*.72,0,7);ctx.fill();ctx.fillStyle='rgba(255,255,255,.28)';ctx.beginPath();ctx.arc(gx-rad*.34,gy-rad*.4,rad*.26,0,7);ctx.fill()}
  for(let i=0;i<5;i++){const a=rnd()*6.283,q=rnd()*r*.8,px=x+Math.cos(a)*q,py=y-r*.1+Math.sin(a)*q*.7;if(T.flower){ctx.fillStyle=['#fff','#ff9cc4','#ffe14d'][i%3];ctx.beginPath();ctx.arc(px,py,2.6,0,7);ctx.fill()}else if(T.ember){ctx.fillStyle='#ffb02e';ctx.beginPath();ctx.arc(px,py,2,0,7);ctx.fill()}else if(T.glowb){const g=ctx.createRadialGradient(px,py,0,px,py,7);g.addColorStop(0,'rgba(190,255,250,.9)');g.addColorStop(1,'rgba(120,255,240,0)');ctx.fillStyle=g;ctx.fillRect(px-7,py-7,14,14)}}}
 const BC={};
@@ -375,16 +476,16 @@ function drawProj(q){const sp=Math.hypot(q.vx,q.vy)||1,ux=q.vx/sp,uy=q.vy/sp,r=q
  if(ps=='vortex'){ctx.strokeStyle='#fff';ctx.lineWidth=3;for(let i=0;i<3;i++){ctx.globalAlpha=.9-i*.22;ctx.beginPath();ctx.arc(q.x,q.y,r*(.35+.28*i),tm*(7-i*1.5)+i*2,tm*(7-i*1.5)+i*2+3.6);ctx.stroke()}ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';ctx.fillStyle='#0c0620cc';ctx.beginPath();ctx.arc(q.x,q.y,r*.24,0,7);ctx.fill();return}
  if(ps=='wave'){ctx.save();ctx.translate(q.x,q.y);ctx.rotate(Math.atan2(uy,ux));const s=Math.max(.7,r/9);ctx.scale(s,s);PSH.wave(q);ctx.restore();ctx.globalCompositeOperation='source-over';return}
  ctx.globalCompositeOperation='source-over';ctx.save();ctx.translate(q.x,q.y);ctx.rotate(Math.atan2(uy,ux));const s=Math.max(.75,r/7);ctx.scale(s,s);ctx.lineJoin=ctx.lineCap='round';ctx.lineWidth=2.2/s+.6;ctx.strokeStyle=INK;(PSH[ps]||PSH.orb)(q);ctx.restore()}
-function drawPickup(p){const bob=Math.sin(tm*6+p.x)*2.2,x=p.x,y=p.y+bob;ctx.fillStyle='rgba(10,5,30,.25)';ctx.beginPath();ctx.ellipse(p.x,p.y+9,6,2.4,0,0,7);ctx.fill();
+function drawPickup(p){const bob=Math.sin(tm*6+p.x)*2.2,x=p.x,y=p.y+bob;softShadow(p.x,p.y+9,8,3.4);
  glowAt(p.t=='coin'?'#ffd23c':p.t=='hp'?'#ff5064':'#50b4ff',x,y,15,.6);ctx.lineJoin='round';ctx.lineWidth=2;ctx.strokeStyle=INK;
  if(p.t=='coin'){const w=Math.abs(Math.cos(tm*4+p.x))*5.4+1.2;aEll(x,y,w,6.4,'#ffd23c');aEll(x,y,w*.55,4,'#ffe98a',1);aEll(x-w*.3,y-2.6,w*.2,1.3,'#fff',1)}
  else if(p.t=='hp'){aRR(x-2.6,y-10,5.2,4.4,1,'#e9e2d0');aRR(x-3.4,y-11.4,6.8,2.4,1,WOOD);ctx.beginPath();ctx.moveTo(x-2.6,y-6);ctx.lineTo(x-7,y+3);ctx.quadraticCurveTo(x,y+9,x+7,y+3);ctx.lineTo(x+2.6,y-6);ctx.closePath();aFS('#ff4d6a');aEll(x-2.6,y+.6,1.6,2.6,'#ffb3c0',1,.5)}
  else{aPoly([x,y-9,x+6,y-1,x,y+9,x-6,y-1],'#4db8ff');aPoly([x,y-9,x+6,y-1,x,y-1],'#bfe6ff',1);aLine(x-6,y-1,x+6,y-1,INK,1)}}
-function drawChest(c){const x=c.x,y=c.y;ctx.fillStyle='rgba(10,5,30,.3)';ctx.beginPath();ctx.ellipse(x,y+15,23,7,0,0,7);ctx.fill();ctx.lineJoin='round';ctx.lineWidth=2.6;ctx.strokeStyle=INK;
+function drawChest(c){const x=c.x,y=c.y;softShadow(x,y+15,26,8);ctx.lineJoin='round';ctx.lineWidth=2.6;ctx.strokeStyle=INK;
  if(!c.open){glowAt('#ffd84d',x,y,40,.35+.2*Math.sin(tm*5));aRR(x-19,y-4,38,19,4,'#a8641f');aRR(x-19,y+6,38,9,[0,0,4,4],'#7d4a17',1);ctx.beginPath();ctx.moveTo(x-19,y-3);ctx.quadraticCurveTo(x-19,y-18,x,y-18);ctx.quadraticCurveTo(x+19,y-18,x+19,y-3);ctx.closePath();aFS('#c47a2a');
   for(const d of[-12,12])aRR(x+d-2.4,y-17,4.8,32,1.2,'#ffd84d');aRR(x-19,y-5,38,4,1,'#ffd84d');aRR(x-4.5,y-8,9,10,2,'#ffe98a');aCirc(x,y-3.6,1.6,INK,1);aStar(x+15+Math.sin(tm*5)*2,y-20,3.4,4,'#fff',tm*3,1)}
  else{aRR(x-19,y-2,38,17,4,'#7d4a17');aRR(x-16,y-1,32,7,2,'#2b1a0c',1);ctx.save();ctx.translate(x,y-4);ctx.rotate(-.5);ctx.beginPath();ctx.moveTo(-19,0);ctx.quadraticCurveTo(-19,-15,0,-15);ctx.quadraticCurveTo(19,-15,19,0);ctx.closePath();aFS('#8a5a22');ctx.restore();for(const d of[-12,12])aRR(x+d-2.4,y-2,4.8,17,1.2,'#b8962e')}}
-function drawPortal(p){const x=p.x,y=p.y;ctx.fillStyle='rgba(10,5,30,.3)';ctx.beginPath();ctx.ellipse(x,y+30,26,8,0,0,7);ctx.fill();glowAt('#b06bff',x,y,62,.6+.2*Math.sin(tm*5));
+function drawPortal(p){const x=p.x,y=p.y;softShadow(x,y+30,30,10);glowAt('#b06bff',x,y,62,.6+.2*Math.sin(tm*5));
  ctx.fillStyle='#1a0c3a';ctx.strokeStyle=INK;ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(x,y,22,31,0,0,7);ctx.fill();ctx.stroke();ctx.globalCompositeOperation='lighter';ctx.lineCap='round';
  for(let i=0;i<4;i++){ctx.strokeStyle=i%2?'#7fe4ff':'#d8b4fe';ctx.lineWidth=3-i*.4;ctx.globalAlpha=.9-i*.15;const a=tm*(2.4+i*.6)+i*1.7;ctx.beginPath();ctx.ellipse(x,y,20-i*4.4,29-i*6.4,0,a,a+3.2);ctx.stroke()}
  ctx.globalAlpha=1;for(let i=0;i<5;i++){const a=tm*1.6+i*1.257,d=30+Math.sin(tm*3+i)*6;ctx.drawImage(glow('#d8b4fe'),x+Math.cos(a)*d-4,y+Math.sin(a)*d*1.3-4,8,8)}ctx.globalCompositeOperation='source-over';
@@ -426,7 +527,7 @@ function drawWorld(){const M=MAPS[MAP],T=TH[M.th]||TH.sand,k=K*dpr;VW=cw/K;VH=ch
  drawObjs();
  // ---- air layer
  for(const q of ents){if(q.t!='a'||q.mine||q.age>=q.delay||!q.rn)continue;const u=q.age/q.delay,fs=q.fs||'orb';
-  if(fs=='bomb'){const x=q.sx+(q.x-q.sx)*u,y=q.sy+(q.y-q.sy)*u-Math.sin(u*Math.PI)*90;ctx.fillStyle='rgba(10,5,30,.25)';ctx.beginPath();ctx.ellipse(q.sx+(q.x-q.sx)*u,q.sy+(q.y-q.sy)*u+8,7,3,0,0,7);ctx.fill();ctx.save();ctx.translate(x-9,y);ctx.lineJoin='round';ctx.lineWidth=2.2;ctx.strokeStyle=INK;WPN.bomb({col:q.col});ctx.restore()}
+  if(fs=='bomb'){const x=q.sx+(q.x-q.sx)*u,y=q.sy+(q.y-q.sy)*u-Math.sin(u*Math.PI)*90;softShadow(q.sx+(q.x-q.sx)*u,q.sy+(q.y-q.sy)*u+8,9,4);ctx.save();ctx.translate(x-9,y);ctx.lineJoin='round';ctx.lineWidth=2.2;ctx.strokeStyle=INK;WPN.bomb({col:q.col});ctx.restore()}
   else if(fs!='bolt'){const h=(1-u)*(1-u)*340;ctx.globalCompositeOperation='lighter';ctx.strokeStyle=q.col;ctx.lineWidth=6;ctx.globalAlpha=.5;ctx.beginPath();ctx.moveTo(q.x+h*.25,q.y-h);ctx.lineTo(q.x+h*.25+12,q.y-h-46);ctx.stroke();ctx.globalAlpha=1;ctx.drawImage(glow(q.col),q.x+h*.25-11,q.y-h-11,22,22);ctx.globalCompositeOperation='source-over'}}
  ctx.globalCompositeOperation='lighter';ctx.lineCap='round';
  for(const q of ents){

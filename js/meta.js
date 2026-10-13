@@ -183,7 +183,35 @@ function setSel(i){sel=i;S.sel=CH[i].n;heroSel=i;persist()}
 function topBar(){const n=need(S.lvl),mx=S.lvl>=MAXL;$('top').innerHTML=`<div class="who"><img src="${portrait(sel,100)}" alt=""><span class="lv">${S.lvl}</span></div><div class="nmx"><b>${esc(ACC.name)}</b><span class="tag ${ACC.role=='admin'?'':ACC.mode=='cloud'?'cloud':'dev'}">${ACC.role=='admin'?'ADMIN':ACC.mode=='cloud'?'☁':'💾'}</span><div class="xp"><i style="width:${mx?100:Math.min(100,S.xp/n*100)}%"></i><span>${mx?'MAX':Math.floor(S.xp)+' / '+n+' XP'}</span></div></div><div class="gold">🪙 ${fmt(S.gold)}</div><button class="icb" data-a="settings" aria-label="${t('settings')}">⚙️</button>`}
 const NAV=[['home','🏠','nHome'],['stages','🗺️','nStages'],['heroes','🦸','nHeroes'],['stats','💪','nStats'],['shop','🛒','nShop'],['gear','💍','nGear'],['quests','🏆','nQuests']];
 function navBar(){const p=pts(),qr=qReady();$('nav').innerHTML=NAV.map(([k,ic,l])=>`<button class="${page==k?'on':''}" data-a="go" data-v="${k}"><span>${ic}</span>${t(l)}${k=='stats'&&p>0?`<i class="dot">${p}</i>`:k=='shop'&&dailyReady()?'<i class="dot">!</i>':k=='quests'&&qr?`<i class="dot">${qr}</i>`:''}</button>`).join('')}
-function render(){if(!S)return;topBar();navBar();$('page').innerHTML=PAGES[page]();scanLazy($('page'))}
+function render(){if(!S)return;topBar();navBar();$('page').innerHTML=PAGES[page]();scanLazy($('page'));showcaseStart()}
+
+// ---- hero showcase loop. Runs only while the hero page is on screen, eases to a stop when the
+// tab is hidden, and is capped at ~33fps: the frame re-renders the figure as vectors every tick,
+// which is cheap but not free on a phone. Drag on the canvas spins it by hand and pauses the
+// auto-turn until you let go.
+let SCV=null,SCR=0,SCYAW=0,SCDRAG=0,SCSPIN=1,SCPX=0,SCPR=0;
+function showcaseStart(){
+ if(SCV){cancelAnimationFrame(SCR);SCV=null}
+ const cv=$('page')&&$('page').querySelector('canvas.showcase');
+ if(!cv)return;
+ SCV=cv;
+ let last=0;
+ const frame=ts=>{
+  if(SCV!==cv)return;
+  SCR=requestAnimationFrame(frame);
+  if(!SCV||document.hidden)return;
+  if(ts-last<30)return;                    // ~33fps cap
+  last=ts;
+  if(!SCDRAG)SCYAW+=.012*SCSPIN;
+  if(document.activeElement===cv)return;   // keyboard users get a static frame, no idle motion
+  const g=['',S.eq.head?GBY[S.eq.head].art:'',S.eq.charm?GBY[S.eq.charm].art:'',S.eq.aura?GBY[S.eq.aura].art:''];
+  showcaseFrame(cv,+cv.dataset.sc,SCYAW,ts/1000,g[1],g[2],g[3]);
+ };
+ SCR=requestAnimationFrame(frame);
+ cv.addEventListener('pointerdown',e=>{SCDRAG=1;SCPX=e.clientX;SCPR=SCYAW;SCSPIN=0;try{cv.setPointerCapture(e.pointerId)}catch(x){}});
+ cv.addEventListener('pointermove',e=>{if(SCDRAG)SCYAW=SCPR+(e.clientX-SCPX)*.012});
+ const up=()=>{if(!SCDRAG)return;SCDRAG=0;SCSPIN=1};
+ cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up)}
 function dailyCard(){return dailyReady()?`<button class="btn sm green" data-a="daily">${t('claim',dailyAmt())}</button>`:`<span class="mut">${t('claimed',S.streak)}</span>`}
 function buffRow(){return`<div class="pb">${S.pb.length?S.pb.map(n=>`<span title="${n}">${bIcon(n)}</span>`).join(''):`<span class="mut">${t('noBuff')}</span>`}</div>`}
 
@@ -206,7 +234,7 @@ heroes(){const c=CH[heroSel],lv=S.own[c.n]||0,sk=c.s,hid=c.sec&&!lv,list=NORM.sl
   :c.sec?`<span class="chip rar r4">🔒 ${c.sec=='chest'?t('secChest'):t('secQuest',questText(QUESTS.find(q=>q.hero==c.n)))}</span>`
   :`<button class="btn${S.gold<PRICE[c.rar]?' off':''}" data-a="buyChar">${t('unlock',fmt(PRICE[c.rar]))}</button><span class="mut">${t('orChest')}</span>`;
  return`<div class="hsplit"><div><div class="hgrid">${list.map(i=>{const h=CH[i],o=S.own[h.n];return`<button class="hc ${o?'':'lock'} ${h.sec?'sec':''} ${i==heroSel?'on':''} ${i==sel?'use':''}" style="--rc:var(--r${h.rar})" data-a="hero" data-v="${i}"><img data-p="${i}|128" alt=""><span>${h.sec&&!o?'???':h.n}</span>${o?`<span class="lvb">Lv${o}</span>`:''}</button>`}).join('')}</div><p class="mut" style="margin-top:10px">${t('owned',Object.keys(S.own).length,NORM.length)} · ${t('charNote')}</p></div>
- <div class="card hinfo"><img src="${portrait(heroSel,300)}" alt=""${lv?'':hid?' style="filter:brightness(0) opacity(.7)"':' style="filter:brightness(.35)"'}><div><h3 style="color:${c.col}">${hid?'???':c.n}</h3><div class="mut">${hid?'':c.t+' · '}<span class="rar r${c.rar}">${t('rar'+c.rar)}</span>${lv?' · Lv.'+lv+'/'+CMAX:''}</div><div class="chips" style="justify-content:inherit;margin:6px 0 0"${hid?' hidden':''}><span class="chip">❤️ ${c.hp}</span><span class="chip">🛡️ ${shOf(c)}</span><span class="chip">👟 ${c.sp}</span></div></div>
+ <div class="card hinfo"><canvas class="showcase" width="300" height="300" data-sc="${heroSel}" aria-label="${hid?'???':c.n}"${lv?'':hid?' style="filter:brightness(0) opacity(.7)"':' style="filter:brightness(.35)"'}></canvas><div><h3 style="color:${c.col}">${hid?'???':c.n}</h3><div class="mut">${hid?'':c.t+' · '}<span class="rar r${c.rar}">${t('rar'+c.rar)}</span>${lv?' · Lv.'+lv+'/'+CMAX:''}</div><div class="chips" style="justify-content:inherit;margin:6px 0 0"${hid?' hidden':''}><span class="chip">❤️ ${c.hp}</span><span class="chip">🛡️ ${shOf(c)}</span><span class="chip">👟 ${c.sp}</span></div></div>
  <div class="skl"${hid?' hidden':''}>${c.pas?`<kbd>★</kbd><span><b>${t('passive')}</b> <span class="mut">${t('pas'+c.n)}</span></span>`:''}${['a','q','e','r','c'].map(k=>`<kbd>${k=='a'?'ATK':k.toUpperCase()}</kbd><span>${IC[sk[k].k]||'✦'} <b>${sk[k].nm}</b> <span class="mut">${k=='c'?t('desperNote'):skillDesc(sk[k])}</span></span>`).join('')}</div><div class="hact">${acts}</div></div></div>`},
 stats(){const p=pts(),c=CH[sel],cur=curStats(sel),used=S.lvl-1-p,rows=[['hp','❤️','sHp','#ff6b7d'],['sh','🛡️','sSh','#a9dcff'],['dm','⚔️','sDm','#ffb02e'],['sp','👟','sSp','#7dffb0']];
  return`<div class="stats"><div class="card"><div class="ptl"><b>${t('level')} ${S.lvl}${S.lvl>=MAXL?' (MAX)':''}</b><span class="pp">${t('points')}: ${p}</span></div>

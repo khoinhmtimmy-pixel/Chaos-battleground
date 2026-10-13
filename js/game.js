@@ -231,7 +231,7 @@ function update(dt){if(choice)return;allC=null;matchT+=dt;
  else{over-=dt;if(over<=0){over=0;for(const [i,e] of all()){e.k=0;if(i=='me'||e.bot)respawn(e)}ents=[]}}
  flash=Math.max(0,flash-dt);shake=Math.max(0,shake-dt);{let n=0;for(let i=0;i<parts.length;i++){const p=parts[i];p.x+=p.vx*dt;p.y+=p.vy*dt;p.l-=dt;if(p.l>0)parts[n++]=p}parts.length=n}for(const d of decals)d.l-=dt;decals=decals.filter(d=>d.l>0);if(decals.length>70)decals.splice(0,decals.length-70);for(const f of kf)f.l-=dt;kf=kf.filter(f=>f.l>0);for(const a of an)a.l-=dt;an=an.filter(a=>a.l>0);for(const t of txts){t.y-=38*dt;t.l-=dt}txts=txts.filter(t=>t.l>0);pt+=dt;if(R&&pt>.07){pt=0;sendPres()}}
 function rr(x,y,w,h,r,f){ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fillStyle=f;ctx.fill()}
-function drawDummy(e){ctx.fillStyle='#0005';ctx.beginPath();ctx.ellipse(e.x,e.y+22,18,6,0,0,7);ctx.fill();
+function drawDummy(e){softShadow(e.x,e.y+22,20,7);
  ctx.fillStyle='#8a5a2b';ctx.fillRect(e.x-4,e.y-4,8,26);ctx.fillRect(e.x-26,e.y-18,52,7);
  ctx.fillStyle='#d9b26a';ctx.strokeStyle='#8a5a2b';ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(e.x-14,e.y-26,28,32,7);ctx.fill();ctx.stroke();
  ctx.beginPath();ctx.arc(e.x,e.y-36,11,0,7);ctx.fill();ctx.stroke();
