@@ -85,7 +85,7 @@ function cast(e,o,d,local){const c=CH[d.c],s=c.s[d.s],ba=d.s=='a'?1:0;if(e){e.rv
   ents.push({t:'a',o,x:d.tx,y:d.ty,r:28,dmg:0,delay:0,sl:0,col:c.col,age:0,done:0})}
  else if(s.k=='shield'&&local&&e)e.sh=s.dur;else if(s.k=='heal'){if(local&&e)e.hp=Math.min(e.mx,e.hp+s.amt);burst(d.x,d.y,'#7dffb0',26)}else if(s.k=='haste'){if(local&&e){e.hst=s.dur;if(s.sh)e.sh=s.sh}burst(d.x,d.y,c.col,20)}
   // Titan form: swap in boosted stats, remember the base so tick() can put them back
-  if(s.form&&local&&e){if(!e.tb)e.tb={mx:e.mx,sm:e.sm};e.tn=s.form.dur;e.mx=Math.round(e.mx*(1+(s.form.hp||0)));e.sm=Math.round(e.sm*(1+(s.form.sh||0)));e.sd=Math.min(e.sd,e.sm);e.hp=e.mx;
+  if(s.form&&local&&e){if(!e.tb)e.tb={mx:e.mx,sm:e.sm};e.tn=s.form.dur;e.fm=s.form.mul||1;e.mx=Math.round(e.mx*(1+(s.form.hp||0)));e.sm=Math.round(e.sm*(1+(s.form.sh||0)));e.sd=Math.min(e.sd,e.sm);e.hp=e.mx;
    if(s.form.hst)e.hst=s.form.dur;shake=.5;burst(d.x,d.y,c.col,50);burst(d.x,d.y,'#ffffff',30);ann(c.n.toUpperCase()+" FORM!",c.col)}
  else if(s.k=='cone'){let dm=s.dmg,r=s.r,arc=s.arc,emp=0;
   // passive combo: every third basic swing is a bigger, harder cut
@@ -100,7 +100,7 @@ function cast(e,o,d,local){const c=CH[d.c],s=c.s[d.s],ba=d.s=='a'?1:0;if(e){e.rv
 // d lands on armor first; returns what reached health. q = quiet (burn / zone ticks)
 function dmgTo(e,d,q){e.sdt=SHD;let a=0;if(e.sd>0){a=Math.min(e.sd,d);e.sd-=a;if(e.sd<=0){e.sd=0;if(!q||e===me){burst(e.x,e.y-6,'#9fd8ff',16);say(e.x,e.y-58,'SHIELD BREAK','#9fd8ff');if(e===me)sfx('brk')}}}e.hp-=d-a;return d-a}
 function hurt(id,e,dmg,sl,o,x){if(!e.al||(dmg<=0&&!x))return;if(raid&&e.raidE&&raid.fid[o])return;if(tmode){const o1=ent(o);if(o1&&o1!==e&&o1.tm===e.tm)return}
- const ow=ent(o);let mul=1,crit=0;if(ow&&ow.awt>0)mul*=1.6;if(ow&&ow.dmgMul)mul*=ow.dmgMul;if(ow&&ow.tn)mul*=ow.tn;if(ow&&ow.ck>1)mul*=comboMul(ow);if(o=='me'&&raid)mul*=raid.dm;
+ const ow=ent(o);let mul=1,crit=0;if(ow&&ow.awt>0)mul*=1.6;if(ow&&ow.dmgMul)mul*=ow.dmgMul;if(ow&&ow.fm)mul*=ow.fm;if(ow&&ow.ck>1)mul*=comboMul(ow);if(o=='me'&&raid)mul*=raid.dm;
  // the attacker's own client settles what a landed hit gives back: passive combo heal, per-skill lifesteal
  if(ow&&ow.al&&x&&dmg>0&&!(e.sh>0)&&(o=='me'||ow.bot||ow.loc)){const pc=CH[ow.ch].pas;if(pc&&x.ba){ow.hc=(ow.hc||0)+1;if(ow.hc>=pc.n){ow.hc=0;heal(ow,ow.mx*pc.heal)}}if(x.ls)heal(ow,dmg*mul*x.ls)}
  if(!(id=='me'||e.bot||e.loc)){if(dmg>0&&!(e.sh>0)){num(e.x,e.y-20,dmg*mul);FX('hit',e.x,e.y-6,14,'#ffffff',.18,Math.random()*6)}return}if(e.sh>0)return;dmg*=mul;
@@ -153,8 +153,8 @@ function decal(x,y,r,col,g){const big=r>=40;decals.push({x,y,r:r*(.8+Math.random
 function awaken(){if(!me||!me.al||me.awt>0||(me.aw||0)<100)return;me.aw=0;me.awt=15;shake=.45;say(me.x,me.y-64,'AWAKENING!','#ffe14d');burst(me.x,me.y,'#ffe14d',40);burst(me.x,me.y,'#ffffff',20);sendPres()}
 function tick(id,e,dt){e.stn=Math.max(0,(e.stn||0)-dt);e.hst=Math.max(0,(e.hst||0)-dt);if(id=='me')e.awt=Math.max(0,(e.awt||0)-dt);
  if(e.ckt>0){e.ckt-=dt;if(e.ckt<=0){e.ckt=0;e.ck=0;e.ckk='';e.ckm=0}}
- // Titan form (s.form): damage multiplier while active, base stats restored when it runs out
- if(e.tn>0){e.tn-=dt;if(e.tn<=0){e.tn=0;if(e.tb){e.mx=e.tb.mx;e.sm=e.tb.sm;e.tb=0}e.hp=Math.min(e.hp,e.mx);burst(e.x,e.y,'#fff',14)}}
+ // Titan form (s.form): e.tn = seconds left, e.fm = damage multiplier; base stats restored when it runs out
+ if(e.tn>0){e.tn-=dt;if(e.tn<=0){e.tn=0;e.fm=0;if(e.tb){e.mx=e.tb.mx;e.sm=e.tb.sm;e.tb=0}e.hp=Math.min(e.hp,e.mx);burst(e.x,e.y,'#fff',14)}}
  if(e.sm>0&&e.al){const k=id=='me'&&raid?raid.sr:1;e.sdt-=dt*k;if(e.sdt<=0&&e.sd<e.sm)e.sd=Math.min(e.sm,e.sd+e.sm*SHR*k*dt)}
  if(e.brn>0&&e.al){e.brn-=dt;dmgTo(e,e.bd*dt,1);if(Math.random()<dt*14)P(e.x+(Math.random()-.5)*14,e.y-6,0,-50,.4,'#ff8a3c',4);
   if(e.hp<=0){if(id=='me'){lastHit=e.bo;die()}else slay(e,e.bo)}}}
