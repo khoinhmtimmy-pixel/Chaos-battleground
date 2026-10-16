@@ -332,7 +332,10 @@ const figScale=(e,c)=>(c.lk&&c.lk.sc)||(e.boss?1.7:1);
 function hiddenE(e){if(raid||!e||e===me||e.dum||e.raidE)return false;if(tmode&&e.tm===me.tm)return false;return BUSH.some(b=>Math.hypot(e.x-b[0],e.y-b[1])<b[2])&&Math.hypot(e.x-me.x,e.y-me.y)>150&&tm>(e.rv||0)&&tm>(e.hft||0)+1}
 function drawChar(e,id){if(e.dum)return drawDummy(e);const c=CH[e.ch],bs=figScale(e,c),cd=c.col,fly=c.lk&&/bat|ghost|lord/.test(c.lk.sh||'');
  const mv=Math.hypot(e.x-(e.px==null?e.x:e.px),e.y-(e.py==null?e.y:e.py));e.px=e.x;e.py=e.y;e.mvs=(e.mvs||0)*.85+mv*.15;const walk=e.mvs>.35;
- const hv=e.hp+(e.sd||0);if(e.lhp!=null&&hv<e.lhp-.4)e.hft=tm+.12;e.lhp=hv;const hit=e.hft&&tm<e.hft,ph=tm*15+e.x*.1,sq=walk?1+Math.sin(ph)*.06:1+Math.sin(tm*3)*.025,bob=walk?-Math.abs(Math.sin(ph))*3:0;
+ let hv=e.hp+(e.sd||0);if(e.lhp!=null&&hv<e.lhp-.4)e.hft=tm+.12;e.lhp=hv;let hit=e.hft&&tm<e.hft,ph=tm*15+e.x*.1,sq=walk?1+Math.sin(ph)*.06:1+Math.sin(tm*3)*.025,bob=walk?-Math.abs(Math.sin(ph))*3:0;
+// hit reaction: a short vertical squash on the frame that was struck. sq is purely a render
+// parameter, so nothing about the hit itself depends on it.
+if(hit)sq*=1+(e.hft-tm)/.12*.13;
  const mine=id=='me',tc=tmode?(e.tm===me.tm?'#4da3ff':'#ff5a5a'):mine?'#ffffff':e.raidE?'#ff6b6b':cd,fy=e.y+20;
  castSh(e.x,fy,(fly?13:18)*bs,bs,fly?.5:1);
  if(mine||tmode||e.boss){ctx.strokeStyle=INK;ctx.lineWidth=tmode?7:5;ctx.beginPath();ctx.ellipse(e.x,fy,20*bs,8*bs,0,0,7);ctx.stroke();ctx.strokeStyle=tc;ctx.lineWidth=tmode?3.6:2.4;ctx.stroke()}
@@ -517,6 +520,7 @@ function drawWorld(){const M=MAPS[MAP],T=TH[M.th]||TH.sand,k=K*dpr;VW=cw/K;VH=ch
   ctx.restore()}
  ctx.globalAlpha=1;
  if(raid){if(portal)drawPortal(portal);if(chest)drawChest(chest);for(const p of pk)drawPickup(p)}
+  EVT.draw();
  if(lockT&&lockT.al&&touch){ctx.strokeStyle='#ff5a5a';ctx.lineWidth=3;ctx.globalAlpha=.55+.35*Math.sin(tm*8);ctx.beginPath();ctx.ellipse(lockT.x,lockT.y+20,26+Math.sin(tm*8)*2,11,0,0,7);ctx.stroke();ctx.globalAlpha=1}
  if(aim&&aim.on&&me.al){const sk=CH[me.ch].s[aim.key],ux=Math.cos(aim.a),uy=Math.sin(aim.a),rg=aimRange(sk);ctx.save();ctx.globalAlpha=.6;ctx.strokeStyle='#fff';ctx.fillStyle=CH[me.ch].col;ctx.lineWidth=3;ctx.setLineDash([10,8]);
   if(sk.cur){const d=Math.max(70,rg*aim.f),tx=me.x+ux*d,ty=me.y+uy*d;ctx.beginPath();ctx.moveTo(me.x,me.y);ctx.lineTo(tx,ty);ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=.3;ctx.beginPath();ctx.arc(tx,ty,sk.r||sk.rad||60,0,7);ctx.fill();ctx.globalAlpha=.8;ctx.stroke()}
@@ -531,8 +535,10 @@ function drawWorld(){const M=MAPS[MAP],T=TH[M.th]||TH.sand,k=K*dpr;VW=cw/K;VH=ch
   else if(fs!='bolt'){const h=(1-u)*(1-u)*340;ctx.globalCompositeOperation='lighter';ctx.strokeStyle=q.col;ctx.lineWidth=6;ctx.globalAlpha=.5;ctx.beginPath();ctx.moveTo(q.x+h*.25,q.y-h);ctx.lineTo(q.x+h*.25+12,q.y-h-46);ctx.stroke();ctx.globalAlpha=1;ctx.drawImage(glow(q.col),q.x+h*.25-11,q.y-h-11,22,22);ctx.globalCompositeOperation='source-over'}}
  ctx.globalCompositeOperation='lighter';ctx.lineCap='round';
  for(const q of ents){
-  if(q.t=='a'&&q.age>=q.delay&&!(q.mine&&!q.done)){const u=Math.min(1,(q.age-q.delay)/.3),rad=q.r*(.6+.6*u),al=1-u;if(q.dmg>0||q.r>30){ctx.globalAlpha=al;ctx.drawImage(glow(q.col),q.x-rad*1.25,q.y-rad*1.25,rad*2.5,rad*2.5);ctx.strokeStyle='#fff';ctx.lineWidth=7*al+1;ctx.beginPath();ctx.arc(q.x,q.y,rad,0,7);ctx.stroke();ctx.strokeStyle=q.col;ctx.lineWidth=3;
-    for(let i=0;i<8;i++){const a=i*.785+q.x*.01;ctx.beginPath();ctx.moveTo(q.x+Math.cos(a)*rad*.5,q.y+Math.sin(a)*rad*.5);ctx.lineTo(q.x+Math.cos(a)*rad*(1.05+.3*u),q.y+Math.sin(a)*rad*(1.05+.3*u));ctx.stroke()}
+  if(q.t=='a'&&q.age>=q.delay&&!(q.mine&&!q.done)){const u=Math.min(1,(q.age-q.delay)/.3),rad=q.r*(.6+.6*u),al=1-u;if(q.dmg>0||q.r>30){
+    // q.wh: this burst connected with nobody, so draw it thin and dim rather than as a landed blast
+    ctx.globalAlpha=al*(q.wh?.5:1);ctx.drawImage(glow(q.col),q.x-rad*1.25,q.y-rad*1.25,rad*2.5,rad*2.5);ctx.strokeStyle='#fff';ctx.lineWidth=(q.wh?2.4:7)*al+1;ctx.beginPath();ctx.arc(q.x,q.y,rad,0,7);ctx.stroke();ctx.strokeStyle=q.col;ctx.lineWidth=3;
+    if(!q.wh)for(let i=0;i<8;i++){const a=i*.785+q.x*.01;ctx.beginPath();ctx.moveTo(q.x+Math.cos(a)*rad*.5,q.y+Math.sin(a)*rad*.5);ctx.lineTo(q.x+Math.cos(a)*rad*(1.05+.3*u),q.y+Math.sin(a)*rad*(1.05+.3*u));ctx.stroke()}
     if(q.rn&&q.fs=='bolt'&&u<.6){ctx.strokeStyle='#fff';ctx.lineWidth=4;ctx.beginPath();let x=q.x,y=q.y;ctx.moveTo(x,y);for(let i=0;i<7;i++){x+=(Math.random()-.5)*26;y-=44;ctx.lineTo(x,y)}ctx.stroke()}
     if(q.tp){ctx.strokeStyle='#fff';ctx.lineWidth=9*al+1;for(const s of[-1,1]){ctx.beginPath();ctx.moveTo(q.x-q.r*.9,q.y-q.r*.9*s);ctx.lineTo(q.x+q.r*.9,q.y+q.r*.9*s);ctx.stroke()}}}
    else{ctx.globalAlpha=al*.8;ctx.drawImage(glow(q.col),q.x-30,q.y-40,60,70)}ctx.globalAlpha=1}

@@ -9,6 +9,9 @@ const P=(x,y,vx,vy,l,c,s)=>{if(parts.length<Q.pc)parts.push({x,y,vx,vy,l,m:l,c,s
 const burst=(x,y,c,n)=>{if(!Q.fx)n=n+1>>1;for(let i=0;i<n;i++){const a=Math.random()*6.283,v=60+Math.random()*240;P(x,y,Math.cos(a)*v,Math.sin(a)*v,.35+Math.random()*.3,c,2+Math.random()*4)}};
 const num=(x,y,v,c)=>{if(txts.length<60)txts.push({x:x+(Math.random()-.5)*16,y,s:Math.max(1,Math.round(v)),c,l:.8,m:.8})};
 const say=(x,y,s,c)=>txts.push({x,y,s,c,l:1.1,m:1.1,big:1});
+// style.css already silences the DOM under prefers-reduced-motion; the canvas shake and the edge
+// flash are drawn here, so they have to follow the same preference or the setting does nothing.
+const RMM=matchMedia('(prefers-reduced-motion: reduce)');
 function resize(){dpr=Math.min(Q.dpr,devicePixelRatio||1);VG=null;pd=0;const r=$('w').getBoundingClientRect();cw=r.width;chh=r.height;cv.width=cw*dpr;cv.height=chh*dpr;K=Math.max(Math.min(cw/W,chh/H),touch?.95:.9)}
 addEventListener('resize',resize);
 let PIL=[[300,200,38],[600,200,38],[300,400,38],[600,400,38],[450,300,30]],SP=[[70,70],[830,70],[70,530],[830,530]];
@@ -24,17 +27,23 @@ const all=()=>allC||(allC=[['me',me],...Object.entries(others)]);
 const hr=e=>e.boss?27:(CH[e.ch].lk&&CH[e.ch].lk.sc>1.15)?21:16;
 function heal(e,v){if(!e.al||v<=0)return;e.hp=Math.min(e.mx,e.hp+v);if(v>=3)FX('heal',e.x,e.y-30,10,'#7dffb0',.6)}
 const myPeer=()=>{const p=R&&R.peers().find(p=>p.isMe);return p&&p.peer};
-function begin(online,loc,dummy,raidMode,teamArg){tmode=!!(online?onlineTeam:teamArg);kf=[];an=[];fb=0;matchT=0;choice=null;chest=null;portal=null;pk=[];decals=[];parts=[];txts=[];aim=null;hold=0;paused=0;allC=null;flash=0;shake=0;fxs.length=0;autoAim=!!($('aa')&&$('aa').checked);{const mv=$('mpsel').value;setMap(online?onlineMap:(mv=='r'?Math.random()*MAPS.length|0:(+mv||0)));if(tmode&&!online&&!MAPS[MAP].w)setMap(BIG[Math.random()*BIG.length|0])}loc2=!online&&!!loc;train=!online&&!!dummy;
- const nm=$('nm').value.trim()||'Hero';me=mk(sel,450,300,nm);setGear(me);me.tm=0;me.x=SP[0][0];me.y=SP[0][1];others={};ents=[];over=0;lastHit=null;
- if(!online&&dummy){R=null;const d=mk(0,450,150,'Dummy',true);d.dum=1;d.hp=d.mx=99999;d.sd=d.sm=0;d.log=[];d.tot=0;others.d0=d;d.x=450;d.y=60}else if(!online&&teamArg){R=null;const pool=BASE.filter(i=>i!=sel).sort(()=>Math.random()-.5),al=mk(pool.pop(),SP[2][0],SP[2][1],'Ally',true),e1=mk(pool.pop(),SP[1][0],SP[1][1],'Enemy 1',true),e2=mk(pool.pop(),SP[3][0],SP[3][1],'Enemy 2',true);al.tm=0;e1.tm=e2.tm=1;others.b0=al;others.b1=e1;others.b2=e2}else if(!online){R=null;const nb=loc?2:3,pool=BASE.filter(i=>i!=sel).sort(()=>Math.random()-.5);if(loc){const p=SP[1];others.p2=mk(pool.pop(),p[0],p[1],'Player 2');others.p2.loc=1;me.nm=nm+' (P1)'}for(let i=0;i<nb;i++){const p=SP[i+(loc?2:1)];others['b'+i]=mk(pool.pop(),p[0],p[1],'Bot '+(i+1),true)}}
+function begin(online,loc,dummy,raidMode,teamArg,again){
+ // one match at a time: a double tap used to rebuild the world mid-fight. Only an explicit restart
+ // (result screen -> play again / next stage, or pause -> restart) may replace a live match.
+ if(run&&!again)return;
+ // taking a local match over from an online one has to close the transport, or its socket leaks
+ if(R){try{R.leave()}catch(e){}R=null}
+ tmode=!!(online?onlineTeam:teamArg);kf=[];an=[];fb=0;matchT=0;choice=null;chest=null;portal=null;pk=[];decals=[];parts=[];txts=[];aim=null;hold=0;paused=0;allC=null;flash=0;shake=0;fxs.length=0;autoAim=!!($('aa')&&$('aa').checked);{const mv=$('mpsel').value;setMap(online?onlineMap:(mv=='r'?Math.random()*MAPS.length|0:(+mv||0)));if(tmode&&!online&&!MAPS[MAP].w)setMap(BIG[Math.random()*BIG.length|0])}loc2=!online&&!!loc;train=!online&&!!dummy;
+ const nm=$('nm').value.trim()||'Hero';me=mk(sel,450,300,nm);setGear(me);me.tm=0;me.x=SP[0][0];me.y=SP[0][1];others={};ents=[];over=0;lastHit=null;EVT.reset();
+ if(!online&&dummy){const d=mk(0,450,150,'Dummy',true);d.dum=1;d.hp=d.mx=99999;d.sd=d.sm=0;d.log=[];d.tot=0;others.d0=d;d.x=450;d.y=60}else if(!online&&teamArg){const pool=BASE.filter(i=>i!=sel).sort(()=>Math.random()-.5),al=mk(pool.pop(),SP[2][0],SP[2][1],'Ally',true),e1=mk(pool.pop(),SP[1][0],SP[1][1],'Enemy 1',true),e2=mk(pool.pop(),SP[3][0],SP[3][1],'Enemy 2',true);al.tm=0;e1.tm=e2.tm=1;others.b0=al;others.b1=e1;others.b2=e2}else if(!online){const nb=loc?2:3,pool=BASE.filter(i=>i!=sel).sort(()=>Math.random()-.5);if(loc){const p=SP[1];others.p2=mk(pool.pop(),p[0],p[1],'Player 2');others.p2.loc=1;me.nm=nm+' (P1)'}for(let i=0;i<nb;i++){const p=SP[i+(loc?2:1)];others['b'+i]=mk(pool.pop(),p[0],p[1],'Bot '+(i+1),true)}}
  $('m').style.display='none';$('mb').style.display='block';if(!online&&raidMode){others={};newRun(raidMode);spawnRoom()}else raid=null;allC=null;resize();lab();UI.game();if(!run){run=1;last=performance.now();cancelAnimationFrame(raf);raf=requestAnimationFrame(loop)}}
 // a PvE run (campaign stage or endless raid); account stats and pre-bought buffs come from pveStats()
 function bfStr(r){r.bfs=Object.entries(r.bf).map(([k,v])=>(BUFFS.find(b=>b.n==k)||{}).ic+(v>1?'×'+v:'')).join(' ')}
 function newRun(cfg){const s=pveStats(),c=CH[me.ch];me.mx=me.hp=Math.round(c.hp*s.hp);me.sm=me.sd=Math.round(shOf(c)*s.sh);
- const r=raid={mode:cfg.mode,stage:cfg.stage||0,plan:cfg.mode=='stage'?stagePlan(cfg.stage):null,wave:1,floor:1,room:1,revived:0,score:0,gold:0,kills:0,rooms:0,hit:0,state:'fight',t:0,dm:s.dm,cd:s.cd||1,sp:s.sp,ls:s.ls||0,cr:0,mg:1,sr:1,gm:1,bf:{},fid:{},queue:[],spawnT:0};
+ const r=raid={mode:cfg.mode,stage:cfg.stage||0,plan:cfg.mode=='stage'?stagePlan(cfg.stage):null,wave:1,floor:1,room:1,revived:0,score:0,gold:0,kills:0,rooms:0,hit:0,state:'fight',t:0,lv:1,xp:0,nxt:xpNeed(1),uc:0,dm:s.dm,cd:s.cd||1,sp:s.sp,ls:s.ls||0,cr:0,mg:1,sr:1,gm:1,bf:{},fid:{},queue:[],spawnT:0};
  for(const n of s.buffs){const b=BUFFS.find(b=>b.n==n);if(b){b.f(r);r.bf[b.n]=(r.bf[b.n]||0)+1}}bfStr(r)}
 $('bp').onclick=()=>begin(false);$('bl').onclick=()=>begin(false,1);$('bd').onclick=()=>begin(false,0,1);$('bt2').onclick=()=>begin(false,0,0,0,1);$('bw').addEventListener('pointerdown',e=>{awaken();e.preventDefault()});
-function leave(t){if(R){try{R.leave()}catch(e){}}R=null;run=0;paused=0;raid=null;choice=null;$('m').style.display='block';$('mb').style.display='none';UI.home(t||'')}
+function leave(t){if(R){try{R.leave()}catch(e){}}R=null;clearInput();run=0;paused=0;raid=null;choice=null;$('m').style.display='block';$('mb').style.display='none';UI.home(t||'')}
 function sendPres(){if(R)R.presence({ch:me.ch,x:Math.round(me.x),y:Math.round(me.y),hp:Math.round(me.hp),sd:Math.round(me.sd),sm:me.sm,mp:MAP,k:me.k,al:me.al,aw:me.awt>0?1:0,sh:me.sh>0?1:0,a:+me.a.toFixed(2),nm:me.nm,gq:me.gq,gc:me.gc,ga:me.ga,t:joinT})}
 function dest(e,s,tx,ty){let d=s.dist;if(s.to)d=Math.min(d,Math.hypot(tx-e.x,ty-e.y));
  return[Math.max(20,Math.min(W-20,e.x+Math.cos(e.a)*d)),Math.max(20,Math.min(H-20,e.y+Math.sin(e.a)*d))]}
@@ -42,6 +51,11 @@ function dest(e,s,tx,ty){let d=s.dist;if(s.to)d=Math.min(d,Math.hypot(tx-e.x,ty-
 // one button never does. Each stack adds 6% damage, so a clean Q-E-R-Q chain hits far harder than
 // the same four casts mashing. Kept modest because it applies in PvP too, where both sides get it.
 const CBW=2.8,CMX=5,CBON=.06;   // CMX, not CMAX: meta.js already declares CMAX for hero level
+// ---- in-match levelling. XP is damage dealt, so levelling tracks how hard you actually play rather
+// than a clock. Tuned against measured output: a full kit lands ~100 dps, so this puts the first
+// level about 30 seconds in and level 12 near the end of a long run. Every number is tuned here.
+const LVMAX=12,BMAX=3,XP_BASE=3000,XP_STEP=1000;
+const xpNeed=lv=>XP_BASE+XP_STEP*(lv-1);
 const comboMul=e=>1+(e.ck>1?(e.ck-1)*CBON:0);
 // ---- slot c, the desperation move. A 5th skill that is strong on purpose but welded shut most of
 // the time: it only opens at <=50% hp or on a full 5-stack chain, and costs 22s. That raises the
@@ -80,7 +94,11 @@ function cast(e,o,d,local){const c=CH[d.c],s=c.s[d.s],ba=d.s=='a'?1:0;if(e){e.rv
   if(s.path)ents.push({t:'s',o,x:d.x,y:d.y,x0:d.x,y0:d.y,x1:d.tx,y1:d.ty,w:s.path.w,dmg:s.path.dmg,sl:s.path.sl||0,st:s.path.st,age:0,dur:.32,life:1,done:0,col:c.col})}
  // strike: vanish, lock the enemy nearest the aim point, then land on it
  else if(s.k=='strike'){let tid=null,bd=150;for(const [i2,o2] of all())if(i2!=o&&o2.al&&!ally(o,o2)){const dd=Math.hypot(o2.x-d.tx,o2.y-d.ty);if(dd<bd){bd=dd;tid=i2}}const t=tid&&ent(tid);
-  ents.push({t:'a',o,x:t?t.x:d.tx,y:t?t.y:d.ty,r:s.r,dmg:s.dmg,delay:s.delay,sl:0,col:c.col,age:0,done:0,st:s.st,fol:tid,tp:1,hl:s.hl});if(e){e.van=s.delay;if(local)e.sh=Math.max(e.sh,s.delay+.4)}FX('tp',d.x,d.y,26,c.col,.4)}
+  const lx=t?t.x:d.tx,ly=t?t.y:d.ty;
+  ents.push({t:'a',o,x:lx,y:ly,r:s.r,dmg:s.dmg,delay:s.delay,sl:0,col:c.col,age:0,done:0,st:s.st,fol:tid,tp:1,hl:s.hl});if(e){e.van=s.delay;if(local)e.sh=Math.max(e.sh,s.delay+.4)}FX('tp',d.x,d.y,26,c.col,.4);
+  // The landing zone used to be invisible: aiming at open ground would still drag you onto anything
+  // sitting inside the snap radius. Show the blast you are about to stand in, and mark the one it took.
+  if(local){FX('ring',lx,ly,s.r,c.col,.5,0);if(t)FX('ring',t.x,t.y,hr(t)+20,'#ffd84d',.45,0)}}
  else if(s.k=='blink'){ents.push({t:'a',o,x:d.x,y:d.y,r:28,dmg:0,delay:0,sl:0,col:c.col,age:0,done:0});if(local&&e){e.x=d.tx;e.y=d.ty}
   ents.push({t:'a',o,x:d.tx,y:d.ty,r:28,dmg:0,delay:0,sl:0,col:c.col,age:0,done:0})}
  else if(s.k=='shield'&&local&&e)e.sh=s.dur;else if(s.k=='heal'){if(local&&e)e.hp=Math.min(e.mx,e.hp+s.amt);burst(d.x,d.y,'#7dffb0',26)}else if(s.k=='haste'){if(local&&e){e.hst=s.dur;if(s.sh)e.sh=s.sh}burst(d.x,d.y,c.col,20)}
@@ -98,21 +116,34 @@ function cast(e,o,d,local){const c=CH[d.c],s=c.s[d.s],ba=d.s=='a'?1:0;if(e){e.rv
  else if(s.k=='rain'){for(let i=0;i<s.n;i++){const an=i*2.4,rd=s.rad*Math.sqrt((i+.5)/s.n);ents.push({t:'a',o,x:d.tx+Math.cos(an)*rd,y:d.ty+Math.sin(an)*rd,r:s.r,dmg:s.dmg,delay:.4+i*s.gap,sl:0,col:c.col,age:0,done:0,rn:1,fs:s.fs,sx:d.x,sy:d.y})}}
  else if(s.k=='chain'){const pts=[{x:d.x,y:d.y}],ids=[];let cx=d.x,cy=d.y;for(let j=0;j<s.n;j++){let t=null,bd=s.rng,tid=null;for(const [i2,o2] of all())if(i2!=o&&o2.al&&!ids.includes(i2)&&!ally(o,o2)){const dd=Math.hypot(o2.x-cx,o2.y-cy);if(dd<bd){bd=dd;t=o2;tid=i2}}if(!t)break;ids.push(tid);pts.push({x:t.x,y:t.y});cx=t.x;cy=t.y;hurt(tid,t,s.dmg,0,o,{st:s.st})}ents.push({t:'l',pts,life:.35,m:.35,col:c.col})}}
 // d lands on armor first; returns what reached health. q = quiet (burn / zone ticks)
-function dmgTo(e,d,q){e.sdt=SHD;let a=0;if(e.sd>0){a=Math.min(e.sd,d);e.sd-=a;if(e.sd<=0){e.sd=0;if(!q||e===me){burst(e.x,e.y-6,'#9fd8ff',16);say(e.x,e.y-58,'SHIELD BREAK','#9fd8ff');if(e===me)sfx('brk')}}}e.hp-=d-a;return d-a}
+function dmgTo(e,d,q){e.sdt=SHD;let a=0;if(e.sd>0){a=Math.min(e.sd,d);e.sd-=a;if(e.sd<=0){e.sd=0;if(!q||e===me){burst(e.x,e.y-6,'#9fd8ff',16);say(e.x,e.y-58,'SHIELD BREAK','#9fd8ff');if(e===me)sfx('brk')}}}e.hp-=d-a;if(e.hp<0)e.hp=0;return d-a}
 function hurt(id,e,dmg,sl,o,x){if(!e.al||(dmg<=0&&!x))return;if(raid&&e.raidE&&raid.fid[o])return;if(tmode){const o1=ent(o);if(o1&&o1!==e&&o1.tm===e.tm)return}
- const ow=ent(o);let mul=1,crit=0;if(ow&&ow.awt>0)mul*=1.6;if(ow&&ow.dmgMul)mul*=ow.dmgMul;if(ow&&ow.fm)mul*=ow.fm;if(ow&&ow.ck>1)mul*=comboMul(ow);if(o=='me'&&raid)mul*=raid.dm;
+ const ow=ent(o);let mul=1,crit=0;if(ow&&ow.awt>0)mul*=1.6;if(ow&&ow.dmgMul)mul*=ow.dmgMul;if(ow&&ow.fm)mul*=ow.fm;if(ow&&ow.ck>1)mul*=comboMul(ow);if(o=='me'&&raid){mul*=raid.dm;if(raid.uc&&me.hp<me.mx*.4)mul*=1+raid.uc}
  // the attacker's own client settles what a landed hit gives back: passive combo heal, per-skill lifesteal
- if(ow&&ow.al&&x&&dmg>0&&!(e.sh>0)&&(o=='me'||ow.bot||ow.loc)){const pc=CH[ow.ch].pas;if(pc&&x.ba){ow.hc=(ow.hc||0)+1;if(ow.hc>=pc.n){ow.hc=0;heal(ow,ow.mx*pc.heal)}}if(x.ls)heal(ow,dmg*mul*x.ls)}
  if(!(id=='me'||e.bot||e.loc)){if(dmg>0&&!(e.sh>0)){num(e.x,e.y-20,dmg*mul);FX('hit',e.x,e.y-6,14,'#ffffff',.18,Math.random()*6)}return}if(e.sh>0)return;dmg*=mul;
- if(o=='me'&&raid){if(dmg>0&&Math.random()<raid.cr){dmg*=2;crit=1}if(raid.ls&&e.raidE)me.hp=Math.min(me.mx,me.hp+dmg*raid.ls)}if(id=='me')me.aw=Math.min(100,(me.aw||0)+dmg*.25);else if(o=='me')me.aw=Math.min(100,(me.aw||0)+dmg*.4*(raid?raid.mg:1));
- const hd=dmgTo(e,dmg);if(dmg>0){num(e.x,e.y-20,dmg,crit?'#ff9d2e':hd<dmg*.5?'#9fd8ff':0);if(hd<dmg)e.sbt=tm+.25;FX(crit?'slash':'hit',e.x,e.y-6,crit?26:14,crit?'#ff9d2e':hd>0?'#ffffff':'#a9dcff',crit?.3:.18,Math.random()*6)}e.hft=tm+.12;e.sl=Math.max(e.sl,sl);if(e.dum){e.log.push({t:tm,d:dmg});e.tot+=dmg}
+ if(o=='me'&&raid&&dmg>0&&Math.random()<raid.cr){dmg*=2;crit=1}
+ const hp0=e.hp,hd=dmgTo(e,dmg),landed=hp0>0?Math.min(hd,hp0):0;
+ // Whatever the attacker is paid for is paid on what actually landed, not on the roll. Paid on the roll,
+ // one overkill hit fed full lifesteal and filled the whole awakening meter off 1 point of damage. hd
+ // keeps its old meaning (raw penetration) so the shield-break ring and the damage numbers are unchanged.
+ if(landed>0){if(o=='me'&&raid&&raid.ls&&e.raidE)me.hp=Math.min(me.mx,me.hp+landed*raid.ls);
+  if(id=='me')me.aw=Math.min(100,(me.aw||0)+landed*.25);else if(o=='me')me.aw=Math.min(100,(me.aw||0)+landed*.4*(raid?raid.mg:1))}
+ if(ow&&ow.al&&x&&dmg>0&&(o=='me'||ow.bot||ow.loc)){const pc=CH[ow.ch].pas;if(pc&&x.ba){ow.hc=(ow.hc||0)+1;if(ow.hc>=pc.n){ow.hc=0;heal(ow,ow.mx*pc.heal)}}if(x.ls&&landed>0)heal(ow,landed*x.ls)}
+ if(dmg>0){num(e.x,e.y-20,dmg,crit?'#ff9d2e':hd<dmg*.5?'#9fd8ff':0);if(hd<dmg)e.sbt=tm+.25;FX(crit?'slash':'hit',e.x,e.y-6,crit?26:14,crit?'#ff9d2e':hd>0?'#ffffff':'#a9dcff',crit?.3:.18,Math.random()*6);
+ // a crit reads as one: a second ring and a nudge of shake, only ever for the player's own blows so
+ // a screen full of enemies critting cannot shake the view. Damage above is already settled.
+ if(crit&&o=='me'){FX('ring',e.x,e.y-6,26,'#ff9d2e',.26,0);shake=Math.max(shake,.16)}}
+e.hft=tm+.12;e.sl=Math.max(e.sl,sl);if(e.dum){e.log.push({t:tm,d:dmg});e.tot+=dmg}
  if(x){if(x.st&&!e.boss){e.stn=Math.max(e.stn||0,x.st);burst(e.x,e.y-20,'#ffe14d',6)}if(x.dot){e.brn=x.dot.t;e.bd=x.dot.d*mul;e.bo=o}
   if(x.kb&&!e.boss){const d=Math.hypot(e.x-x.x,e.y-x.y)||1,f=x.kb<0?-Math.min(-x.kb,d):x.kb;e.dash=null;move(e,(e.x-x.x)/d*f,(e.y-x.y)/d*f)}}
- if(id=='me'){lastHit=o;flashS=hd>0?0:1;flash=hd>0?.15:.07;shake=Math.max(shake,hd>0?.25:.1);if(raid)raid.hit+=hd;if(dmg>0)sfx(hd>0?'hurt':'blk');if(me.hp<=0)die()}else{if(o=='me'&&dmg>0)sfx('hit');if(e.hp<=0)slay(e,o)}}
-function slay(e,o){e.al=0;e.rt=3;FX('poof',e.x,e.y,e.boss?64:26,CH[e.ch].col,e.boss?.7:.45,Math.random()*6);if(e.boss)shake=.5;credit(o,e)}
+ if(id=='me'){lastHit=o;flashS=hd>0?0:1;flash=hd>0?.15:.07;shake=Math.max(shake,hd>0?.25:.1);if(raid)raid.hit+=hd;if(dmg>0)sfx(hd>0?'hurt':'blk');if(me.hp<=0)die()}else{if(o=='me'){if(dmg>0)sfx('hit');if(raid&&hd>0)raid.xp+=hd}if(e.hp<=0)slay(e,o)}}
+function slay(e,o){if(!e.al)return;e.al=0;e.rt=3;FX('poof',e.x,e.y,e.boss?64:26,CH[e.ch].col,e.boss?.7:.45,Math.random()*6);if(e.boss)shake=.5;
+ // a kill the player lands gets a short kick. Math.max keeps a swarm of kills from stacking it up.
+ if(o=='me')shake=Math.max(shake,e.boss?.4:.1);credit(o,e)}
 function freeSpot(c){for(const p of c)if(!hitPil(p[0],p[1],34))return{x:p[0],y:p[1]};return{x:c[0][0],y:c[0][1]}}
 function spawnRoom(){const r=raid,st=r.mode=='stage';allC=null;r.wave=(r.floor-1)*5+r.room;for(const id in others)delete others[id];ents=[];pk=[];chest=null;portal=null;choice=null;r.fid={};
  const rm=r.rm=st?r.plan.rooms[r.room-1]:{type:r.room==5?'boss':(r.room==3?'treasure':'fight'),map:SMALL[Math.random()*SMALL.length|0],n:Math.min(12,4+r.floor+r.room),boss:BOSS[(r.floor-1)%BOSS.length],adds:3};
+  EVT.room();
  setMap(rm.map);me.x=SP[0][0];me.y=SP[0][1];me.dash=null;r.type=rm.type;r.queue=[];r.spawnT=.8;
  r.hs=st?r.plan.hs:1.15*(1+.2*(r.floor-1)+.05*(r.room-1));r.ds=st?r.plan.ds:1.1+.1*(r.floor-1);r.gv=st?1+.05*(r.stage-1):1+.15*(r.floor-1);
  if(rm.type=='boss'){const bi=rm.boss,b=mk(bi,450,110,CH[bi].n,true);b.boss=1;b.raidE=1;b.mx=b.hp=Math.round(CH[bi].hp*r.hs*1.04);b.dmgMul=r.ds*.88;others.boss=b;r.fid.boss=1;spawnFoes(rm.adds);r.state='fight';sfx('boss')}
@@ -132,12 +163,36 @@ function roomClear(quiet){const r=raid;r.state='clear';if(!quiet){r.rooms++;r.sc
  const cp=freeSpot([[450,300],[450,200],[450,400],[330,300],[570,300],[300,150]]),pp=freeSpot([[450,60],[450,540],[90,300],[810,300]]);
  chest={x:cp.x,y:cp.y,open:false};portal={x:pp.x,y:pp.y};if(quiet){pk.push({x:cp.x-60,y:cp.y+40,t:'hp',v:.3},{x:cp.x+60,y:cp.y+40,t:'en',v:40})}}
 function nextRoom(){const r=raid;r.room++;if(r.mode!='stage'&&r.room>5){r.floor++;r.room=1}sfx('port');spawnRoom()}
-function openChoice(){const l=BUFFS.filter(b=>!(b.run&&me.hp>me.mx*.85)).sort(()=>Math.random()-.5).slice(0,3);choice={list:l};UI.choice(l)}
-function pickBuff(i){if(!choice||!choice.list[i])return;const b=choice.list[i];b.f(raid);raid.bf[b.n]=(raid.bf[b.n]||0)+1;bfStr(raid);say(me.x,me.y-60,b.n+'!','#ffe14d');burst(me.x,me.y,'#ffe14d',24);sfx('buff');choice=null;UI.choice(null)}
-function raidTick(dt){const r=raid;if(r.state=='over')return;
+// one upgrade screen at a time, never one with an upgrade already maxed, and never two stacked.
+// src is carried so the panel can say why it opened.
+function openChoice(src){ if(choice)return;
+ const r=raid,l=BUFFS.filter(b=>(r.bf[b.n]||0)<(b.max||BMAX)).filter(b=>!(b.run&&me.hp>me.mx*.85));
+ if(!l.length)return;
+ const p=l.sort(()=>Math.random()-.5).slice(0,3);
+ choice={list:p,src:src||'chest',lv:r.lv};UI.choice(p,choice) }
+// Threshold check. Runs once per frame from raidTick rather than from the damage path, so a big
+// burst of damage can only ever open one screen, and two level-ups in a frame collapse into one.
+function lvlTick(){ const r=raid;if(!r||r.lv>=LVMAX||(r.state!=='fight'&&r.state!=='clear'))return;
+ if(r.xp<r.nxt||choice)return;
+ let up=0;
+ while(r.lv<LVMAX&&r.xp>=r.nxt){r.xp-=r.nxt;r.lv++;r.nxt=xpNeed(r.lv);up++}
+ if(!up)return;
+ ann('LEVEL '+r.lv+'!','#ffd84d');sfx('buff');burst(me.x,me.y,'#ffd84d',30);
+ say(me.x,me.y-70,(up>1?'LEVEL UP x'+up:'LEVEL '+r.lv),'#ffd84d');
+ openChoice('lvl') }
+// The screen is consumed before the upgrade is applied, so a double click or a held number key
+// cannot apply the same upgrade twice, and a maxed one is dropped rather than stacked past its cap.
+function pickBuff(i){if(!choice||!choice.list[i])return;
+ const b=choice.list[i],r=raid;
+ choice=null;UI.choice(null);
+ if((r.bf[b.n]||0)>=(b.max||BMAX))return;
+ b.f(r);r.bf[b.n]=(r.bf[b.n]||0)+1;bfStr(r);
+ say(me.x,me.y-60,b.n+'!','#ffe14d');burst(me.x,me.y,'#ffe14d',24);sfx('buff')}
+function raidTick(dt){const r=raid;EVT.tick(dt);if(!r||r.state=='over')return;
  if(r.state=='down'){r.downT-=dt;if(r.downT<=0){paused=1;UI.down(r)}return}
  if(r.state=='win'){r.winT-=dt;if(r.winT<=0){endRun(true);return}}
  r.t+=dt;
+ lvlTick();
  if(r.state=='fight'){r.spawnT-=dt;let live=0;for(const id in others)if(others[id].raidE&&others[id].al)live++;
   if(!live&&r.spawnT<=0){if(r.queue.length){spawnFoes(r.queue.shift());if(!r.queue.length&&r.rm.elite)spawnFoes(r.rm.elite,1);r.spawnT=.7}else roomClear(false)}}
  // loot flies in once the room is cleared; potions wait until they are needed
@@ -179,11 +234,45 @@ function feedKill(k,v){if(raid)return;kf.unshift({a:k.nm,b:v.nm,ta:k.tm,tb:v.tm,
 function die(){me.al=0;me.rt=3;me.dash=null;me.hp=0;me.van=0;sfx('die');FX('poof',me.x,me.y,30,CH[me.ch].col,.5);if(raid){if(raid.state=='fight'||raid.state=='clear'){raid.pst=raid.state;raid.state='down';raid.downT=.9}return}if(R)R.emit('kill',{k:lastHit});else credit(lastHit,me);sendPres()}
 // one revive per run (the menu layer charges for it); endRun hands the totals to the menu layer
 function revive(){const r=raid;if(!r||r.state!='down')return;r.revived++;r.state=r.pst||'fight';me.al=1;me.hp=me.mx*.5;me.sd=me.sm;me.sh=2.5;me.stn=0;me.brn=0;ents=ents.filter(q=>q.o=='me');paused=0;burst(me.x,me.y,'#7dffb0',40);say(me.x,me.y-64,'REVIVED!','#7dffb0')}
-function endRun(win){const r=raid;if(!r||r.state=='over')return;r.state='over';paused=1;UI.runEnd({mode:r.mode,stage:r.stage,win:!!win,floor:r.floor,room:r.room,wave:r.wave,rooms:r.rooms,total:r.plan?r.plan.rooms.length:0,gold:Math.round(r.gold),kills:r.kills,bosses:r.bk||0,time:r.t,revived:r.revived,hp:Math.max(0,me.hp/me.mx)})}
+function endRun(win){const r=raid;if(!r||r.state=='over')return;r.state='over';paused=1;EVT.reset();UI.runEnd({mode:r.mode,stage:r.stage,win:!!win,floor:r.floor,room:r.room,wave:r.wave,rooms:r.rooms,total:r.plan?r.plan.rooms.length:0,gold:Math.round(r.gold),kills:r.kills,bosses:r.bk||0,time:r.t,revived:r.revived,hp:Math.max(0,me.hp/me.mx),lv:r.lv,bf:r.bf})}
 function hitPil(x,y,r){for(const p of PIL)if(Math.hypot(x-p[0],y-p[1])<p[2]+r)return p}
-function move(e,dx,dy){let x=e.x+dx,y=e.y+dy;x=Math.max(16,Math.min(W-16,x));y=Math.max(16,Math.min(H-16,y));
- for(const p of PIL){const d=Math.hypot(x-p[0],y-p[1]),m=p[2]+16;if(d<m){if(d<1e-6){x=p[0]+m;y=p[1]}else{x=p[0]+(x-p[0])/d*m;y=p[1]+(y-p[1])/d*m}}}e.x=x;e.y=y}
-function respawn(e){const p=tmode?SP[(e.tm||0)+2*(Math.random()*2|0)]:rs();e.x=p[0];e.y=p[1];e.hp=e.mx;e.sd=e.sm;e.al=1;e.sh=1.2;e.sl=0;e.brn=0;e.van=0;if(e.cg)for(const k in e.cg)e.cg[k]=CH[e.ch].s[k].chg}
+// Push a body out of the pillars to the NEAREST spot that is clear of all of them.
+// Resolving pillar by pillar cascades along a wall: inside a run of overlapping circles each push
+// lands in the next circle, so the body is walked all the way to the far side. A dash ends wherever
+// it ends, so aiming one through a wall used to fling the player clean through it.
+function clearPillars(x,y){
+ for(let pass=0;pass<3;pass++){
+  const hit=[];let deep=null;
+  for(const p of PIL){const d=Math.hypot(x-p[0],y-p[1]),pen=p[2]+16-d;if(pen>0){hit.push({p:p,d:d,pen:pen});if(!deep||pen>deep.pen)deep={p:p,d:d}}}
+  if(!hit.length)return[x,y];
+  let bx=x,by=y,bd=1/0,fx=x,fy=y,fd=1/0;
+  for(const h of hit){
+   const p=h.p,m=p[2]+16,nx=h.d>1e-6?(x-p[0])/h.d:1,ny=h.d>1e-6?(y-p[1])/h.d:0;
+   for(const c of [[p[0]+nx*m,p[1]+ny*m],[p[0]-nx*m,p[1]-ny*m]]){
+    const d=Math.hypot(c[0]-x,c[1]-y);
+    if(d<bd){bd=d;bx=c[0];by=c[1]}
+    if(d<fd&&!hitPil(c[0],c[1],16)){fd=d;fx=c[0];fy=c[1]}}
+  }
+  if(fd<1/0){x=fx;y=fy;continue}
+  // Deep inside a run of circles: every surface is buried in the next one, so no candidate above is
+  // free. March outward along the deepest circle's normal both ways and keep whichever side frees
+  // the body soonest. That is the shortest way out, so it can never land on the far side of a wall.
+  const m=deep.p[2]+16,nx=deep.d>1e-6?(x-deep.p[0])/deep.d:1,ny=deep.d>1e-6?(y-deep.p[1])/deep.d:0;
+  let best=null;
+  for(const s of[1,-1]){
+   for(let t=8;t<900;t+=8){
+    const qx=x+s*nx*t,qy=y+s*ny*t;
+    if(!hitPil(qx,qy,16)){if(!best||t<best.t)best={x:qx,y:qy,t:t};break}
+   if(best&&best.t<=t)break}
+  }
+  if(best){x=best.x;y=best.y}
+  else{x=bx;y=by}}
+ return[x,y]}
+// the bound is applied last, so a body can never end a frame outside the arena
+function move(e,dx,dy){let x=e.x+dx,y=e.y+dy;[x,y]=clearPillars(x,y);e.x=Math.max(16,Math.min(W-16,x));e.y=Math.max(16,Math.min(H-16,y))}
+// a form must not survive death: hand the boosted stats back first, or the next life starts with a
+// raised max health and the form's damage multiplier still ticking
+function respawn(e){if(e.tb){e.mx=e.tb.mx;e.sm=e.tb.sm;e.tb=0}e.tn=0;e.fm=0;const p=tmode?SP[(e.tm||0)+2*(Math.random()*2|0)]:rs();e.x=p[0];e.y=p[1];e.hp=e.mx;e.sd=e.sm;e.al=1;e.sh=1.2;e.sl=0;e.brn=0;e.van=0;if(e.cg)for(const k in e.cg)e.cg[k]=CH[e.ch].s[k].chg}
 function update(dt){if(choice)return;allC=null;matchT+=dt;
   if(hold>0)hold-=dt;lockT=null;if(touch){if(aim&&aim.on){me.a=aim.a;mouse.x=me.x+Math.cos(me.a)*220;mouse.y=me.y+Math.sin(me.a)*220}
   else if(hold>0){mouse.x=me.x+Math.cos(me.a)*220;mouse.y=me.y+Math.sin(me.a)*220}
@@ -193,14 +282,14 @@ function update(dt){if(choice)return;allC=null;matchT+=dt;
  for(const [id,e] of all()){for(const k in e.cd)e.cd[k]=Math.max(0,e.cd[k]-dt*(e.awt>0?2.5:1)*(id=='me'&&raid?raid.cd:1));e.sh=Math.max(0,e.sh-dt);e.sl=Math.max(0,e.sl-dt);if(e.van>0)e.van=Math.max(0,e.van-dt);
   if(e.cg)for(const k in e.cg){const sk=CH[e.ch].s[k];if(e.cg[k]<sk.chg&&e.cd[k]<=0){e.cg[k]++;if(e.cg[k]<sk.chg)e.cd[k]=sk.cd}}
   if(id=='me'||e.bot||e.loc)tick(id,e,dt);if(e.awt>0&&e.al&&Math.random()<dt*40)P(e.x+(Math.random()-.5)*24,e.y+10,(Math.random()-.5)*20,-90,.5,'#ffe14d',3)}
- if(me.al){if(me.dash){const d=me.dash;d.t+=dt/.15;const u=Math.min(1,d.t);me.x=d.x0+(d.x1-d.x0)*u;me.y=d.y0+(d.y1-d.y0)*u;if(u>=1)me.dash=null}
+ if(me.al){if(me.dash){const d=me.dash;d.t+=dt/.15;const u=Math.min(1,d.t);me.x=d.x0+(d.x1-d.x0)*u;me.y=d.y0+(d.y1-d.y0)*u;if(u>=1){me.dash=null;move(me,0,0)}}
   else if(!(me.stn>0)&&!(me.van>0)){let dx=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0)+joy.x,dy=(keys.s||keys.arrowdown?1:0)-(keys.w||keys.arrowup?1:0)+joy.y;const l=Math.max(1,Math.hypot(dx,dy)),sp=CH[me.ch].sp*(me.sl>0?.5:1)*(me.hst>0?1.6:1)*(me.awt>0?1.3:1)*(me.tn>0?1.35:1)*(raid?raid.sp:1);move(me,dx/l*sp*dt,dy/l*sp*dt)}
   if(mouse.down||keys.f)tryCast(me,'me','a',mouse.x,mouse.y)}
  else if(!raid){me.rt-=dt;if(me.rt<=0)respawn(me)}
  for(const id in others){const e=others[id];
   if(!e.bot&&!e.loc){e.x+=(e.tx-e.x)*Math.min(1,dt*14);e.y+=(e.ty-e.y)*Math.min(1,dt*14);continue}
   if(!e.al){if(e.raidE){raid.score+=e.boss?200*raid.wave:30;raid.kills++;if(e.boss){raid.bk=(raid.bk||0)+1;if(raid.mode=='raid'&&raid.bk==5){say(450,200,'RAID CONQUERED!','#ffd84d');sfx('win')}}sfx(e.boss?'boom':'kill');dropLoot(e);delete others[id];allC=null;continue}e.rt-=dt;if(e.rt<=0)respawn(e);continue}
-  if(e.dash){const d=e.dash;d.t+=dt/.15;const u=Math.min(1,d.t);e.x=d.x0+(d.x1-d.x0)*u;e.y=d.y0+(d.y1-d.y0)*u;if(u>=1)e.dash=null;continue}
+  if(e.dash){const d=e.dash;d.t+=dt/.15;const u=Math.min(1,d.t);e.x=d.x0+(d.x1-d.x0)*u;e.y=d.y0+(d.y1-d.y0)*u;if(u>=1){e.dash=null;move(e,0,0)}continue}
   if(e.dum){e.log=e.log.filter(x=>tm-x.t<3);e.nm='DPS '+Math.round(e.log.reduce((a,x)=>a+x.d,0)/3)+' | Total '+Math.round(e.tot);e.hp=e.mx;continue}
   let t=null,bd=1e9;for(const [i2,o] of all())if(i2!=id&&o.al&&!(raid&&o.raidE)&&!(tmode&&o.tm===e.tm)){const d=Math.hypot(o.x-e.x,o.y-e.y);if(d<bd){bd=d;t=o}}
   if(!t||e.stn>0||e.van>0)continue;if(e.loc){const dx=(k2.arrowright?1:0)-(k2.arrowleft?1:0),dy=(k2.arrowdown?1:0)-(k2.arrowup?1:0);if(dx||dy)e.a=Math.atan2(dy,dx);const l=Math.max(1,Math.hypot(dx,dy)),sp=CH[e.ch].sp*(e.sl>0?.5:1)*(e.hst>0?1.6:1);move(e,dx/l*sp*dt,dy/l*sp*dt);if(k2.enter)tryCast(e,id,'a',e.x+Math.cos(e.a)*220,e.y+Math.sin(e.a)*220);continue}if(e.foe){e.a=Math.atan2(t.y-e.y,t.x-e.x);const ai=CH[e.ch].ai,spd=CH[e.ch].sp*1.1*(e.sl>0?.5:1);let dir=0,st=0;
@@ -210,7 +299,7 @@ function update(dt){if(choice)return;allC=null;matchT+=dt;
   if(e.boss){e.a=Math.atan2(t.y-e.y,t.x-e.x);const dir=bd>260?1:bd<140?-1:0,sp=CH[e.ch].sp*.62*(e.sl>0?.5:1);move(e,Math.cos(e.a)*dir*sp*dt,Math.sin(e.a)*dir*sp*dt);
    if(bd<560){if(Math.random()<dt*1.8)tryCast(e,id,'a',t.x,t.y);if(Math.random()<dt*.45)tryCast(e,id,'q',t.x,t.y);if(Math.random()<dt*.2)tryCast(e,id,'e',t.x,t.y);if(Math.random()<dt*.16)tryCast(e,id,'r',t.x,t.y);if(desOpen(e)&&Math.random()<dt*.5)tryCast(e,id,'c',t.x,t.y)}continue}
   if(e.err==null||Math.random()<dt*1.5)e.err=(Math.random()-.5)*.9;e.a=Math.atan2(t.y-e.y,t.x-e.x)+e.err;
-  const dir=bd>240?1:bd<150?-1:0,st=Math.sin(tm*1.3+id.charCodeAt(1))*.7,sp=CH[e.ch].sp*.5*(e.sl>0?.5:1)*(e.hst>0?1.6:1);
+  const dir=bd>240?1:bd<150?-1:0,st=Math.sin(tm*1.3+(id.charCodeAt(1)||id.charCodeAt(0)||0))*.7,sp=CH[e.ch].sp*.5*(e.sl>0?.5:1)*(e.hst>0?1.6:1);
   move(e,(Math.cos(e.a)*dir-Math.sin(e.a)*st)*sp*dt,(Math.sin(e.a)*dir+Math.cos(e.a)*st)*sp*dt);
   if(bd<380){if(Math.random()<dt*1.6)tryCast(e,id,'a',t.x,t.y);if(Math.random()<dt*.18)tryCast(e,id,'q',t.x,t.y);if(Math.random()<dt*.08)tryCast(e,id,'r',t.x,t.y)}
   if(Math.random()<dt*.12||(e.hp<30&&Math.random()<dt*.5))tryCast(e,id,'e',t.x,t.y)}
@@ -223,13 +312,13 @@ function update(dt){if(choice)return;allC=null;matchT+=dt;
      if(Math.random()<dt*14)P(q.x,q.y,0,0,.3,'#c7d2fe',q.r*.5)}
     q.life-=dt;if(Math.random()<Q.tr)P(q.x,q.y,(Math.random()-.5)*50,(Math.random()-.5)*50,.3,q.col,q.r*.6);if(q.x<0||q.x>W||q.y<0||q.y>H||hitPil(q.x,q.y,q.r))q.life=0;
    if(q.life>0)for(const [id,e] of all()){if(id==q.o||!e.al||ally(q.o,e))continue;if(Math.hypot(e.x-q.x,e.y-q.y)<q.r+hr(e)){if(q.h&&q.h[id])continue;if(q.pierce)(q.h=q.h||{})[id]=1;else q.life=0;burst(q.x,q.y,q.col,12);decal(q.x,q.y,10,q.col);hurt(id,e,q.dmg,q.sl,q.o,q);if(!q.pierce)break}}}
-  else{q.age+=dt;if(q.fol&&!q.done){const t=ent(q.fol);if(t&&t.al){q.x=t.x;q.y=t.y}}if(q.mine&&!q.done&&q.age>.7)for(const [id,e] of all())if(id!=q.o&&e.al&&!ally(q.o,e)&&Math.hypot(e.x-q.x,e.y-q.y)<q.r*.8+hr(e))q.delay=q.age;if(!q.done&&q.age>=q.delay){q.done=1;if(q.dmg>0){burst(q.x,q.y,q.col,q.r>60?32:14);if(q.dmg>30)shake=.35;decal(q.x,q.y,q.r,q.col)}else burst(q.x,q.y,q.col,8);for(const [id,e] of all())if(id!=q.o&&e.al&&Math.hypot(e.x-q.x,e.y-q.y)<q.r+hr(e)){if(q.dmg>0)hurt(id,e,q.dmg,q.sl,q.o,q)}
-    if(q.tp){const oe=ent(q.o);if(oe){oe.van=0;if(q.o=='me'||oe.bot||oe.loc){const a=Math.atan2(q.y-oe.y,q.x-oe.x);oe.x=q.x-Math.cos(a)*34;oe.y=q.y-Math.sin(a)*34;move(oe,0,0);if(q.hl)heal(oe,oe.mx*q.hl)}FX('tp',q.x,q.y,30,q.col,.45)}}}
+  else{q.age+=dt;if(q.fol&&!q.done){const t=ent(q.fol);if(t&&t.al){q.x=t.x;q.y=t.y}}if(q.mine&&!q.done&&q.age>.7)for(const [id,e] of all())if(id!=q.o&&e.al&&!ally(q.o,e)&&Math.hypot(e.x-q.x,e.y-q.y)<q.r*.8+hr(e))q.delay=q.age;if(!q.done&&q.age>=q.delay){q.done=1;if(q.dmg>0){burst(q.x,q.y,q.col,q.r>60?32:14);if(q.dmg>30)shake=.35;decal(q.x,q.y,q.r,q.col)}else burst(q.x,q.y,q.col,8);let nh=0;for(const [id,e] of all())if(id!=q.o&&e.al&&Math.hypot(e.x-q.x,e.y-q.y)<q.r+hr(e)){if(q.dmg>0){hurt(id,e,q.dmg,q.sl,q.o,q);nh++}}
+    if(q.tp){const oe=ent(q.o);if(oe){oe.van=0;if(q.o=='me'||oe.bot||oe.loc){const a=Math.atan2(q.y-oe.y,q.x-oe.x);oe.x=q.x-Math.cos(a)*34;oe.y=q.y-Math.sin(a)*34;move(oe,0,0);if(q.hl)heal(oe,oe.mx*q.hl)}FX('tp',q.x,q.y,30,q.col,.45)}}else if(q.dmg>0&&!nh)q.wh=1}
    if(q.age>q.delay+.3)q.life=0;else q.life=1}}
  ents=ents.filter(q=>q.life>0);
  if(raid){}else if(!over){const w=tmode?(teamScore(me.tm)>=10?[0,{nm:'YOUR TEAM'}]:teamScore(1-me.tm)>=10?[0,{nm:'ENEMY TEAM'}]:null):all().find(([i,e])=>e.k>=5);if(w){over=5;winner=w[1].nm;UI.pvpEnd(tmode?teamScore(me.tm)>=10:w[1]===me,!!R,loc2||train)}}
  else{over-=dt;if(over<=0){over=0;for(const [i,e] of all()){e.k=0;if(i=='me'||e.bot)respawn(e)}ents=[]}}
- flash=Math.max(0,flash-dt);shake=Math.max(0,shake-dt);{let n=0;for(let i=0;i<parts.length;i++){const p=parts[i];p.x+=p.vx*dt;p.y+=p.vy*dt;p.l-=dt;if(p.l>0)parts[n++]=p}parts.length=n}for(const d of decals)d.l-=dt;decals=decals.filter(d=>d.l>0);if(decals.length>70)decals.splice(0,decals.length-70);for(const f of kf)f.l-=dt;kf=kf.filter(f=>f.l>0);for(const a of an)a.l-=dt;an=an.filter(a=>a.l>0);for(const t of txts){t.y-=38*dt;t.l-=dt}txts=txts.filter(t=>t.l>0);pt+=dt;if(R&&pt>.07){pt=0;sendPres()}}
+ if(RMM.matches){flash=0;shake=0}else{flash=Math.max(0,flash-dt);shake=Math.max(0,shake-dt);}{let n=0;for(let i=0;i<parts.length;i++){const p=parts[i];p.x+=p.vx*dt;p.y+=p.vy*dt;p.l-=dt;if(p.l>0)parts[n++]=p}parts.length=n}for(const d of decals)d.l-=dt;decals=decals.filter(d=>d.l>0);if(decals.length>70)decals.splice(0,decals.length-70);for(const f of kf)f.l-=dt;kf=kf.filter(f=>f.l>0);for(const a of an)a.l-=dt;an=an.filter(a=>a.l>0);for(const t of txts){t.y-=38*dt;t.l-=dt}txts=txts.filter(t=>t.l>0);pt+=dt;if(R&&pt>.07){pt=0;sendPres()}}
 function rr(x,y,w,h,r,f){ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fillStyle=f;ctx.fill()}
 function drawDummy(e){softShadow(e.x,e.y+22,20,7);
  ctx.fillStyle='#8a5a2b';ctx.fillRect(e.x-4,e.y-4,8,26);ctx.fillRect(e.x-26,e.y-18,52,7);
@@ -339,12 +428,14 @@ function hudPvp(){const pl=all(),n=pl.length,pw=Math.min(210,(cw-54)/n-4);
 function hudRun(){const r=raid,c=CH[me.ch],x=8,y=8,w=Math.min(264,cw-64),bx=x+62,bw=w-70,st=r.mode=='stage',mw=Math.min(150,cw*.3);
  rr(x,y,w,78,14,'rgba(27,16,48,.9)');ctx.strokeStyle='#ffffff22';ctx.lineWidth=1.5;ctx.beginPath();ctx.roundRect(x,y,w,78,14);ctx.stroke();
  ctx.fillStyle=c.col;ctx.beginPath();ctx.arc(x+25,y+47,19,0,7);ctx.fill();ctx.strokeStyle='#1b1030';ctx.lineWidth=3;ctx.stroke();ctx.fillStyle='#fff';ctx.font='900 18px system-ui';ctx.textAlign='center';ctx.fillText(c.n[0],x+25,y+53);
- ctx.font='900 11px system-ui';ctx.textAlign='left';ctx.fillStyle='#ffe14d';ctx.fillText((st?'STAGE '+(r.plan.c+1)+'-'+r.plan.i:'FLOOR '+r.floor)+' · ROOM '+r.room+'/'+(st?r.plan.rooms.length:5),x+10,y+16);
+ ctx.font='900 11px system-ui';ctx.textAlign='left';ctx.fillStyle='#ffe14d';ctx.fillText('LV '+(r.lv||1)+' · '+(st?'STAGE '+(r.plan.c+1)+'-'+r.plan.i:'FLOOR '+r.floor)+' · ROOM '+r.room+'/'+(st?r.plan.rooms.length:5),x+10,y+16);
  ctx.textAlign='right';ctx.fillStyle='#ffd23c';ctx.fillText('🪙 '+Math.round(r.gold),x+w-10,y+16);
  const row=(yy,f,col,txt,ic,icc)=>{ctx.textAlign='center';ctx.font='900 12px system-ui';ctx.fillStyle=icc;ctx.fillText(ic,bx-9,yy+10);hbar(bx,yy,bw,11,f,col);if(txt){ctx.font='900 9px system-ui';ctx.lineWidth=2.5;otext(txt,bx+bw/2,yy+9)}};
  row(y+24,me.hp/me.mx,'#ef4444',Math.max(0,Math.ceil(me.hp))+' / '+me.mx,'♥','#ff6b7d');
  row(y+41,me.sm?me.sd/me.sm:0,me.sdt>0?'#7f9fc4':'#a9dcff',Math.ceil(Math.max(0,me.sd))+' / '+me.sm,'◆','#a9dcff');
  row(y+58,me.awt>0?me.awt/15:(me.aw||0)/100,me.awt>0?'#fff3a0':'#ffd84d',me.awt>0?'AWAKENED':me.aw>=100?(touch?'READY!':'SPACE!'):'','★','#ffd84d');
+ // xp toward the next upgrade, tucked under the three vitals bars inside the same panel
+ hbar(bx,y+71,bw,4,Math.max(0,Math.min(1,(r.xp||0)/(r.nxt||1))),'#a78bfa');
  let by=y+96;const bo=others.boss;
  if(bo&&bo.al){const L=w+20,Rr=cw-mw-20,wide=Rr-L>=220,bw2=wide?Math.min(440,Rr-L):cw-mw-28,bx2=wide?L+(Rr-L-bw2)/2:8,yy=wide?16:y+88;
   hbar(bx2,yy,bw2,13,bo.hp/bo.mx,'#ef4444');ctx.font='900 11px system-ui';ctx.textAlign='center';ctx.lineWidth=3;otext('👑 '+bo.nm+'  '+Math.ceil(bo.hp),bx2+bw2/2,yy+27);if(!wide)by+=36}
@@ -368,7 +459,10 @@ addEventListener('keydown',e=>{const k=(e.key||'').toLowerCase();if(!k)return;if
  if(loc2&&others.p2&&',./;'.includes(k)&&k.length==1){const p=others.p2;tryCast(p,'p2',{',':'q','.':'e','/':'r',';':'c'}[k],p.x+Math.cos(p.a)*220,p.y+Math.sin(p.a)*220);e.preventDefault()}
  if(k=='enter')e.preventDefault()
  if(k==' ')awaken();if(k==' '||k.startsWith('arrow'))e.preventDefault()});
-addEventListener('keyup',e=>{const k=(e.key||'').toLowerCase();if(!k)return;keys[k]=0;k2[k]=0});addEventListener('blur',()=>{keys={};k2={};mouse.down=false});
+addEventListener('keyup',e=>{const k=(e.key||'').toLowerCase();if(!k)return;keys[k]=0;k2[k]=0});// one place that drops every held input. A key is only ever cleared by its own keyup, so losing
+// focus mid-stride, pausing, or leaving a match used to leave a key latched and the hero drifting.
+const clearInput=()=>{keys={};k2={};mouse.down=false;aim=null;hold=0;jid=null;joy.x=joy.y=0};
+addEventListener('blur',clearInput);
 const mp=e=>{const r=cv.getBoundingClientRect();mouse.x=cam.x+(e.clientX-r.left)/K;mouse.y=cam.y+(e.clientY-r.top)/K};
 cv.addEventListener('mousemove',e=>{if(!touch)mp(e)});cv.addEventListener('mousedown',e=>{if(touch)return;mp(e);mouse.down=true});addEventListener('mouseup',()=>{if(!touch)mouse.down=false});
 cv.addEventListener('contextmenu',e=>e.preventDefault());
@@ -385,7 +479,11 @@ js.addEventListener('pointerup',jend);js.addEventListener('pointercancel',jend);
  b.addEventListener('pointermove',e=>{if(e.pointerId!==pid||!aim||aim.key!='a')return;const dx=e.clientX-cx,dy=e.clientY-cy;if(Math.hypot(dx,dy)>14){aim.on=1;aim.a=Math.atan2(dy,dx)}});
  const end=e=>{if(e.pointerId!==pid)return;pid=null;mouse.down=false;if(aim&&aim.key=='a')aim=null};
  ['pointerup','pointercancel'].forEach(t=>b.addEventListener(t,end))}
-function aimRange(s){return Math.min(520,s.cur?380:(s.len||(s.spd&&s.life?s.spd*s.life:0)||s.dist||s.r||(s.rad||0)+120||200))}
+// A strike reaches s.rng, but its s.r is the blast it lands in, not how far it goes. Falling through the
+// chain below handed the drag the blast radius, so on touch every strike fired a third of the way the
+// player aimed while keyboard players got the full reach. Chain's rng is a target search radius, not a
+// reach, so this stays keyed on the kind.
+function aimRange(s){return s.k=='strike'?s.rng:Math.min(520,s.cur?380:(s.len||(s.spd&&s.life?s.spd*s.life:0)||s.dist||s.r||(s.rad||0)+120||200))}
 ['q','e','r','c'].forEach(k=>{const b=$('b'+k);let pid=null,cx=0,cy=0;
  b.addEventListener('pointerdown',e=>{if(!run||!me)return;pid=e.pointerId;try{b.setPointerCapture(pid)}catch(err){}const r=b.getBoundingClientRect();cx=r.left+r.width/2;cy=r.top+r.height/2;aim={key:k,a:me.a,f:0,on:0};e.preventDefault()});
  b.addEventListener('pointermove',e=>{if(e.pointerId!==pid||!aim)return;const dx=e.clientX-cx,dy=e.clientY-cy,l=Math.hypot(dx,dy);if(l>14){aim.on=1;aim.a=Math.atan2(dy,dx);aim.f=Math.min(1,l/90)}});

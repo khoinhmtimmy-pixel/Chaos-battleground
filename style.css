@@ -248,6 +248,10 @@ td .btn{min-height:28px;padding:2px 8px;font-size:12px;margin:1px}
 .rw div{background:#120c30;border-radius:14px;padding:8px;font-weight:800;font-size:20px}
 .rw small{display:block;color:var(--mut);font-size:12px;font-weight:700}
 .lvup{padding:8px;border-radius:14px;background:linear-gradient(90deg,#ffb02e33,#7c5cff33);border:2px solid var(--gold);font-weight:800;animation:pulse 1.2s infinite}
+.runups{padding:9px;border-radius:14px;background:#120c30;border:2px solid #7c5cff55;text-align:left}
+.runups b{display:block;font-size:13px;color:var(--gold);margin-bottom:6px}
+.upchips{display:flex;flex-wrap:wrap;gap:6px}
+.upchips i{font:800 12px system-ui;font-style:normal;background:#241a52;border:1px solid #7c5cff55;border-radius:9px;padding:4px 8px;white-space:nowrap}
 .buffs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .bf{display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 6px;border-radius:16px;background:linear-gradient(170deg,#3b2a9a,#1d1538);border:3px solid #7fe4ff;border-bottom-width:6px;font-weight:800;min-height:150px;transition:transform .1s}
 .bf:hover{transform:translateY(-4px);border-color:var(--gold)}

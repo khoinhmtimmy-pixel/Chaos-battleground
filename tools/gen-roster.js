@@ -85,7 +85,7 @@ const K={
    q:{k:'proj',cd:4,n:3,spread:.4,spd:s,r:9,dmg:o.qd||13,life:.4,nm:'Fan of Blades'},
    e:{k:'blink',cd:3.5,dist:300,to:1,nm:'Vanish'},
    r:{k:'nova',cd:14,r:90,dmg:o.rd||50,delay:.45,sl:.5,nm:'Execute'},
-    c:{k:'strike',cd:22,rng:540,r:155,dmg:o.x5||155,delay:.35,st:1,hl:1,nm:'Death Mark'}}},
+    c:{k:'strike',cur:1,cd:22,rng:540,r:155,dmg:o.x5||155,delay:.35,st:1,hl:1,nm:'Death Mark'}}},
  archer:(o={})=>{const s=o.spd||700;
   return{a:{k:'proj',cd:.5,spd:s,r:6,dmg:o.ad||9,life:.8,ps:'arrow',nm:'Arrow'},
    q:{k:'proj',cd:4.5,n:4,spread:.9,spd:s*.85,r:9,dmg:o.qd||11,life:.6,nm:'Volley'},

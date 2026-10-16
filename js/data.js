@@ -60,7 +60,7 @@ a:{k:'proj',cd:.28,spd:640,r:6,dmg:6,life:.3,nm:'Dagger Throw'},
 q:{k:'proj',cd:4,n:3,spread:.5,spd:600,r:8,dmg:11,life:.5,nm:'Shadow Fan'},
 e:{k:'blink',cd:5,dist:300,to:1,nm:'Umbral Step'},
 r:{k:'nova',cd:14,cur:1,r:80,dmg:40,delay:.5,nm:'Assassinate'},
- c:{k:'strike',cd:22,rng:520,r:150,dmg:150,delay:0.35,st:1,hl:1,nm:'Phantom Execution'}
+ c:{k:'strike',cur:1,cd:22,rng:520,r:150,dmg:150,delay:0.35,st:1,hl:1,nm:'Phantom Execution'}
 }},
 {n:'Aoi',t:'Water Priestess',col:'#4fd6c8',hair:'#2a8fa8',acc:'halo',hp:95,sp:215,s:{
 a:{k:'proj',cd:.45,spd:520,r:9,dmg:7,life:.8,sl:.6,nm:'Water Shot'},
@@ -348,7 +348,7 @@ a:{k:'cone',r:60,arc:1.6,dmg:7,cd:.28,nm:'Quick Slash'},
 q:{k:'dash',dist:280,nova:{r:60,dmg:16},cd:4,nm:'Phantom Cut'},
 e:{k:'orbit',n:2,rad:50,dur:3,dmg:10,cd:7,nm:'Twin Blades'},
 r:{k:'dash',dist:340,nova:{r:90,dmg:40,st:.5},cd:14,nm:'Death Mark Rush'},
- c:{k:'strike',cd:22,rng:560,r:160,dmg:170,delay:0.35,st:1.2,hl:1,nm:'Assassination'}
+ c:{k:'strike',cur:1,cd:22,rng:560,r:160,dmg:170,delay:0.35,st:1.2,hl:1,nm:'Assassination'}
 }},
 {n:'Lyra',t:'MOBA Marksman',col:'#22d3ee',hair:'#164e63',acc:'bow',hp:85,sp:215,s:{
 a:{k:'proj',spd:760,r:6,dmg:7,life:.7,cd:.3,nm:'Rapid Arrow'},
@@ -512,7 +512,9 @@ const BUFFS=[{n:'Power Up',ic:'⚔️',d:'+18% damage',dv:'+18% sát thương',f
 {n:'Bulwark',ic:'🛡️',d:'+35% max shield',dv:'+35% khiên tối đa',f:r=>{me.sm=Math.round(me.sm*1.35);me.sd=me.sm}},
 {n:'Quick Guard',ic:'🔋',d:'Shield recharges 40% sooner and faster',dv:'Khiên hồi sớm và nhanh hơn 40%',f:r=>{r.sr*=1.4}},
 {n:'Gold Rush',ic:'🪙',d:'+50% gold from this run',dv:'+50% vàng trong lượt này',f:r=>{r.gm*=1.5}},
-{n:'Field Medic',ic:'🧪',run:1,d:'Restore 40% HP right now',dv:'Hồi ngay 40% máu',f:r=>{me.hp=Math.min(me.mx,me.hp+me.mx*.4)}}];
+{n:'Field Medic',ic:'🧪',run:1,max:1,d:'Restore 40% HP right now',dv:'Hồi ngay 40% máu',f:r=>{me.hp=Math.min(me.mx,me.hp+me.mx*.4)}},
+   {n:'Unstable Core',ic:'\u{1F300}',max:2,d:'Below 40% HP you deal +45% damage',dv:'Dưới 40% máu bạn gây +45% sát thương',
+    f:r=>{r.uc+=.45}}];
 
 // ---- accessories. 3 slots (head/charm/aura), bought with gold in the Gear screen.
 // b = PvE-only stat bonuses as fractions (cd < 1 means skills recharge faster), p = gold price, art = draw key in js/art.js
@@ -568,7 +570,7 @@ function genLights(i){LIGHTS.length=0;const M=MAPS[i],w=M.w||900,h=M.h||600;
  let sd=i*733+7;const rnd=()=>{sd=(sd*9301+49297)%233280;return sd/233280};
  const n=M.w?14:8;
  for(let j=0;j<n;j++)LIGHTS.push([40+rnd()*(w-80),40+rnd()*(h-80),26+rnd()*15])}
-const IC={proj:'➶',cone:'⚔',beam:'═',orbit:'◎',rain:'☔',mine:'●',chain:'⚡',zone:'◉',nova:'✸',dash:'⇢',blink:'✧',shield:'◍',heal:'✚',haste:'≫'};
+const IC={proj:'➶',cone:'⚔',beam:'═',orbit:'◎',rain:'☔',mine:'●',chain:'⚡',zone:'◉',nova:'✸',dash:'⇢',blink:'✧',shield:'◍',heal:'✚',haste:'≫',strike:'⌖'};
 CH.forEach(c=>{const m=MOD[c.n];if(m)for(const k in m)Object.assign(c.s[k],m[k])});
 // ---- balance pass (tuned with 1v1 duel simulations): kit fixes, then per-character [health x, damage x]
 const KIT={Sakura:{a:{home:0,cd:.55}},Arashi:{a:{home:0,cd:.45}}};
