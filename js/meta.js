@@ -223,7 +223,7 @@ home(){const c=CH[sel],p=curStats(sel),stg=Math.min(S.stage,NSTAGE),pl=stagePlan
  <div class="modes"><button class="mode m-camp" data-a="playStage" data-v="${stg}"><span class="mi">🗺️</span><b>${t('campaign')}</b><small>${done?t('campDone'):t('stage')+' '+(pl.c+1)+'-'+pl.i+' · '+chapName(pl.c)}</small><em>${t('play')}</em></button>
  <button class="mode m-raid${rk?'':' lock'}" data-a="playRaid"><span class="mi">🏰</span><b>${t('raid')}</b><small>${rk?(S.raid?t('raidSub',Math.ceil(S.raid/5),(S.raid-1)%5+1):t('raidNew')):t('raidLock')}</small><em>${rk?t('play'):'🔒'}</em></button>
  <button class="mode m-pvp" data-a="arena"><span class="mi">⚔️</span><b>${t('arena')}</b><small>${t('arenaCard')}</small><em>${t('open')}</em></button>
- <div class="mini"><div class="card"><b>🎁 ${t('daily')}</b>${dailyCard()}</div><div class="card"><b>✨ ${t('nextBuffs')}</b>${buffRow()}</div></div></div></div>`},
+ <div class="mini"><div class="card"><b>🎁 ${t('daily')}</b>${dailyCard()}</div><div class="card"><b>✨ ${t('nextBuffs')}</b>${buffRow()}</div></div>${typeof progCard==='function'?progCard():''}</div></div>`},
 stages(){const cs=chapSel,cp=CHAP[cs],lo=cs*10+1;if(stSel<lo||stSel>lo+9)stSel=clamp(S.stage,lo,lo+9);
  const pl=stagePlan(stSel),lock=stSel>S.stage,base=60+25*stSel,foes=[...new Set((pl.i==10?[chi(cp.boss)]:[]).concat(pl.rooms[0].pool))];
  return`<div><div class="chaps">${CHAP.map((c,i)=>{let g=0;for(let s=i*10+1;s<=i*10+10;s++)g+=S.stars[s]||0;return`<button class="chap ${i==cs?'on':''} ${S.stage<=i*10?'lock':''}" style="--cc:${c.col}" data-a="chap" data-v="${i}">${i+1}. ${chapName(i)}<small>★ ${g}/30</small></button>`}).join('')}</div>
@@ -291,7 +291,7 @@ function reward(o){let gold=o.gold,xp=0,stars=0,best=false;
   else{gold=Math.round(gold*.6);xp=Math.round(base*.3*o.rooms/Math.max(1,o.total))}}
  else{xp=o.rooms*(25+15*o.floor);if(o.wave>S.raid){S.raid=o.wave;best=o.rooms>0}S.rb=Math.max(S.rb,o.bosses|0)}
  S.kills+=o.kills|0;
- S.gold+=gold;const up=addXp(xp);persist();return{gold,xp,stars,up,best}}
+ S.gold+=gold;const up=addXp(xp);persist();if(typeof progRecordMatch=='function')progRecordMatch({mode:o.mode,win:o.mode=='stage'?!!o.win:(o.bosses||0)>=5,kills:o.kills|0,time:o.time||0,score:gold||0,bosses:o.bosses|0,floor:o.floor||0,stage:o.stage||0});return{gold,xp,stars,up,best}}
 
 const ACT={
 async start(){if(busy)return;busy=true;try{await Promise.race([probe(),new Promise(r=>setTimeout(r,3500))]);if(await resume())enterHub();else{ACT.authtab(authMode);show('s-auth')}}finally{busy=false}},
@@ -370,7 +370,7 @@ runEnd(o){const r=reward(o),st=o.mode=='stage',pl=st?stagePlan(o.stage):null,goo
  ${runUps(o)}${r.up?`<div class="lvup">🎉 ${t('lvup',S.lvl,r.up,50*r.up)}</div>`:''}<div class="xp" style="max-width:none"><i style="width:${mx?100:Math.min(100,S.xp/n*100)}%"></i><span>${t('level')} ${S.lvl} · ${mx?'MAX':Math.floor(S.xp)+' / '+n+' XP'}</span></div>
  ${st&&!o.win?`<p class="mut">${t('failTip')}</p>`:''}<div class="col">${btns}<button class="btn ghost" data-a="home">${t('toHub')}</button></div></div>`)},
 // deathmatch win (not training or couch play)
-pvpEnd(win,online,skip){if(!win||skip||!S)return;const g=online?60:30,x=online?100:50;S.gold+=g;S.wins++;const up=addXp(x);persist();toast(t('pvpWin',g,x));if(up){sfx('lvl');toast('🎉 '+t('lvup',S.lvl,up,50*up))}}};
+pvpEnd(win,online,skip){if(!win||skip||!S)return;const g=online?60:30,x=online?100:50;S.gold+=g;S.wins++;const up=addXp(x);persist();if(typeof progRecordMatch=='function')progRecordMatch({mode:'arena',win:!!win,kills:(me&&me.k)|0,time:matchT||0,score:(me&&me.k)|0});toast(t('pvpWin',g,x));if(up){sfx('lvl');toast('🎉 '+t('lvup',S.lvl,up,50*up))}}};
 
 // ---- admin: list players and edit their saves (cloud accounts through /api/admin, device accounts straight from storage)
 const ADM={
