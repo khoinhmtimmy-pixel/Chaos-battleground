@@ -125,6 +125,19 @@ Trạng thái mỗi khung hình: `chase` (ép sát) → `strike`/`hold` (trong t
 - **Rẻ khi đông:** mỗi con chỉ quét lại mục tiêu mỗi `AI_SEEK` giây (0,25s) thay vì mỗi khung hình.
 - **Dừng khi trận kết thúc:** `raid.state != 'fight'` hoặc `over > 0` (bảng "round mới" ở Đấu trường) thì mọi AI đứng yên, không đánh người đã gục.
 
+### Boss Obsidian Warden (`js/boss.js`)
+
+Một boss mới trong danh sách raid boss, chạy trên chính engine hiện có (move/tryCast/FX/say/spawnFoes), không có engine riêng:
+
+- **Giới thiệu & thanh máu:** spawnRoom đã có `say` + `sfx('boss')` và thanh máu boss trong HUD; thêm `bossAI:'warden'` để bật logic riêng.
+- **Mẫu tấn công:** Slam (telegraph nova), Charge (dash), Sweep (beam), Abyssal Quake (radial); mỗi đòn có vòng cảnh báo (`FX('ring',...)`) trước khi nổ.
+- **Hai pha** (theo HP): >60% pha 1; ≤60% pha 2 (triệu hồi 2 quái, nhanh hơn); ≤25% pha 3 (giận dữ ×1.3 sát thương + haste, triệu hồi 3 quái). Chuyển pha chỉ kích hoạt một lần (`bossPhase`).
+- **Cửa sổ phản công:** máy trạng thái `idle → telegraph → recover → idle`; trong `recover` boss chỉ né ngang và không đánh, người chơi có thời gian đánh trả.
+- **Không chồng mẫu:** chỉ một đòn tại một thời điểm; `bossT` làm cooldown.
+- **Kết thúc / phần thưởng / dọn dẹp:** dùng đường `slay()`/`credit()`/`dropLoot()`/`delete others[id]` sẵn có; quái triệu hồi còn lại phải bị hạ trước khi phòng sạch.
+
+Chạy `node tools/test-boss.js` để kiểm tra chuyển pha, điều kiện hạ gục, phần thưởng và dọn dẹp mà không cần mở trình duyệt.
+
 Thêm kiểu mới (ví dụ **Tank** hay **Flanker**): thêm một dòng vào `FOE_AI` (chỉ số) rồi gán `ai:'tank'` cho quái trong `js/data.js`. Nếu hành vi chỉ khác về số (Tank = chaser chậm, trâu) thì không cần sửa máy trạng thái; Flanker cần thêm một nhánh trong phần chọn trạng thái của `foeAI()` (điểm tiếp cận lệch 90° quanh mục tiêu). Tinh chỉnh riêng một con: `aiP:{...}` trên bản ghi quái đó sẽ đè lên dòng chung. Chạy `node tools/test-ai.js` để kiểm tra AI mà không cần mở trình duyệt.
 
 

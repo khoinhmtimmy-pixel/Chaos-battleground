@@ -441,6 +441,14 @@ q:{k:'orbit',n:4,rad:80,dur:4,dmg:10,cd:7,nm:'Fist Storm'},
 e:{k:'dash',dist:300,nova:{r:90,dmg:22},cd:6,nm:'Charge'},
 r:{k:'nova',r:220,dmg:40,delay:1.1,cd:13,nm:'Final Smash'},
  c:{k:'nova',cd:22,r:265,dmg:88,delay:1,kb:190,st:1,nm:'World Ender'}
+}
+},
+{boss:1,bossAI:'warden',n:'Obsidian Warden',t:'Colossus',col:'#475569',hair:'#0f172a',acc:'horn',hp:880,sp:128,s:{
+ a:{k:'cone',r:110,arc:2.2,dmg:18,kb:80,cd:1.4,nm:'Seismic Slam'},
+ q:{k:'nova',r:130,dmg:22,delay:.6,kb:100,cd:6,nm:'Ground Pound'},
+ e:{k:'dash',dist:260,nova:{r:80,dmg:16,kb:90},cd:7,nm:'Charge'},
+ r:{k:'beam',len:480,w:26,dur:1,dmg:10,cd:11,nm:'Laser Sweep'},
+ c:{k:'nova',cd:22,r:230,dmg:70,delay:1,kb:150,st:1,nm:'Abyssal Quake'}
 }});
 // ---- PvE foes. `ai` selects an archetype row in FOE_AI (js/ai.js): rush = chaser, range/snipe/bomb
 // = ranged. Optional `aiP:{...}` overrides any of that row's fields for one enemy (band, ar, turn,

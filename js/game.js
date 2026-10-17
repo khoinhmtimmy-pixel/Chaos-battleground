@@ -147,7 +147,7 @@ function spawnRoom(){const r=raid,st=r.mode=='stage';allC=null;r.wave=(r.floor-1
   EVT.room();
  setMap(rm.map);me.x=SP[0][0];me.y=SP[0][1];me.dash=null;r.type=rm.type;r.queue=[];r.spawnT=.8;
  r.hs=st?r.plan.hs:1.15*(1+.2*(r.floor-1)+.05*(r.room-1));r.ds=st?r.plan.ds:1.1+.1*(r.floor-1);r.gv=st?1+.05*(r.stage-1):1+.15*(r.floor-1);
- if(rm.type=='boss'){const bi=rm.boss,b=mk(bi,450,110,CH[bi].n,true);b.boss=1;b.raidE=1;b.mx=b.hp=Math.round(CH[bi].hp*r.hs*1.04);b.dmgMul=r.ds*.88;others.boss=b;r.fid.boss=1;spawnFoes(rm.adds);r.state='fight';sfx('boss')}
+ if(rm.type=='boss'){const bi=rm.boss,b=mk(bi,450,110,CH[bi].n,true);b.boss=1;b.bossAI=CH[bi].bossAI;b.raidE=1;b.mx=b.hp=Math.round(CH[bi].hp*r.hs*1.04);b.dmgMul=r.ds*.88;others.boss=b;r.fid.boss=1;spawnFoes(rm.adds);r.state='fight';sfx('boss')}
  else if(rm.type=='treasure'){roomClear(true)}
  else{const n=rm.n;r.queue=[Math.ceil(n*.6),Math.floor(n*.4)].filter(x=>x>0);r.state='fight'}
  say(450,230,(st?'STAGE '+(r.plan.c+1)+'-'+r.plan.i:'FLOOR '+r.floor)+' - ROOM '+r.room+(rm.type=='boss'?'  BOSS!':rm.type=='treasure'?'  TREASURE':''),'#ffe14d');shake=.25}
@@ -308,6 +308,7 @@ function update(dt){if(choice)return;allC=null;matchT+=dt;
   const live=raid?raid.state=='fight':over<=0;
   if(e.foe){if(live)foeAI(e,id,t,bd,dt);continue}
   if(!live)continue;
+if(e.bossAI==='warden'){bossWardenAI(e,id,t,bd,dt);continue}
   if(e.boss){e.a=Math.atan2(t.y-e.y,t.x-e.x);const dir=bd>260?1:bd<140?-1:0,sp=CH[e.ch].sp*.62*(e.sl>0?.5:1);move(e,Math.cos(e.a)*dir*sp*dt,Math.sin(e.a)*dir*sp*dt);
    if(bd<560){if(Math.random()<dt*1.8)tryCast(e,id,'a',t.x,t.y);if(Math.random()<dt*.45)tryCast(e,id,'q',t.x,t.y);if(Math.random()<dt*.2)tryCast(e,id,'e',t.x,t.y);if(Math.random()<dt*.16)tryCast(e,id,'r',t.x,t.y);if(desOpen(e)&&Math.random()<dt*.5)tryCast(e,id,'c',t.x,t.y)}continue}
   if(e.err==null||Math.random()<dt*1.5)e.err=(Math.random()-.5)*.9;e.a=Math.atan2(t.y-e.y,t.x-e.x)+e.err;
