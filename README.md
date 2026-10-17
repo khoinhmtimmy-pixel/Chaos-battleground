@@ -108,6 +108,26 @@ Muốn đổi sang năm sau chỉ cần sửa `EV.s` và `EV.e`.
 
 Muốn chỉnh độ khó hay kinh tế: `stagePlan()` trong `js/data.js` (số quái, hệ số máu / sát thương theo màn) và nhóm hằng số ở phần "progression rules" trong `js/meta.js` (XP mỗi cấp, giá rương, tỉ lệ rương, danh sách nhiệm vụ `QUESTS`, thưởng).
 
+### Kiểu AI của quái (`js/ai.js`)
+
+Mọi quái PvE chạy **một máy trạng thái chung**; khác nhau chỉ ở bảng số `FOE_AI`. Hai kiểu hành vi đang có:
+
+| Kiểu | Cách chơi của người chơi | Quái đang dùng |
+| --- | --- | --- |
+| `chaser` | Cận chiến, ép sát và chém; phải lùi / né để không bị dồn | Goblin, Ogre, Bat, Slime, Skeleton Knight |
+| `ranged` | Giữ khoảng, bắn tỉa; phải áp sát hoặc dùng địa hình | Imp Archer, Wraith, Bomb Imp, Hex Mage, Fire Imp, Frost Shaman, Necromancer |
+
+Trạng thái mỗi khung hình: `chase` (ép sát) → `strike`/`hold` (trong tầm, đánh/ghìm) → `retreat` (quá gần thì lùi) → `reposition` (bị tường chặn thì né ngang rồi đi tiếp). Vài điểm được giữ cố định:
+
+- **Không xoay tức thời:** quái quay mặt có tốc độ giới hạn (`turn`, rad/giây) cộng một độ lệch ngắm chậm (`jit`), nên không bao giờ bám dính tuyệt đối.
+- **Đòn có thể phản ứng:** quái `ranged` phải ngắm ổn định `tele` giây trước khi bắn; quái mới vào trận chờ `react` giây.
+- **Không kẹt vô hạn:** nếu đang cố đi mà không nhích, nó chuyển sang `reposition`, và sau vài lần vẫn kẹt thì tự tìm về giữa sân.
+- **Rẻ khi đông:** mỗi con chỉ quét lại mục tiêu mỗi `AI_SEEK` giây (0,25s) thay vì mỗi khung hình.
+- **Dừng khi trận kết thúc:** `raid.state != 'fight'` hoặc `over > 0` (bảng "round mới" ở Đấu trường) thì mọi AI đứng yên, không đánh người đã gục.
+
+Thêm kiểu mới (ví dụ **Tank** hay **Flanker**): thêm một dòng vào `FOE_AI` (chỉ số) rồi gán `ai:'tank'` cho quái trong `js/data.js`. Nếu hành vi chỉ khác về số (Tank = chaser chậm, trâu) thì không cần sửa máy trạng thái; Flanker cần thêm một nhánh trong phần chọn trạng thái của `foeAI()` (điểm tiếp cận lệch 90° quanh mục tiêu). Tinh chỉnh riêng một con: `aiP:{...}` trên bản ghi quái đó sẽ đè lên dòng chung. Chạy `node tools/test-ai.js` để kiểm tra AI mà không cần mở trình duyệt.
+
+
 Muốn thêm hoặc chỉnh phụ kiện: bảng `GEAR` trong `js/data.js` (`id` khớp regex `GEARID` ở `api/_lib.js`, `art` là khoá vẽ trong `js/art.js`, `b` là phần thưởng). Chạy `node tools/check-gear.js` để kiểm tra id trùng, slot thiếu món, khoá vẽ chưa dùng, và bộ huyền thoại có vượt trục chỉ số hay không.
 
 Muốn sửa 100 nhân vật sinh tự động: sửa bảng `ROSTER` trong `tools/gen-roster.js` rồi chạy `node tools/gen-roster.js` để sinh lại `js/roster.js` (**đừng sửa `js/roster.js` tay, nó sẽ bị ghi đè**). Script tự kiểm tra trước khi ghi: tên phải 2–12 chữ cái (khớp regex `HERO` ở `api/_lib.js`), không trùng nhân vật sẵn có, vũ khí / trang phục / tóc / mũ phải nằm trong từ vựng mà `js/art.js` vẽ được, và mỗi nhân vật phải có đủ 4 chiêu hợp lệ. Thêm nhân vật thì nhớ đưa vào một `K` archetype sẵn có hoặc viết thêm archetype mới.

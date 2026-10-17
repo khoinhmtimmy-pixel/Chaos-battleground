@@ -442,6 +442,9 @@ e:{k:'dash',dist:300,nova:{r:90,dmg:22},cd:6,nm:'Charge'},
 r:{k:'nova',r:220,dmg:40,delay:1.1,cd:13,nm:'Final Smash'},
  c:{k:'nova',cd:22,r:265,dmg:88,delay:1,kb:190,st:1,nm:'World Ender'}
 }});
+// ---- PvE foes. `ai` selects an archetype row in FOE_AI (js/ai.js): rush = chaser, range/snipe/bomb
+// = ranged. Optional `aiP:{...}` overrides any of that row's fields for one enemy (band, ar, turn,
+// spd, ...), so a single enemy can be retuned without touching the shared behaviour.
 CH.push(
 {foe:1,ai:'rush',n:'Goblin',t:'Rusher',col:'#65a30d',hair:'#365314',acc:'ears',hp:38,sp:155,s:{a:{k:'cone',r:55,arc:1.8,dmg:6,cd:.9,nm:'Stab'},e:{k:'dash',dist:200,nova:{r:50,dmg:6},cd:4,nm:'Charge'}}},
 {foe:1,ai:'range',n:'Imp Archer',t:'Archer',col:'#f59e0b',hair:'#78350f',acc:'horn',hp:28,sp:120,s:{a:{k:'proj',spd:380,r:6,dmg:5,life:1.2,cd:1.1,nm:'Arrow'},q:{k:'proj',n:3,spread:.5,spd:340,r:6,dmg:4,life:1.2,cd:4,nm:'Triple Shot'}}},

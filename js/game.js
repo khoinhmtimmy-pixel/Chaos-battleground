@@ -122,6 +122,7 @@ function hurt(id,e,dmg,sl,o,x){if(!e.al||(dmg<=0&&!x))return;if(raid&&e.raidE&&r
  // the attacker's own client settles what a landed hit gives back: passive combo heal, per-skill lifesteal
  if(!(id=='me'||e.bot||e.loc)){if(dmg>0&&!(e.sh>0)){num(e.x,e.y-20,dmg*mul);FX('hit',e.x,e.y-6,14,'#ffffff',.18,Math.random()*6)}return}if(e.sh>0)return;dmg*=mul;
  if(o=='me'&&raid&&dmg>0&&Math.random()<raid.cr){dmg*=2;crit=1}
+ if(crit)SY.crit(o,e,dmg,0);
  const hp0=e.hp,hd=dmgTo(e,dmg),landed=hp0>0?Math.min(hd,hp0):0;
  // Whatever the attacker is paid for is paid on what actually landed, not on the roll. Paid on the roll,
  // one overkill hit fed full lifesteal and filled the whole awakening meter off 1 point of damage. hd
@@ -282,7 +283,7 @@ function update(dt){if(choice)return;allC=null;matchT+=dt;
  for(const [id,e] of all()){for(const k in e.cd)e.cd[k]=Math.max(0,e.cd[k]-dt*(e.awt>0?2.5:1)*(id=='me'&&raid?raid.cd:1));e.sh=Math.max(0,e.sh-dt);e.sl=Math.max(0,e.sl-dt);if(e.van>0)e.van=Math.max(0,e.van-dt);
   if(e.cg)for(const k in e.cg){const sk=CH[e.ch].s[k];if(e.cg[k]<sk.chg&&e.cd[k]<=0){e.cg[k]++;if(e.cg[k]<sk.chg)e.cd[k]=sk.cd}}
   if(id=='me'||e.bot||e.loc)tick(id,e,dt);if(e.awt>0&&e.al&&Math.random()<dt*40)P(e.x+(Math.random()-.5)*24,e.y+10,(Math.random()-.5)*20,-90,.5,'#ffe14d',3)}
- if(me.al){if(me.dash){const d=me.dash;d.t+=dt/.15;const u=Math.min(1,d.t);me.x=d.x0+(d.x1-d.x0)*u;me.y=d.y0+(d.y1-d.y0)*u;if(u>=1){me.dash=null;move(me,0,0)}}
+ if(me.al){if(me.dash){const d=me.dash;d.t+=dt/.15;const u=Math.min(1,d.t);me.x=d.x0+(d.x1-d.x0)*u;me.y=d.y0+(d.y1-d.y0)*u;if(u>=1){me.dash=null;SY.dash({x0:d.x0,y0:d.y0});move(me,0,0)}}
   else if(!(me.stn>0)&&!(me.van>0)){let dx=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0)+joy.x,dy=(keys.s||keys.arrowdown?1:0)-(keys.w||keys.arrowup?1:0)+joy.y;const l=Math.max(1,Math.hypot(dx,dy)),sp=CH[me.ch].sp*(me.sl>0?.5:1)*(me.hst>0?1.6:1)*(me.awt>0?1.3:1)*(me.tn>0?1.35:1)*(raid?raid.sp:1);move(me,dx/l*sp*dt,dy/l*sp*dt)}
   if(mouse.down||keys.f)tryCast(me,'me','a',mouse.x,mouse.y)}
  else if(!raid){me.rt-=dt;if(me.rt<=0)respawn(me)}
@@ -291,11 +292,22 @@ function update(dt){if(choice)return;allC=null;matchT+=dt;
   if(!e.al){if(e.raidE){raid.score+=e.boss?200*raid.wave:30;raid.kills++;if(e.boss){raid.bk=(raid.bk||0)+1;if(raid.mode=='raid'&&raid.bk==5){say(450,200,'RAID CONQUERED!','#ffd84d');sfx('win')}}sfx(e.boss?'boom':'kill');dropLoot(e);delete others[id];allC=null;continue}e.rt-=dt;if(e.rt<=0)respawn(e);continue}
   if(e.dash){const d=e.dash;d.t+=dt/.15;const u=Math.min(1,d.t);e.x=d.x0+(d.x1-d.x0)*u;e.y=d.y0+(d.y1-d.y0)*u;if(u>=1){e.dash=null;move(e,0,0)}continue}
   if(e.dum){e.log=e.log.filter(x=>tm-x.t<3);e.nm='DPS '+Math.round(e.log.reduce((a,x)=>a+x.d,0)/3)+' | Total '+Math.round(e.tot);e.hp=e.mx;continue}
-  let t=null,bd=1e9;for(const [i2,o] of all())if(i2!=id&&o.al&&!(raid&&o.raidE)&&!(tmode&&o.tm===e.tm)){const d=Math.hypot(o.x-e.x,o.y-e.y);if(d<bd){bd=d;t=o}}
-  if(!t||e.stn>0||e.van>0)continue;if(e.loc){const dx=(k2.arrowright?1:0)-(k2.arrowleft?1:0),dy=(k2.arrowdown?1:0)-(k2.arrowup?1:0);if(dx||dy)e.a=Math.atan2(dy,dx);const l=Math.max(1,Math.hypot(dx,dy)),sp=CH[e.ch].sp*(e.sl>0?.5:1)*(e.hst>0?1.6:1);move(e,dx/l*sp*dt,dy/l*sp*dt);if(k2.enter)tryCast(e,id,'a',e.x+Math.cos(e.a)*220,e.y+Math.sin(e.a)*220);continue}if(e.foe){e.a=Math.atan2(t.y-e.y,t.x-e.x);const ai=CH[e.ch].ai,spd=CH[e.ch].sp*1.1*(e.sl>0?.5:1);let dir=0,st=0;
-   if(ai=='rush')dir=bd>55?1:0;else if(ai=='range'){dir=bd>300?1:bd<210?-1:0;st=Math.sin(tm*1.3+e.x*.01)*.7}else if(ai=='snipe')dir=bd>430?1:bd<340?-1:0;else{dir=bd>230?1:bd<150?-1:0;st=Math.sin(tm+e.y*.01)*.4}
-   move(e,(Math.cos(e.a)*dir-Math.sin(e.a)*st)*spd*dt,(Math.sin(e.a)*dir+Math.cos(e.a)*st)*spd*dt);const rg=ai=='rush'?100:ai=='snipe'?600:ai=='bomb'?360:440;
-   if(bd<rg&&Math.random()<dt*(ai=='rush'?4.5:2))tryCast(e,id,'a',t.x,t.y);if(bd<rg+80&&Math.random()<dt*.35)tryCast(e,id,'q',t.x,t.y);if(ai=='rush'&&bd>140&&bd<320&&Math.random()<dt*.5)tryCast(e,id,'e',t.x,t.y);continue}
+  // Foes cache their target: rescanning every fighter for every enemy every frame was the most
+  // expensive part of a big fight. The scan reruns a few times a second (staggered per enemy),
+  // or immediately once the cached target is gone.
+  let t=null,bd=1e9;
+  if(e.foe){
+   if(!e.tgt||!e.tgt.al)e.tt=0;
+   if(e.tt>0){t=e.tgt;bd=Math.hypot(t.x-e.x,t.y-e.y)}
+   else{for(const [i2,o] of all())if(i2!=id&&o.al&&!(raid&&o.raidE)&&!(tmode&&o.tm===e.tm)){const d=Math.hypot(o.x-e.x,o.y-e.y);if(d<bd){bd=d;t=o}}e.tgt=t;e.tt=AI_SEEK*(.75+Math.random()*.5)}
+   e.tt-=dt
+  }else for(const [i2,o] of all())if(i2!=id&&o.al&&!(raid&&o.raidE)&&!(tmode&&o.tm===e.tm)){const d=Math.hypot(o.x-e.x,o.y-e.y);if(d<bd){bd=d;t=o}}
+  if(!t||e.stn>0||e.van>0)continue;if(e.loc){const dx=(k2.arrowright?1:0)-(k2.arrowleft?1:0),dy=(k2.arrowdown?1:0)-(k2.arrowup?1:0);if(dx||dy)e.a=Math.atan2(dy,dx);const l=Math.max(1,Math.hypot(dx,dy)),sp=CH[e.ch].sp*(e.sl>0?.5:1)*(e.hst>0?1.6:1);move(e,dx/l*sp*dt,dy/l*sp*dt);if(k2.enter)tryCast(e,id,'a',e.x+Math.cos(e.a)*220,e.y+Math.sin(e.a)*220);continue}
+  // a decided match (raid finished, death screen, or the arena's post-KO countdown) silences every
+  // AI fighter. Without this, bots kept swinging into the "new round" banner and at a dead player.
+  const live=raid?raid.state=='fight':over<=0;
+  if(e.foe){if(live)foeAI(e,id,t,bd,dt);continue}
+  if(!live)continue;
   if(e.boss){e.a=Math.atan2(t.y-e.y,t.x-e.x);const dir=bd>260?1:bd<140?-1:0,sp=CH[e.ch].sp*.62*(e.sl>0?.5:1);move(e,Math.cos(e.a)*dir*sp*dt,Math.sin(e.a)*dir*sp*dt);
    if(bd<560){if(Math.random()<dt*1.8)tryCast(e,id,'a',t.x,t.y);if(Math.random()<dt*.45)tryCast(e,id,'q',t.x,t.y);if(Math.random()<dt*.2)tryCast(e,id,'e',t.x,t.y);if(Math.random()<dt*.16)tryCast(e,id,'r',t.x,t.y);if(desOpen(e)&&Math.random()<dt*.5)tryCast(e,id,'c',t.x,t.y)}continue}
   if(e.err==null||Math.random()<dt*1.5)e.err=(Math.random()-.5)*.9;e.a=Math.atan2(t.y-e.y,t.x-e.x)+e.err;
