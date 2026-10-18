@@ -17,6 +17,7 @@ const TX={vi:{tapStart:'NHẤN ĐỂ BẮT ĐẦU',login:'Đăng nhập',registe
   evOver:'Halloween đã kết thúc',evDays:'Halloween còn {0} ngày',candy:'Kẹo',hChest:'Rương Halloween',hLeft:'Rương Halloween còn {0} ngày',hOver:'Rương Halloween đã đóng',
  campaign:'CHIẾN DỊCH',raid:'RAID VÔ TẬN',arena:'ĐẤU TRƯỜNG',play:'CHƠI ▶',open:'MỞ ▶',stage:'Màn',campDone:'Đã phá đảo! Chơi lại để cày vàng và XP',raidSub:'Kỷ lục: tầng {0} · phòng {1}',raidNew:'Leo tầng không giới hạn, boss mỗi 5 phòng',raidLock:'🔒 Qua màn 1-3 để mở khoá',arenaCard:'Đấu bot · 2v2 · Online PvP',change:'Đổi nhân vật',
  daily:'Quà hằng ngày',dailyd:'Đăng nhập mỗi ngày để nhận vàng. Chuỗi ngày càng dài, quà càng lớn (tối đa 7 ngày).',claim:'Nhận 🪙 {0}',claimed:'Đã nhận hôm nay · chuỗi {0} ngày',nextBuffs:'Buff cho lượt kế',noBuff:'Chưa có, mua ở Cửa hàng',
+ dchTitle:'Thử thách hằng ngày',dchPlay:'CHƠI ▶',dchNone:'Chưa có lượt nào hôm nay',dchBoard:'Kỷ lục (riêng máy)',dchEmpty:'Chưa có lượt chơi nào. Danh sách chỉ lưu trên máy bạn.',dchNote:'Chỉ lưu cục bộ trên máy này — không phải xếp hạng toàn cầu và không chống gian lận.',
  rar0:'Cơ bản',rar1:'Hiếm',rar2:'Sử thi',rar3:'Huyền thoại',rar4:'BÍ ẨN',nQuests:'Nhiệm vụ',locked:'Chưa mở khoá',start:'BẮT ĐẦU',stInfo:'{0} phòng',first:'lần đầu ×2',stars3:'3★: không hồi sinh và còn từ 50% máu',
  select:'CHỌN',using:'✔ Đang dùng',upgrade:'⬆ Nâng Lv {0} · 🪙 {1}',maxed:'ĐÃ MAX',unlock:'Mở khoá · 🪙 {0}',orChest:'hoặc thử vận may với rương ở Cửa hàng',upDone:'{0} lên Lv {1}!',noGold:'Không đủ vàng',charNote:'Mỗi cấp nhân vật: +5% máu và sát thương (màn chơi & raid)',
  level:'Cấp',points:'Điểm',sHp:'Máu',sSh:'Khiên',sDm:'Sát thương',sSp:'Tốc độ',respec:'Đặt lại điểm · 🪙 {0}',respecDone:'Đã hoàn lại toàn bộ điểm',noPts:'Hết điểm, lên cấp để nhận thêm',statNote:'Mỗi lần lên cấp nhận 1 điểm. Chỉ số cộng thêm áp dụng cho Màn chơi và Raid; đấu PvP luôn cân bằng.',base:'Gốc',now:'Hiện tại',
@@ -44,6 +45,7 @@ en:{tapStart:'TAP TO START',login:'Log in',register:'Sign up',username:'Username
   evOver:'Halloween has ended',evDays:'Halloween: {0} days left',candy:'Candy',hChest:'Halloween Chest',hLeft:'Halloween Chest: {0} days left',hOver:'The Halloween Chest is closed',
  campaign:'CAMPAIGN',raid:'ENDLESS RAID',arena:'ARENA',play:'PLAY ▶',open:'OPEN ▶',stage:'Stage',campDone:'Campaign cleared! Replay to farm gold and XP',raidSub:'Best: floor {0} · room {1}',raidNew:'Climb forever, a boss every 5 rooms',raidLock:'🔒 Clear stage 1-3 to unlock',arenaCard:'Bots · 2v2 · Online PvP',change:'Change hero',
  daily:'Daily gift',dailyd:'Log in every day for gold. Longer streaks pay more (up to 7 days).',claim:'Claim 🪙 {0}',claimed:'Claimed today · {0} day streak',nextBuffs:'Buffs for next run',noBuff:'None yet, buy in the Shop',
+ dchTitle:'Daily Challenge',dchPlay:'PLAY ▶',dchNone:'No runs yet today',dchBoard:'Best runs (local)',dchEmpty:'No runs yet. This list is stored on your device only.',dchNote:'Local to this device — not a global ranking and not cheat-proof.',
  rar0:'Basic',rar1:'Rare',rar2:'Epic',rar3:'Legendary',rar4:'SECRET',nQuests:'Quests',locked:'Locked',start:'START',stInfo:'{0} rooms',first:'first clear ×2',stars3:'3★: no revive and at least 50% health left',
  select:'SELECT',using:'✔ In use',upgrade:'⬆ To Lv {0} · 🪙 {1}',maxed:'MAXED',unlock:'Unlock · 🪙 {0}',orChest:'or try your luck with a chest in the Shop',upDone:'{0} reached Lv {1}!',noGold:'Not enough gold',charNote:'Each hero level: +5% health and damage (stages & raid)',
  level:'Level',points:'Points',sHp:'Health',sSh:'Shield',sDm:'Damage',sSp:'Speed',respec:'Reset points · 🪙 {0}',respecDone:'All points refunded',noPts:'No points left, level up for more',statNote:'Every level grants 1 point. Bonuses apply in Stages and Raid; PvP is always even.',base:'Base',now:'Now',
@@ -118,7 +120,7 @@ function setGear(e){for(const[sl,k]of[['head','gq'],['charm','gc'],['aura','ga']
 // the engine asks for this when a run starts; buffs bought beforehand are spent here
 // gear sits next to the stat points: same multipliers, separate axis. Multipliers only, so nothing needs clamping.
 function gearMul(){const o={hp:1,sh:1,dm:1,sp:1,ls:0,cd:1};for(const sl of GSLOTS){const g=GBY[S.eq[sl]];if(!g)continue;const b=g.b;for(const k of['hp','sh','dm','sp'])o[k]*=1+(b[k]||0);o.ls+=b.ls||0;o.cd*=b.cd||1}return o}
-function pveStats(){const cm=charMul(CH[sel].n),b=S.pb.slice();if(b.length){S.pb=[];persist()}const g=gearMul();
+function pveStats(heroIdx){const h=(heroIdx==null||!(heroIdx in CH))?sel:heroIdx,cm=charMul(CH[h].n),b=S.pb.slice();if(b.length){S.pb=[];persist()}const g=gearMul();
  return{hp:cm*(1+BON.hp*S.st.hp)*g.hp,sh:(1+BON.sh*S.st.sh)*g.sh,dm:cm*(1+BON.dm*S.st.dm)*g.dm,sp:(1+BON.sp*S.st.sp)*g.sp,ls:g.ls,cd:g.cd,buffs:b}}
 const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
 const dailyReady=()=>S.daily!==today();
@@ -223,7 +225,7 @@ home(){const c=CH[sel],p=curStats(sel),stg=Math.min(S.stage,NSTAGE),pl=stagePlan
  <div class="modes"><button class="mode m-camp" data-a="playStage" data-v="${stg}"><span class="mi">🗺️</span><b>${t('campaign')}</b><small>${done?t('campDone'):t('stage')+' '+(pl.c+1)+'-'+pl.i+' · '+chapName(pl.c)}</small><em>${t('play')}</em></button>
  <button class="mode m-raid${rk?'':' lock'}" data-a="playRaid"><span class="mi">🏰</span><b>${t('raid')}</b><small>${rk?(S.raid?t('raidSub',Math.ceil(S.raid/5),(S.raid-1)%5+1):t('raidNew')):t('raidLock')}</small><em>${rk?t('play'):'🔒'}</em></button>
  <button class="mode m-pvp" data-a="arena"><span class="mi">⚔️</span><b>${t('arena')}</b><small>${t('arenaCard')}</small><em>${t('open')}</em></button>
- <div class="mini"><div class="card"><b>🎁 ${t('daily')}</b>${dailyCard()}</div><div class="card"><b>✨ ${t('nextBuffs')}</b>${buffRow()}</div></div>${typeof progCard==='function'?progCard():''}</div></div>`},
+ <div class="mini"><div class="card"><b>🎁 ${t('daily')}</b>${dailyCard()}</div><div class="card"><b>✨ ${t('nextBuffs')}</b>${buffRow()}</div></div>${typeof progCard==='function'?progCard():''}${typeof chalCard==='function'?chalCard():''}</div></div>`},
 stages(){const cs=chapSel,cp=CHAP[cs],lo=cs*10+1;if(stSel<lo||stSel>lo+9)stSel=clamp(S.stage,lo,lo+9);
  const pl=stagePlan(stSel),lock=stSel>S.stage,base=60+25*stSel,foes=[...new Set((pl.i==10?[chi(cp.boss)]:[]).concat(pl.rooms[0].pool))];
  return`<div><div class="chaps">${CHAP.map((c,i)=>{let g=0;for(let s=i*10+1;s<=i*10+10;s++)g+=S.stars[s]||0;return`<button class="chap ${i==cs?'on':''} ${S.stage<=i*10?'lock':''}" style="--cc:${c.col}" data-a="chap" data-v="${i}">${i+1}. ${chapName(i)}<small>★ ${g}/30</small></button>`}).join('')}</div>
@@ -336,6 +338,7 @@ chest(v){const k=+v;if(!CHEST[k])return;if(!chestPool().length){toast(t('allOwne
 quest(v){const q=QUESTS.find(x=>x.id==v);if(!q||S.q[q.id]||qVal(q.k)<q.n)return;S.q[q.id]=1;if(q.hero){const i=chi(q.hero);if(!S.own[q.hero]){S.own[q.hero]=1;persist();heroSel=i;render();reveal(i);return}S.gold+=3000;toast(t('qGot','🪙 3,000'))}else{S.gold+=q.g;toast(t('qGot','🪙 '+fmt(q.g)))}persist();sfx('buy');render()},
 lucky(){if(S.pb.length>=3){toast(t('luckyFull'),1);sfx('err');return}if(!spend(LUCKY))return;const l=BUFFS.filter(b=>!b.run),b=l[Math.random()*l.length|0];S.pb.push(b.n);persist();sfx('buy');toast(t('got',b.ic+' '+b.n));render()},
 daily(){if(!dailyReady())return;const a=dailyAmt();S.streak=nextStreak();S.daily=today();S.gold+=a;persist();sfx('buy');toast('🎁 +'+a+' 🪙');render()},
+ dailyRun(){if(typeof startDailyRun!=='function'||!S)return;ACT.home();startDailyRun()},
 // in-game overlays
 resume(){ov(null);paused=0},
 quit(){ov(null);if(raid&&raid.state!='over')endRun(false);else leave('')},

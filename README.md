@@ -140,6 +140,20 @@ Chạy `node tools/test-boss.js` để kiểm tra chuyển pha, điều kiện h
 
 Thêm kiểu mới (ví dụ **Tank** hay **Flanker**): thêm một dòng vào `FOE_AI` (chỉ số) rồi gán `ai:'tank'` cho quái trong `js/data.js`. Nếu hành vi chỉ khác về số (Tank = chaser chậm, trâu) thì không cần sửa máy trạng thái; Flanker cần thêm một nhánh trong phần chọn trạng thái của `foeAI()` (điểm tiếp cận lệch 90° quanh mục tiêu). Tinh chỉnh riêng một con: `aiP:{...}` trên bản ghi quái đó sẽ đè lên dòng chung. Chạy `node tools/test-ai.js` để kiểm tra AI mà không cần mở trình duyệt.
 
+### Daily Challenge & bảng xếp hạng cục bộ (`js/daily.js`)
+
+Thuần client-side (game đã có sẵn tài khoản cloud/device nhưng tính năng này không đụng tới backend):
+
+- **Thử thách theo ngày, tất định:** `getUtcDateKey()` chốt ngày theo **UTC** (mọi múi giờ cùng một thử thách trong ngày), seed vào PRNG Mulberry32 → deterministic: cùng ngày ra cùng anh hùng / bản đồ nhỏ / modifier / tiêu đề, kể cả sau khi tải lại trang hay mở phiên mới.
+- **Bắt đầu lượt:** nút `data-a="dailyRun"` trên trang chủ → `startDailyRun()` mở một lượt **Raid vô tận** với hero + map + modifier của ngày (chỉ số được áp dụng trong `newRun(cfg)`: `spMul/dmMul/hpMul/cdMul/lsAdd/enemyDmMul/goldMul`). Các trận thường không bị ảnh hưởng — multiplier mặc định là 1.
+- **Ghi điểm:** `endRun()` chỉ gọi `dailyFinishRun()` khi `raid.daily` được bật; `dailyFinishRun` có cờ chống ghi đôi. Điểm = kills×10 + floor×50 + room-clear + 200 nếu thắng.
+- **Bảng cục bộ:** `cb_daily_scores` trong localStorage, tối đa 50 lượt, sắp theo điểm → thời gian → hạ gục. Dữ liệu hỏng / thiếu / sai kiểu được lọc hoặc reset về rỗng thay vì làm hỏng game.
+- **UI tách khỏi luật:** toàn bộ luật nằm trong `js/daily.js`, card + nút trên trang chủ (`chalCard()`), chữ dịch qua `t('dch*')`. Card ghi rõ: điểm chỉ lưu trên máy, **không phải xếp hạng toàn cầu và không chống gian lận**.
+
+Chạy `node tools/test-daily.js` để kiểm tra tính tất định theo ngày, ghi điểm, sắp hạng, dữ liệu hỏng và glue contract mà không cần mở trình duyệt.
+
+Muốn có bảng xếp hạng thật trong tương lai: thêm endpoint `/api/leaderboard` (Upstash Redis qua `api/_lib.js`), chấm điểm **trên server** từ replay hoặc checksum lượt chơi, ghi theo `dateKey` UTC, giới hạn mỗi tài khoản N lượt/ngày, và chỉ hiển thị tên nhân vật đã public. Không nên tin điểm do client gửi lên.
+
 
 Muốn thêm hoặc chỉnh phụ kiện: bảng `GEAR` trong `js/data.js` (`id` khớp regex `GEARID` ở `api/_lib.js`, `art` là khoá vẽ trong `js/art.js`, `b` là phần thưởng). Chạy `node tools/check-gear.js` để kiểm tra id trùng, slot thiếu món, khoá vẽ chưa dùng, và bộ huyền thoại có vượt trục chỉ số hay không.
 
