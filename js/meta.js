@@ -29,7 +29,8 @@ const TX={vi:{tapStart:'NHẤN ĐỂ BẮT ĐẦU',login:'Đăng nhập',registe
  arenaSub:'Đấu đối kháng: ai hạ 5 mạng trước sẽ thắng. Thắng nhận 🪙 và XP.',map:'Bản đồ',mBots:'🤖 Đấu 3 Bot',m2v2:'👥 2v2 cùng Bot',mDummy:'🎯 Tập luyện',mLocal:'⌨️ 2 người 1 máy',online:'Online PvP (tối đa 4 người)',onlineSub:'Mọi người chọn CÙNG máy chủ trung gian và nhập CÙNG mã phòng.',room:'Mã phòng',team2:'👥 Chia đội 2v2 (bản đồ lớn)',broker:'Máy chủ trung gian',joinOnline:'🌐 Vào phòng Online',advServer:'🖥️ Dùng server riêng',advServerSub:'Dán địa chỉ server WebSocket của bạn (wss://…). Mọi người dùng chung địa chỉ và mã phòng.',joinServer:'Vào bằng server',advCode:'🌍 1v1 bằng mã copy-paste',advCodeSub:'Chủ phòng: bấm Host, gửi mã cho bạn, dán mã trả lời rồi bấm Connect. Khách: dán mã của chủ phòng, bấm Join, gửi lại mã trả lời.',pasteHere:'Dán mã vào đây',yourCode:'Mã của bạn hiện ở đây',
  paused:'TẠM DỪNG',resume:'TIẾP TỤC',restart:'Chơi lại từ đầu',quit:'Thoát về sảnh',onlineNoPause:'Trận online vẫn đang diễn ra!',chooseBuff:'CHỌN 1 BUFF',levelUp:'LÊN CẤP! ',lvFmt:'CẤP {0} - CHỌN NÂNG CẤP',runUps:'NÂNG CẤP TRONG TRẬN',downed:'BẠN ĐÃ GỤC NGÃ',reviveQ:'Hồi sinh với 50% máu và đầy khiên? (1 lần mỗi lượt)',noRevive:'Đã dùng lượt hồi sinh',revive:'HỒI SINH',giveup:'Bỏ cuộc',
  victory:'CHIẾN THẮNG!',defeat:'THẤT BẠI',raidOver:'KẾT THÚC RAID',raidReach:'Tới tầng {0} · phòng {1}',newBest:'Kỷ lục mới!',gold:'Vàng',kills:'Hạ gục',time:'Thời gian',lvup:'LÊN CẤP {0}! +{1} điểm nâng cấp · +{2} 🪙',nextStage:'MÀN TIẾP ▶',again:'Chơi lại',retry:'THỬ LẠI',toStats:'💪 Nâng cấp',toHub:'Về sảnh',pvpWin:'Thắng trận! +{0} 🪙 · +{1} XP',failTip:'Mẹo: nâng điểm chỉ số, nâng cấp nhân vật hoặc mua Buff May Mắn rồi thử lại.',
- howtoBody:'<b>Máy tính:</b> WASD di chuyển · chuột trái tấn công theo hướng chuột · Q / E / R dùng chiêu · Space thức tỉnh khi thanh vàng đầy · Esc tạm dừng.<br><b>Điện thoại:</b> cần điều khiển bên trái · ATK và Q/E/R bên phải, kéo nút để ngắm tay.<br><b>Khiên & máu:</b> khiên (thanh xanh) đỡ đòn trước và tự hồi sau 3,5 giây không trúng đòn. Hết khiên mới mất máu, và máu <u>không tự hồi</u>, chỉ hồi bằng bình máu, chiêu hồi máu hoặc buff.<br><b>Tiến trình:</b> qua màn nhận vàng và XP → lên cấp nhận điểm cộng Máu / Khiên / Sát thương / Tốc độ → dùng vàng mở rương nhân vật, nâng cấp nhân vật và mua buff.',
+ back:'Quay lại',floor:'Tầng',rooms:'Phòng',bosses:'Boss',revives:'Hồi sinh',hpStat:'Máu còn',score:'Điểm',newRound:'Vòng mới sau {0}s',
+ howtoBody:'<h4>🎮 Máy tính</h4><p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> di chuyển · chuột trái đánh theo hướng chuột · <kbd>Q</kbd> <kbd>E</kbd> <kbd>R</kbd> dùng chiêu · <kbd>Space</kbd> thức tỉnh khi thanh vàng đầy · <kbd>Esc</kbd> tạm dừng.</p><h4>📱 Điện thoại</h4><p>Cần điều khiển bên trái · nút <b>ATK</b> và <b>Q/E/R</b> bên phải (kéo nút để ngắm tay) · nút <b>☰</b> góc trên phải để tạm dừng.</p><h4>🛡️ Sinh tồn</h4><p>Khiên (thanh xanh) đỡ đòn trước và tự hồi sau 3,5 giây không trúng đòn. Hết khiên mới mất máu, và máu <u>không tự hồi</u> — chỉ hồi bằng bình máu, chiêu hồi máu hoặc buff.</p><h4>🏆 Tiến trình</h4><p>Qua màn nhận vàng và XP → lên cấp cộng điểm Máu / Khiên / Sát thương / Tốc độ → dùng vàng mở rương, nâng cấp anh hùng và mua buff.</p>',
  admTitle:'Quản trị người chơi',admNone:'Chưa có người chơi nào',admGold:'+5000🪙',admAll:'Mở hết',admMax:'Max',admReset:'Reset',admDel:'Xoá',admSure:'Xoá hẳn tài khoản {0}?',admOk:'Đã cập nhật {0}',admPass:'Đổi MK',admNewPass:'Mật khẩu mới cho {0} (tối thiểu 6 ký tự):',name:'Tên',heroes:'Nhân vật'},
 en:{tapStart:'TAP TO START',login:'Log in',register:'Sign up',username:'Username',password:'Password',password2:'Repeat password',or:'or',guest:'🎮 Quick play (Guest)',
  hintCloud:'☁️ Cloud account: your progress follows you to any device.',hintDev:'💾 Account server not connected: accounts and progress stay on this device only.',
@@ -57,7 +58,8 @@ en:{tapStart:'TAP TO START',login:'Log in',register:'Sign up',username:'Username
  arenaSub:'Deathmatch: first to 5 KOs wins. Wins pay 🪙 and XP.',map:'Map',mBots:'🤖 vs 3 Bots',m2v2:'👥 2v2 with Bots',mDummy:'🎯 Training',mLocal:'⌨️ Local 2-Player',online:'Online PvP (up to 4 players)',onlineSub:'Everyone picks the SAME relay and types the SAME room code.',room:'Room code',team2:'👥 2v2 teams (big map)',broker:'Relay',joinOnline:'🌐 Join online room',advServer:'🖥️ Use your own server',advServerSub:'Paste your WebSocket server address (wss://…). Everyone uses the same address and room code.',joinServer:'Join with server',advCode:'🌍 1v1 with copy-paste codes',advCodeSub:'Host: press Host, send the code, paste the reply, press Connect. Guest: paste the host code, press Join, send your reply back.',pasteHere:'Paste a code here',yourCode:'Your code appears here',
  paused:'PAUSED',resume:'RESUME',restart:'Restart run',quit:'Quit to lobby',onlineNoPause:'The online match is still running!',chooseBuff:'CHOOSE A BUFF',levelUp:'LEVEL UP! ',lvFmt:'LEVEL {0} - CHOOSE AN UPGRADE',runUps:'RUN UPGRADES',downed:'YOU WERE DOWNED',reviveQ:'Revive with 50% health and a full shield? (once per run)',noRevive:'Revive already used',revive:'REVIVE',giveup:'Give up',
  victory:'VICTORY!',defeat:'DEFEAT',raidOver:'RAID OVER',raidReach:'Reached floor {0} · room {1}',newBest:'New best!',gold:'Gold',kills:'Kills',time:'Time',lvup:'LEVEL {0}! +{1} upgrade points · +{2} 🪙',nextStage:'NEXT STAGE ▶',again:'Play again',retry:'RETRY',toStats:'💪 Upgrade',toHub:'Lobby',pvpWin:'Match won! +{0} 🪙 · +{1} XP',failTip:'Tip: spend stat points, level your hero or grab a Lucky Buff, then try again.',
- howtoBody:'<b>Desktop:</b> WASD to move · left click attacks toward the mouse · Q / E / R cast skills · Space awakens when the gold bar is full · Esc pauses.<br><b>Mobile:</b> stick on the left · ATK and Q/E/R on the right, drag a button to aim by hand.<br><b>Shield & health:</b> the shield (blue bar) takes hits first and recharges 3.5s after you stop getting hit. Health only drops once the shield is gone and <u>never regenerates</u>: only potions, healing skills and buffs restore it.<br><b>Progress:</b> clear stages for gold and XP → level up for points in Health / Shield / Damage / Speed → spend gold on hero chests, hero levels and buffs.',
+ back:'Back',floor:'Floor',rooms:'Rooms',bosses:'Bosses',revives:'Revives',hpStat:'HP left',score:'Score',newRound:'New round in {0}s',
+ howtoBody:'<h4>🎮 Desktop</h4><p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> to move · left click attacks toward the mouse · <kbd>Q</kbd> <kbd>E</kbd> <kbd>R</kbd> cast skills · <kbd>Space</kbd> awakens when the gold bar is full · <kbd>Esc</kbd> pauses.</p><h4>📱 Mobile</h4><p>Stick on the left · <b>ATK</b> and <b>Q/E/R</b> on the right (drag a button to aim by hand) · the <b>☰</b> button top-right pauses.</p><h4>🛡️ Survival</h4><p>The shield (blue bar) takes hits first and recharges 3.5s after you stop getting hit. Health only drops once the shield is gone and <u>never regenerates</u>: only potions, healing skills and buffs restore it.</p><h4>🏆 Progression</h4><p>Clear stages for gold and XP → level up for points in Health / Shield / Damage / Speed → spend gold on hero chests, hero levels and buffs.</p>',
  admTitle:'Player admin',admNone:'No players yet',admGold:'+5000🪙',admAll:'All heroes',admMax:'Max',admReset:'Reset',admDel:'Delete',admSure:'Delete account {0} for good?',admOk:'Updated {0}',admPass:'Password',admNewPass:'New password for {0} (6+ characters):',name:'Name',heroes:'Heroes'}};
 let LANG=LS.get('cb_lang','vi');if(!TX[LANG])LANG='vi';
 const t=(k,...a)=>{let s=TX[LANG][k];if(s==null)s=TX.en[k];if(s==null)return k;a.forEach((v,i)=>{s=s.split('{'+i+'}').join(v)});return s};
@@ -170,7 +172,7 @@ setInterval(()=>{if(dirty)push()},30000);addEventListener('pagehide',()=>push(1)
 document.addEventListener('visibilitychange',()=>{if(document.hidden){push(1);if(run&&!R&&!paused&&!ovKind)UI.pause()}});
 
 // ---- screens
-let page='home',chapSel=0,stSel=1,heroSel=0,authMode='login',ovKind=null,lastRun=null,busy=false;
+let page='home',chapSel=0,stSel=1,heroSel=0,authMode='login',ovKind=null,lastRun=null,busy=false,pvpCdShown=-1;
 const show=id=>document.querySelectorAll('.scr').forEach(e=>e.classList.toggle('on',e.id==id));
 const modal=id=>document.querySelectorAll('.modal').forEach(e=>e.classList.toggle('on',e.id==id));
 function ov(kind,html){const o=$('ov');ovKind=kind;o.innerHTML=html||'';o.classList.toggle('on',!!kind)}
@@ -306,7 +308,11 @@ settings(){$('st-lang').value=LANG;$('st-vol').value=Math.round(SFX.vol*100);$('
 toAuth(){modal(null);ACT.authtab('register');show('s-auth')},
 logout(){push(1);ACC=null;S=null;LS.del('cb_acc');modal(null);$('au').value=$('ap').value=$('ap2').value='';ACT.authtab('login');show('s-auth')},
 fullscreen(){try{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}catch(e){}},
-howto(){const b=$('md-x-body');b.className='sheet';b.innerHTML=`<button class="x" data-a="close">✕</button><h3>${t('howto')}</h3><p class="mut" style="font-size:14px;line-height:1.55">${t('howtoBody')}</p><button class="btn wide" data-a="close">OK</button>`;modal('md-x')},
+howto(){const b=$('md-x-body');b.className='sheet';b.innerHTML=`<button class="x" data-a="close">✕</button><h3>${t('howto')}</h3><div class="howto mut">${t('howtoBody')}</div><button class="btn wide" data-a="close">OK</button>`;modal('md-x')},
+// in-match variant: the modals live inside the menu layer, which is hidden during a run, so the
+// pause screen shows the same tutorial inside the overlay instead.
+ pauseHow(){ov('pauseHow',`<div class="panel"><h2>${t('howto')}</h2><div class="howto mut">${t('howtoBody')}</div><div class="col"><button class="btn big green" data-a="resume">${t('resume')}</button><button class="btn ghost" data-a="pauseBack">${t('back')}</button></div></div>`)},
+ pauseBack(){ov(null);UI.pause()},
 playStage(v){const s=+v;if(!(s>=1&&s<=NSTAGE)||s>S.stage){toast(t('locked'),1);sfx('err');return}startRun({mode:'stage',stage:s})},
 playRaid(){if(S.stage<=3){toast(t('raidLock'),1);sfx('err');return}startRun({mode:'raid'})},
 chap(v){chapSel=+v;stSel=0;render()},stSel(v){stSel=+v;render()},hero(v){heroSel=+v;render()},
@@ -347,6 +353,7 @@ next(){const s=lastRun&&lastRun.stage+1;if(s&&s<=NSTAGE&&s<=S.stage)startRun({mo
 home(){ov(null);leave('')},toStats(){ov(null);page='stats';leave('')},
 revive(){const r=raid;if(!r||r.revived||!spend(reviveCost(r)))return;persist();ov(null);sfx('heal');revive()},
 giveup(){ov(null);endRun(false)},buff(v){pickBuff(+v)},
+pvpAgain(){ov(null);const c=(typeof pvpCfg!=='undefined'&&pvpCfg)||{loc:0,dummy:0,team:0};begin(false,c.loc,c.dummy,0,c.team,1)},
 admin(){adminPanel()}};
 
 // what the engine calls back into
@@ -360,20 +367,37 @@ function runUps(o){ const bf=o.bf||{},names=Object.keys(bf);
 
 const UI={
 game(){showcaseStop();ov(null);modal(null)},
-home(msg){ov(null);modal(null);if(!S){show('s-auth');return}stSel=Math.min(S.stage,NSTAGE);chapSel=(stSel-1)/10|0;show('s-hub');render();toast(msg,1)},
-pause(){if(!run)return;clearInput();if(ovKind=='pause'){ACT.resume();return}if(ovKind)return;if(!R)paused=1;
- ov('pause',`<div class="panel"><h2>${t('paused')}</h2>${R?`<p class="mut">${t('onlineNoPause')}</p>`:''}<div class="col"><button class="btn big green" data-a="resume">${t('resume')}</button>${raid&&lastRun?`<button class="btn blue" data-a="retry">${t('restart')}</button>`:''}<button class="btn red" data-a="quit">${t('quit')}</button></div></div>`)},
+home(msg){ov(null);modal(null);pvpCdShown=-1;ovKind=null;paused=0;if(!S){show('s-auth');return}stSel=Math.min(S.stage,NSTAGE);chapSel=(stSel-1)/10|0;show('s-hub');render();toast(msg,1)},
+pause(){if(!run)return;clearInput();if(ovKind=='pause'){ACT.resume();return}if(ovKind=='pauseHow'){ACT.pauseBack();return}if(ovKind)return;if(!R)paused=1;
+ const mm=Math.floor((matchT||0)/60),ss=String(Math.floor((matchT||0)%60)).padStart(2,'0');
+ // compact snapshot of the current match, so pausing also answers "how is this run going?"
+ const stats=raid?`<div class="chips"><span class="chip">📍 ${t('floor')} ${raid.floor}</span><span class="chip">🚪 ${t('rooms')} ${raid.room}</span><span class="chip">💀 ${raid.kills}</span><span class="chip">🪙 ${Math.round(raid.gold)}</span></div>`
+  :`<div class="chips"><span class="chip">💀 KO ${(me&&me.k)|0}</span><span class="chip">⏱ ${mm}:${ss}</span></div>`;
+ ov('pause',`<div class="panel"><h2>${t('paused')}</h2>${R?`<p class="mut">${t('onlineNoPause')}</p>`:stats}<div class="col"><button class="btn big green" data-a="resume">${t('resume')}</button>${raid&&lastRun?`<button class="btn blue" data-a="retry">${t('restart')}</button>`:''}<button class="btn ghost" data-a="pauseHow">${t('howto')}</button><button class="btn red" data-a="quit">${t('quit')}</button></div></div>`)},
 choice(l,st){if(!l){if(ovKind=='choice')ov(null);return}ov('choice',`<div class="panel" style="width:min(640px,100%)"><h2>${st&&st.src=='lvl'?t('levelUp')+t('lvFmt',st.lv||0):t('chooseBuff')}</h2><div class="buffs">${l.map((b,i)=>`<button class="bf" data-a="buff" data-v="${i}"><span class="bi">${b.ic}</span>${b.n}<small>${LANG=='vi'?b.dv:b.d}</small><kbd>[ ${i+1} ]</kbd></button>`).join('')}</div></div>`)},
 down(r){const cost=reviveCost(r),can=!r.revived&&S.gold>=cost;sfx('lose');ov('down',`<div class="panel"><h2 class="bad">${t('downed')}</h2><p class="mut">${r.revived?t('noRevive'):t('reviveQ')}</p><div class="col">${r.revived?'':`<button class="btn big green${can?'':' off'}" data-a="revive">${t('revive')} · 🪙 ${cost}</button>`}<button class="btn red" data-a="giveup">${t('giveup')}</button></div><div class="gold" style="align-self:center">🪙 ${fmt(S.gold)}</div></div>`)},
 runEnd(o){const r=reward(o),st=o.mode=='stage',pl=st?stagePlan(o.stage):null,good=!st||o.win,mm=Math.floor(o.time/60),ss=String(Math.floor(o.time%60)).padStart(2,'0'),n=need(S.lvl),mx=S.lvl>=MAXL;sfx(r.up?'lvl':good&&(st||r.best)?'win':'lose');
  const btns=st?(o.win?(o.stage<NSTAGE?`<button class="btn big green" data-a="next">${t('nextStage')}</button>`:'')+`<button class="btn blue" data-a="retry">${t('again')}</button>`:`<button class="btn big" data-a="retry">${t('retry')}</button><button class="btn purple" data-a="toStats">${t('toStats')}</button>`):`<button class="btn big" data-a="retry">${t('again')}</button>`;
+// extra tiles: a stage run reports what you finished with, a raid run reports how deep it went
+ const extra=st?`<div><small>${t('hpStat')}</small>❤️ ${Math.round(Math.max(0,o.hp||0)*100)}%</div>${o.revived?`<div><small>${t('revives')}</small>✚ ${o.revived}</div>`:''}`
+  :`<div><small>${t('floor')}</small>📍 ${o.floor}</div><div><small>${t('rooms')}</small>🚪 ${o.rooms}</div><div><small>${t('bosses')}</small>👑 ${o.bosses||0}</div>${o.revived?`<div><small>${t('revives')}</small>✚ ${o.revived}</div>`:''}`;
  ov('result',`<div class="panel"><h2 class="${good?'':'bad'}">${st?t(o.win?'victory':'defeat'):t('raidOver')}</h2>${st&&o.win?`<div class="stars">${[1,2,3].map(i=>`<span class="${i<=r.stars?'f':''}">★</span>`).join('')}</div>`:''}
  <div class="mut">${st?t('stage')+' '+(pl.c+1)+'-'+pl.i+' · '+chapName(pl.c):t('raidReach',o.floor,o.room)+(r.best?' · 🏆 '+t('newBest'):'')}</div>
- <div class="rw"><div><small>${t('gold')}</small>🪙 +${fmt(r.gold)}</div><div><small>XP</small>⭐ +${fmt(r.xp)}</div><div><small>${t('kills')}</small>💀 ${o.kills}</div><div><small>${t('time')}</small>⏱ ${mm}:${ss}</div></div>
+ <div class="rw"><div><small>${t('gold')}</small>🪙 +${fmt(r.gold)}</div><div><small>XP</small>⭐ +${fmt(r.xp)}</div><div><small>${t('kills')}</small>💀 ${o.kills}</div><div><small>${t('time')}</small>⏱ ${mm}:${ss}</div>${extra}</div>
  ${runUps(o)}${r.up?`<div class="lvup">🎉 ${t('lvup',S.lvl,r.up,50*r.up)}</div>`:''}<div class="xp" style="max-width:none"><i style="width:${mx?100:Math.min(100,S.xp/n*100)}%"></i><span>${t('level')} ${S.lvl} · ${mx?'MAX':Math.floor(S.xp)+' / '+n+' XP'}</span></div>
  ${st&&!o.win?`<p class="mut">${t('failTip')}</p>`:''}<div class="col">${btns}<button class="btn ghost" data-a="home">${t('toHub')}</button></div></div>`)},
 // deathmatch win (not training or couch play)
-pvpEnd(win,online,skip){if(!win||skip||!S)return;const g=online?60:30,x=online?100:50;S.gold+=g;S.wins++;const up=addXp(x);persist();if(typeof progRecordMatch=='function')progRecordMatch({mode:'arena',win:!!win,kills:(me&&me.k)|0,time:matchT||0,score:(me&&me.k)|0});toast(t('pvpWin',g,x));if(up){sfx('lvl');toast('🎉 '+t('lvup',S.lvl,up,50*up))}}};
+pvpEnd(win,online,skip){if(!S)return;
+ if(!skip&&typeof progRecordMatch=='function')progRecordMatch({mode:'arena',win:!!win,kills:(me&&me.k)|0,time:matchT||0,score:(me&&me.k)|0});
+ if(win&&!skip){const g=online?60:30,x=online?100:50;S.gold+=g;S.wins++;const up=addXp(x);persist();toast(t('pvpWin',g,x));if(up){sfx('lvl');toast('🎉 '+t('lvup',S.lvl,up,50*up))}}
+ if(online)return;   // online rounds run on; only local matches show a result screen
+ const mt=matchT||0,mm=Math.floor(mt/60),ss=String(Math.floor(mt%60)).padStart(2,'0');pvpCdShown=Math.ceil(over);
+ ov('pvpEnd',`<div class="panel"><h2 class="${win?'':'bad'}">${win?t('victory'):t('defeat')}</h2>
+ <div class="rw"><div><small>${t('kills')}</small>💀 KO ${(me&&me.k)|0}</div><div><small>${t('time')}</small>⏱ ${mm}:${ss}</div>${tmode?`<div><small>${t('score')}</small>🎯 ${teamScore(me.tm)} : ${teamScore(1-me.tm)}</div>`:''}</div>
+ <p class="mut">${t('newRound','<b id="pvpN">'+Math.ceil(over)+'</b>')}</p>
+ <div class="col"><button class="btn big green" data-a="pvpAgain">${t('again')}</button><button class="btn ghost" data-a="home">${t('toHub')}</button></div></div>`)},
+ pvpCount(){const n=Math.ceil(over);if(ovKind=='pvpEnd'&&pvpCdShown!==n){pvpCdShown=n;const el=$('pvpN');if(el)el.textContent=n}},
+ pvpClose(){if(ovKind=='pvpEnd')ov(null)},};
 
 // ---- admin: list players and edit their saves (cloud accounts through /api/admin, device accounts straight from storage)
 const ADM={
@@ -394,7 +418,13 @@ async function adminDo(act,name){if(!ACC||ACC.role!='admin')return;let ok=false;
  toast(ok?t('admOk',name):t('errNet'),!ok);if(ok)sfx('buy');adminPanel()}
 
 // ---- wiring
-document.addEventListener('click',e=>{const a=e.target.closest('[data-adm]');if(a){adminDo(a.dataset.adm,a.dataset.n);return}const b=e.target.closest('[data-a]');if(!b)return;const f=ACT[b.dataset.a];if(f){if(!b.classList.contains('off'))sfx('ui');f(b.dataset.v,b)}});
+let actDebKey='',actDebT=0;
+document.addEventListener('click',e=>{const a=e.target.closest('[data-adm]');if(a){adminDo(a.dataset.adm,a.dataset.n);return}const b=e.target.closest('[data-a]');if(!b)return;const f=ACT[b.dataset.a];if(!f)return;
+ // double-click/double-tap guard: the same action+value is ignored for 400ms, so a stray second
+ // tap can't fire "Play again" twice, buy twice, or claim twice.
+ const now=performance.now(),key=b.dataset.a+'|'+(b.dataset.v||'');
+ if(key===actDebKey&&now-actDebT<400)return;actDebKey=key;actDebT=now;
+ if(!b.classList.contains('off'))sfx('ui');f(b.dataset.v,b)});
 document.querySelectorAll('.modal').forEach(m=>m.addEventListener('pointerdown',e=>{if(e.target===m&&m.id!='md-x')modal(null)}));
 $('authf').addEventListener('submit',async e=>{e.preventDefault();if(busy)return;const name=$('au').value.trim(),pass=$('ap').value,er=$('aerr');
  if(!NAME_RE.test(name)){er.textContent=t('errName');return}if(pass.length<6){er.textContent=t('errPass');return}if(authMode=='register'&&pass!==$('ap2').value){er.textContent=t('errPass2');return}
