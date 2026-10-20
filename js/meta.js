@@ -296,7 +296,7 @@ function reward(o){let gold=o.gold,xp=0,stars=0,best=false;
  S.gold+=gold;const up=addXp(xp);persist();if(typeof progRecordMatch=='function')progRecordMatch({mode:o.mode,win:o.mode=='stage'?!!o.win:(o.bosses||0)>=5,kills:o.kills|0,time:o.time||0,score:gold||0,bosses:o.bosses|0,floor:o.floor||0,stage:o.stage||0});return{gold,xp,stars,up,best}}
 
 const ACT={
-async start(){if(busy)return;busy=true;try{await Promise.race([probe(),new Promise(r=>setTimeout(r,3500))]);if(await resume())enterHub();else{ACT.authtab(authMode);show('s-auth')}}finally{busy=false}},
+async start(){if(busy)return;busy=true;try{await Promise.race([probe(),new Promise(r=>setTimeout(r,3500))]);if(await resume()){enterHub()}else{begin(false);enterHub()}}}finally{busy=false}},
 authtab(v){authMode=v;document.querySelectorAll('#authf .tab').forEach(b=>b.classList.toggle('on',b.dataset.v==v));$('ap2w').hidden=v!='register';$('ap').autocomplete=v=='register'?'new-password':'current-password';$('asub').textContent=t(v);$('aerr').textContent='';$('ahint').textContent=t(cloudOK?'hintCloud':'hintDev')},
 guest(){ACC={name:'Guest'+(100+Math.random()*900|0),role:'user',mode:'guest'};const old=LS.get('cb_gname',null);if(old)ACC.name=old;else LS.set('cb_gname',ACC.name);LS.set('cb_acc',ACC);loadSave(null);enterHub()},
 go(v){page=v;render();$('page').scrollTop=0},lang(){setLang(LANG=='vi'?'en':'vi')},close(){modal(null)},arena(){modal('md-arena')},
@@ -346,7 +346,8 @@ retry(){if(lastRun)startRun(lastRun,1)},
 next(){const s=lastRun&&lastRun.stage+1;if(s&&s<=NSTAGE&&s<=S.stage)startRun({mode:'stage',stage:s},1);else ACT.home()},
 home(){ov(null);leave('')},toStats(){ov(null);page='stats';leave('')},
 revive(){const r=raid;if(!r||r.revived||!spend(reviveCost(r)))return;persist();ov(null);sfx('heal');revive()},
-giveup(){ov(null);endRun(false)},buff(v){pickBuff(+v)},
+giveup(){ov(null);endRun(false)},arenaMode(v){const mode=v;if(mode=='mBots')begin(false);else if(mode=='m2v2')begin(false,0,0,0,1);else if(mode=='mDummy')begin(false,0,1);else if(mode=='mLocal')begin(false,1);else if(mode==='online'){ACT.joinOnline();return;}toast('Starting '+mode,1);sfx('err')},buff(v){pickBuff(+v)},
+joinOnline(){const code=$('rc').value;if(!code){toast(t('enter a room code'),1);sfx('err');return}joining=1;try{joinMQ()}finally{joining=0}},
 admin(){adminPanel()}};
 
 // what the engine calls back into
@@ -373,7 +374,7 @@ runEnd(o){const r=reward(o),st=o.mode=='stage',pl=st?stagePlan(o.stage):null,goo
  ${runUps(o)}${r.up?`<div class="lvup">🎉 ${t('lvup',S.lvl,r.up,50*r.up)}</div>`:''}<div class="xp" style="max-width:none"><i style="width:${mx?100:Math.min(100,S.xp/n*100)}%"></i><span>${t('level')} ${S.lvl} · ${mx?'MAX':Math.floor(S.xp)+' / '+n+' XP'}</span></div>
  ${st&&!o.win?`<p class="mut">${t('failTip')}</p>`:''}<div class="col">${btns}<button class="btn ghost" data-a="home">${t('toHub')}</button></div></div>`)},
 // deathmatch win (not training or couch play)
-pvpEnd(win,online,skip){if(!win||skip||!S)return;const g=online?60:30,x=online?100:50;S.gold+=g;S.wins++;const up=addXp(x);persist();if(typeof progRecordMatch=='function')progRecordMatch({mode:'arena',win:!!win,kills:(me&&me.k)|0,time:matchT||0,score:(me&&me.k)|0});toast(t('pvpWin',g,x));if(up){sfx('lvl');toast('🎉 '+t('lvup',S.lvl,up,50*up))}}};
+pvpEnd(win,online,skip){if(!win||skip||!S)return;const g=online?60:30,x=online?100:50;S.gold+=g;S.wins++;const up=addXp(x);persist();if(typeof progRecordMatch=='function')progRecordMatch({mode:'arena',win:!!win,kills:(me&&me.k)|0,time:matchT||0,score:(me&&me.k)|0});UI.runEnd({mode:'arena',win:!!win,kills:(me&&me.k)|0,time:matchT||0,score:(me&&me.k)|0,gold:g,xp:x});toast(t('pvpWin',g,x));if(up){sfx('lvl');toast('🎉 '+t('lvup',S.lvl,up,50*up))}}};
 
 // ---- admin: list players and edit their saves (cloud accounts through /api/admin, device accounts straight from storage)
 const ADM={

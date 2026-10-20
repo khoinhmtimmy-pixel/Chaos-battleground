@@ -113,7 +113,8 @@ body.t #tc{display:block}
 .hero h2{position:relative;font-size:30px;line-height:1}
 .hero .sub{color:var(--mut);font-size:14px;margin:2px 0 8px}
 .chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:10px}
-.chip{padding:3px 10px;border-radius:14px;background:#120c30;border:2px solid var(--line);font-size:13px;font-weight:700;white-space:nowrap}
+.chip{padding:4px 10px;border-radius:14px;background:#120c30;border:2px solid var(--line);font-size:13px;font-weight:700;white-space:nowrap;display:inline-flex;align-items:center;gap:4px}
+.chip small{font-size:10px;color:var(--mut);font-weight:600;padding:0 2px}
 .rar{font-weight:800}.r0{color:var(--r0)}.r1{color:var(--r1)}.r2{color:var(--r2)}.r3{color:var(--r3)}.r4{background:linear-gradient(90deg,#ff4d8d,#ffb02e,#7fe4ff,#b77bff);-webkit-background-clip:text;background-clip:text;color:transparent}.chip.r4{border-color:#ff4d8d;white-space:normal}
 .modes{display:flex;flex-direction:column;gap:10px}
 .mode{position:relative;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:2px 12px;text-align:left;padding:14px 16px;border-radius:18px;border:3px solid var(--ink);border-bottom-width:7px;overflow:hidden;transition:transform .08s,filter .15s}
