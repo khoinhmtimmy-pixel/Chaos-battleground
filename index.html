@@ -51,10 +51,10 @@
    <p class="mut" data-t="arenaSub"></p>
    <div class="row"><span>🗺️ <span data-t="map"></span></span><select id="mpsel"></select></div>
    <div class="grid2">
-    <button class="btn blue" id="bp" data-a="arenaMode" data-v="mBots"></button>
-    <button class="btn blue" id="bt2" data-a="arenaMode" data-v="m2v2"></button>
-    <button class="btn purple" id="bd" data-a="arenaMode" data-v="mDummy"></button>
-    <button class="btn purple" id="bl" data-a="arenaMode" data-v="mLocal"></button>
+    <button class="btn blue" id="bp" data-a="arenaMode" data-v="mBots" data-t="mBots"></button>
+    <button class="btn blue" id="bt2" data-a="arenaMode" data-v="m2v2" data-t="m2v2"></button>
+    <button class="btn purple" id="bd" data-a="arenaMode" data-v="mDummy" data-t="mDummy"></button>
+    <button class="btn purple" id="bl" data-a="arenaMode" data-v="mLocal" data-t="mLocal"></button>
    </div>
    <div id="msg" class="note"></div>
    <h4>🌐 <span data-t="online"></span></h4>
@@ -62,7 +62,7 @@
    <div class="row"><span data-t="room"></span><input id="rc" maxlength="8"></div>
    <label class="chk"><input type="checkbox" id="tm2"> <span data-t="team2"></span></label>
    <div class="row"><span data-t="broker"></span><select id="brk"><option value="wss://broker.hivemq.com:8884/mqtt">HiveMQ</option><option value="wss://broker.emqx.io:8084/mqtt">EMQX</option><option value="wss://test.mosquitto.org:8081/mqtt">Mosquitto</option></select></div>
-   <button class="btn wide" id="bm" data-a="joinOnline" hidden></button><div id="mmsg" class="note"></div>
+   <button class="btn wide" id="bm" data-a="joinOnline" data-t="joinOnline"></button><div id="mmsg" class="note"></div>
    <details><summary data-t="advServer"></summary>
     <p class="mut" data-t="advServerSub"></p>
     <input id="srv" class="full" placeholder="wss://your-server-address"><button class="btn sm" id="bs" data-a="joinServer"></button><div id="smsg" class="note"></div></details>

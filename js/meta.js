@@ -352,7 +352,7 @@ retry(){if(lastRun)startRun(lastRun,1)},
 next(){const s=lastRun&&lastRun.stage+1;if(s&&s<=NSTAGE&&s<=S.stage)startRun({mode:'stage',stage:s},1);else ACT.home()},
 home(){ov(null);leave('')},toStats(){ov(null);page='stats';leave('')},
 revive(){const r=raid;if(!r||r.revived||!spend(reviveCost(r)))return;persist();ov(null);sfx('heal');revive()},
-giveup(){ov(null);endRun(false)},arenaMode(v){const mode=v;if(mode=='mBots')begin(false);else if(mode=='m2v2')begin(false,0,0,0,1);else if(mode=='mDummy')begin(false,0,1);else if(mode=='mLocal')begin(false,1);else if(mode==='online'){ACT.joinOnline();return;}toast('Starting '+mode,1);sfx('err')},buff(v){pickBuff(+v)},
+giveup(){ov(null);endRun(false)},arenaMode(v){const mode=v;if(mode=='mBots')begin(false);else if(mode=='m2v2')begin(false,0,0,0,1);else if(mode=='mDummy')begin(false,0,1);else if(mode=='mLocal')begin(false,1);else if(mode==='online')ACT.joinOnline();else{toast('Starting '+mode,1);sfx('err')}},buff(v){pickBuff(+v)},
 joinOnline(){const code=$('rc').value;if(!code){toast(t('enter a room code'),1);sfx('err');return}joining=1;try{joinMQ()}finally{joining=0}},
 pvpAgain(){ov(null);const c=(typeof pvpCfg!=='undefined'&&pvpCfg)||{loc:0,dummy:0,team:0};begin(false,c.loc,c.dummy,0,c.team,1)},
 admin(){adminPanel()}};

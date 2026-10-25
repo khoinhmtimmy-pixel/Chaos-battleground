@@ -1,6 +1,6 @@
 // online play: every transport (WebRTC 1v1, MQTT broker, WebSocket server) exposes the same room interface to wire()
 function wire(){const my=R;begin(true);joinT=Date.now();
- my.onPeers(c=>{if(R!==my)return;const seen={};for(const p of c.peers){if(p.isMe||p.presence.ch==null||(p.presence.t===joinT&&p.presence.nm===me.nm))continue;const q=p.presence,id=p.peer,qc=CH[q.ch];if(!qc||qc.boss||qc.foe)continue;q.nm=String(q.nm||'?').slice(0,14);seen[id]=1;
+ my.onPeers(c=>{if(R!==my)return;const seen={};for(const p of c.peers){if(p.isMe||p.peer===myPeer()||p.presence.ch==null)continue;const q=p.presence,id=p.peer,qc=CH[q.ch];if(!qc||qc.boss||qc.foe)continue;q.nm=String(q.nm||'?').slice(0,14);seen[id]=1;
   let e=others[id];if(!e){if(Object.keys(others).length>=3){leave('Room is full (4 players).');return}e=others[id]=mk(q.ch,q.x,q.y,q.nm,false)}
   if(MAPS[q.mp]&&myPeer()=='G'&&MAP!=q.mp){setMap(q.mp);ents=[];respawn(me)}Object.assign(e,{t:q.t,awt:q.aw?1:0,ch:q.ch,tx:q.x,ty:q.y,hp:q.hp,mx:CH[q.ch].hp,sd:+q.sd||0,sm:+q.sm||0,k:q.k,al:q.al,sh:q.sh?1:0,a:q.a,nm:q.nm,gq:q.gq,gc:q.gc,ga:q.ga})}
   for(const id in others)if(!others[id].bot&&!seen[id])delete others[id]});
@@ -47,7 +47,7 @@ function mkMQ(c,room,myId){const base='tb1/'+room+'/',cbs={},pcbs=[],rp={},seen=
    else if(k=='x'){delete rp[id];notify()}},
   presence(p){mine=p;const t=Date.now();if(t-last<90)return;last=t;c.pub(base+myId+'/p',JSON.stringify(p))},
   emit(n,d){c.pub(base+myId+'/e',JSON.stringify({n,d}))},on(n,f){(cbs[n]=cbs[n]||[]).push(f)},onPeers(f){pcbs.push(f)},
-  peers(){const keep=order().slice(0,4),ids=Object.keys(rp).filter(id=>keep.includes(id));return[{isMe:true,peer:myId,presence:mine||{}}].concat(ids.filter(id=>!ids.some(o=>o!=id&&rp[o].nm===rp[id].nm&&rp[o].ch===rp[id].ch&&seen[o]-seen[id]>1200)).map(id=>({isMe:false,peer:id,presence:rp[id]})))},
+  peers(){const keep=order().slice(0,4),ids=Object.keys(rp).filter(id=>keep.includes(id));return[{isMe:true,peer:myId,presence:mine||{}}].concat(ids.map(id=>({isMe:false,peer:id,presence:rp[id]})))},
   leave(){clearInterval(iv);try{c.pub(base+myId+'/x','x')}catch(e){}c.close()}};return R4}
 $('bm').onclick=async()=>{if(joining)return;joining=1;try{await joinMQ()}finally{joining=0}};
 function closeOld(){if(R){try{R.leave()}catch(e){}R=null}}
