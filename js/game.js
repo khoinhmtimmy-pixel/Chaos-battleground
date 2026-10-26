@@ -15,7 +15,7 @@ const RMM=matchMedia('(prefers-reduced-motion: reduce)');
 function resize(){dpr=Math.min(Q.dpr,devicePixelRatio||1);VG=null;pd=0;const r=$('w').getBoundingClientRect();cw=r.width;chh=r.height;cv.width=cw*dpr;cv.height=chh*dpr;K=Math.max(Math.min(cw/W,chh/H),touch?.95:.9)}
 addEventListener('resize',resize);
 let PIL=[[300,200,38],[600,200,38],[300,400,38],[600,400,38],[450,300,30]],SP=[[70,70],[830,70],[70,530],[830,530]];
-let kf=[],an=[],fb=0,matchT=0,BUSH=[],tmode=false,onlineTeam=false,autoAim=false,lockT=null,decals=[],pk=[],chest=null,portal=null,choice=null,nid=0,raid=null,aim=null,hold=0,joining=0,MAP=0,onlineMap=0,train=0,loc2=0,k2={},cam={x:0,y:0},K=1,VW=900,VH=600,cw=900,chh=600,dpr=1,touch=matchMedia("(pointer:coarse)").matches,joy={x:0,y:0},parts=[],txts=[],shake=0,sel=0,me,others={},ents=[],R=null,keys={},mouse={x:450,y:300,down:false},last=0,over=0,winner='',lastHit=null,flash=0,run=0,pt=0,tm=0,joinT=Date.now(),paused=0,pd=0,allC=null,raf=0,fts=.016,slowT=0,VG=null,VR=null,flashS=0,pvpCfg=null;
+let kf=[],an=[],fb=0,matchT=0,BUSH=[],tmode=false,onlineTeam=false,autoAim=false,lockT=null,decals=[],pk=[],chest=null,portal=null,choice=null,nid=0,raid=null,aim=null,hold=0,joining=0,MAP=0,onlineMap=0,train=0,loc2=0,k2={},cam={x:0,y:0},K=1,VW=900,VH=600,cw=900,chh=600,dpr=1,touch=matchMedia("(pointer:coarse)").matches,joy={x:0,y:0},parts=[],txts=[],shake=0,sel=0,me,others={},ents=[],R=null,keys={},mouse={x:450,y:300,down:false},last=0,over=0,winner='',lastHit=null,flash=0,run=0,pt=0,tm=0,joinT=Date.now(),paused=0,pd=0,allC=null,raf=0,fts=.016,slowT=0,VG=null,VR=null,flashS=0,pvpCfg=null,shards=[],survivalMode=false;
 $('mpsel').innerHTML=MAPS.map((m,i)=>'<option value="'+i+'">'+m.n+'</option>').join('')+'<option value="r">🎲 Random</option>';
 $('rc').value=Math.random().toString(36).slice(2,6);
 // armor (sd of sm) soaks hits first and recharges SHD seconds after the last hit; health never regenerates on its own
@@ -33,7 +33,7 @@ function begin(online,loc,dummy,raidMode,teamArg,again){
  if(run&&!again)return;
  // taking a local match over from an online one has to close the transport, or its socket leaks
  if(R){try{R.leave()}catch(e){}R=null}
- tmode=!!(online?onlineTeam:teamArg);kf=[];an=[];fb=0;matchT=0;choice=null;chest=null;portal=null;pk=[];decals=[];parts=[];txts=[];aim=null;hold=0;paused=0;allC=null;flash=0;shake=0;fxs.length=0;autoAim=!!($('aa')&&$('aa').checked);{const mv=$('mpsel').value;setMap(online?onlineMap:(raidMode&&raidMode.map!=null)?raidMode.map:(mv=='r'?Math.random()*MAPS.length|0:(+mv||0)));if(tmode&&!online&&!MAPS[MAP].w)setMap(BIG[Math.random()*BIG.length|0])}loc2=!online&&!!loc;train=!online&&!!dummy;if(!online&&!raidMode)pvpCfg={loc:loc?1:0,dummy:dummy?1:0,team:teamArg?1:0};
+ tmode=!!(online?onlineTeam:teamArg);kf=[];an=[];fb=0;matchT=0;choice=null;chest=null;portal=null;pk=[];decals=[];parts=[];txts=[];aim=null;hold=0;paused=0;allC=null;flash=0;shake=0;fxs.length=0;autoAim=!!($('aa')&&$('aa').checked);shards=[];{const mv=$('mpsel').value;setMap(online?onlineMap:(raidMode&&raidMode.map!=null)?raidMode.map:(survivalMode?MAPS.findIndex(m=>m.n&&m.n.indexOf('Survival Wasteland')>=0): (mv=='r'?Math.random()*MAPS.length|0:(+mv||0))));if(tmode&&!online&&!MAPS[MAP].w)setMap(BIG[Math.random()*BIG.length|0])}loc2=!online&&!!loc;train=!online&&!!dummy;if(!online&&!raidMode)pvpCfg={loc:loc?1:0,dummy:dummy?1:0,team:teamArg?1:0};
  const nm=$('nm').value.trim()||'Hero',hSel=(raidMode&&raidMode.hero!=null)?raidMode.hero:sel;me=mk(hSel,450,300,nm);setGear(me);me.tm=0;me.x=SP[0][0];me.y=SP[0][1];others={};ents=[];over=0;lastHit=null;EVT.reset();
  if(!online&&dummy){const d=mk(0,450,150,'Dummy',true);d.dum=1;d.hp=d.mx=99999;d.sd=d.sm=0;d.log=[];d.tot=0;others.d0=d;d.x=450;d.y=60}else if(!online&&teamArg){const pool=BASE.filter(i=>i!=hSel).sort(()=>Math.random()-.5),al=mk(pool.pop(),SP[2][0],SP[2][1],'Ally',true),e1=mk(pool.pop(),SP[1][0],SP[1][1],'Enemy 1',true),e2=mk(pool.pop(),SP[3][0],SP[3][1],'Enemy 2',true);al.tm=0;e1.tm=e2.tm=1;others.b0=al;others.b1=e1;others.b2=e2}else if(!online){const nb=loc?2:3,pool=BASE.filter(i=>i!=hSel).sort(()=>Math.random()-.5);if(loc){const p=SP[1];others.p2=mk(pool.pop(),p[0],p[1],'Player 2');others.p2.loc=1;me.nm=nm+' (P1)'}for(let i=0;i<nb;i++){const p=SP[i+(loc?2:1)];others['b'+i]=mk(pool.pop(),p[0],p[1],'Bot '+(i+1),true)}}
  $('m').style.display='none';$('mb').style.display='block';if(!online&&raidMode){others={};newRun(raidMode);spawnRoom()}else raid=null;allC=null;resize();lab();UI.game();if(!run){run=1;last=performance.now();cancelAnimationFrame(raf);raf=requestAnimationFrame(loop)}}
@@ -200,7 +200,7 @@ function raidTick(dt){const r=raid;EVT.tick(dt);if(!r||r.state=='over')return;
  const suck=r.state!='fight';
  for(const p of pk){const d=Math.hypot(me.x-p.x,me.y-p.y),want=p.t!='hp'||me.hp<me.mx;
   if(me.al&&want&&d>1&&(d<110||(suck&&p.t!='hp'))){const v=Math.min(d,(suck?520:280)*dt);p.x+=(me.x-p.x)/d*v;p.y+=(me.y-p.y)/d*v}
-  if(me.al&&want&&d<22){p.dead=1;if(p.t=='coin'){r.gold+=p.v*r.gv*r.gm;r.score+=p.v;sfx('coin')}else if(p.t=='hp'){me.hp=Math.min(me.mx,me.hp+me.mx*p.v);say(me.x,me.y-50,'+HP','#7dffb0');sfx('heal')}else{me.aw=Math.min(100,(me.aw||0)+p.v)}}}
+  if(me.al&&want&&d<22){p.dead=1;if(p.t=='coin'){r.gold+=p.v*r.gv*r.gm;r.score+=p.v;sfx('coin')}else if(p.t=='hp'){me.hp=Math.min(me.mx,me.hp+me.mx*p.v);say(me.x,me.y-50,'+HP','#7dffb0');sfx('heal')}else if(p.t=='shard'){me.shards=(me.shards||0)+p.v;say(me.x,me.y-50,'+SHARD','#a78bfa');sfx('coin')}else{me.aw=Math.min(100,(me.aw||0)+p.v)}}}
  pk=pk.filter(p=>!p.dead);
  if(chest&&!chest.open&&me.al&&Math.hypot(me.x-chest.x,me.y-chest.y)<38){chest.open=true;openChoice()}
  if(portal&&me.al&&r.state=='clear'&&Math.hypot(me.x-portal.x,me.y-portal.y)<40)nextRoom()}
@@ -227,7 +227,7 @@ function upd2(q,dt){q.age=(q.age||0)+dt;const oe=ent(q.o);
   if(raid&&e.raidE&&raid.fid[q.o])continue;
   if(mine){if(q.pull&&dd>4){const f=Math.min(q.pull*dt,dd);move(e,(q.x-e.x)/dd*f,(q.y-e.y)/dd*f)}if(q.dps){const zd=dmgTo(e,q.dps*(q.dm||1)*dt,1);if(id=='me'){lastHit=q.o;if(raid)raid.hit+=zd}if(e.hp<=0){if(id=='me')die();else slay(e,q.o)}}if(q.sl)e.sl=Math.max(e.sl,.2)}}
   if(Math.random()<dt*20){const an=Math.random()*6.283,rd=q.r*Math.random();P(q.x+Math.cos(an)*rd,q.y+Math.sin(an)*rd,-Math.sin(an)*60,Math.cos(an)*60,.5,q.col,3)}}}
-function credit(o,v){const kr=o=='me'?me:others[o];if(o=='me'){me.k++;me.aw=Math.min(100,(me.aw||0)+15)}else if(others[o]&&(others[o].bot||others[o].loc))others[o].k++;if(kr&&v)feedKill(kr,v)}
+function credit(o,v){const kr=o=='me'?me:others[o];if(o=='me'){me.k++;me.aw=Math.min(100,(me.aw||0)+15)}else if(others[o]&&(others[o].bot||others[o].loc))others[o].k++;if(kr&&v)feedKill(kr,v);if(v&&v.al===0){pk.push({x:v.x,y:v.y,t:'shard',v:Math.random()<.2?2:1})}}
 function ann(t,c){an.push({s:t,c,l:2.4,m:2.4});if(an.length>3)an.shift()}
 function feedKill(k,v){if(raid)return;kf.unshift({a:k.nm,b:v.nm,ta:k.tm,tb:v.tm,l:6});if(kf.length>5)kf.pop();
  k.ks=(k.kt&&tm-k.kt<7)?(k.ks||0)+1:1;k.kt=tm;const mine=k===me||(tmode&&k.tm===me.tm),N=['','','DOUBLE KILL','TRIPLE KILL','QUADRA KILL','PENTA KILL','LEGENDARY!'];

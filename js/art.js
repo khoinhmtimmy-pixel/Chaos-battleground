@@ -451,7 +451,7 @@ function paintBush(x,y,r,T,sd){const [l,d,o]=T.bush,rnd=rng(sd);softShadow(x+r*.
  for(let i=0;i<5;i++){const a=rnd()*6.283,q=rnd()*r*.8,px=x+Math.cos(a)*q,py=y-r*.1+Math.sin(a)*q*.7;if(T.flower){ctx.fillStyle=['#fff','#ff9cc4','#ffe14d'][i%3];ctx.beginPath();ctx.arc(px,py,2.6,0,7);ctx.fill()}else if(T.ember){ctx.fillStyle='#ffb02e';ctx.beginPath();ctx.arc(px,py,2,0,7);ctx.fill()}else if(T.glowb){const g=ctx.createRadialGradient(px,py,0,px,py,7);g.addColorStop(0,'rgba(190,255,250,.9)');g.addColorStop(1,'rgba(120,255,240,0)');ctx.fillStyle=g;ctx.fillRect(px-7,py-7,14,14)}}}
 const BC={};
 function drawBush(b,i){const k=MAP+'|'+i;let p=BC[k];if(!p){const r=b[2],w=Math.ceil(r*2.9+16),h=Math.ceil(r*2.5+16),c=document.createElement('canvas');c.width=w*2;c.height=h*2;const x=c.getContext('2d'),o=ctx;x.scale(2,2);ctx=x;try{paintBush(w/2,h*.52,r,TH[MAPS[MAP].th]||TH.sand,MAP*131+i*17+5)}finally{ctx=o}p=BC[k]={c,w,h,ox:w/2,oy:h*.52}}
- ctx.drawImage(p.c,b[0]-p.ox+Math.sin(tm*2+b[0]*.05)*1.6,b[1]-p.oy,p.w,p.h)}
+ const dx=me?me.x-b[0]:0,dy=me?me.y-b[1]:0,d=Math.hypot(dx,dy),push=d<150?(150-d)*.35:0,ang=Math.atan2(dy,dx);ctx.drawImage(p.c,b[0]-p.ox+Math.sin(tm*2+b[0]*.05)*1.6+Math.cos(ang+Math.PI)*push,b[1]-p.oy+Math.sin(ang+Math.PI)*push,p.w,p.h)}
 function drawObjs(){const L=[],vis=(x,y,r)=>x+r>cam.x-60&&x-r<cam.x+VW+60&&y+r>cam.y-110&&y-r<cam.y+VH+70;for(const p of PIL)if(vis(p[0],p[1],p[2]))L.push([p[1]+p[2]*.5,()=>drawRock(p)]);BUSH.forEach((b,i)=>{if(vis(b[0],b[1],b[2]*1.6))L.push([b[1]+b[2]*.9,()=>drawBush(b,i)])});
  for(const [id,e] of all()){if(!e.al||hiddenE(e))continue;L.push([e.y+16,()=>{const inb=BUSH.some(b=>Math.hypot(e.x-b[0],e.y-b[1])<b[2]);if(inb&&(id=='me'||(tmode&&e.tm===me.tm)))ctx.globalAlpha=.62;drawChar(e,id);ctx.globalAlpha=1}])}
  L.sort((a,b)=>a[0]-b[0]);for(const o of L)o[1]()}
@@ -483,7 +483,8 @@ function drawPickup(p){const bob=Math.sin(tm*6+p.x)*2.2,x=p.x,y=p.y+bob;softShad
  glowAt(p.t=='coin'?'#ffd23c':p.t=='hp'?'#ff5064':'#50b4ff',x,y,15,.6);ctx.lineJoin='round';ctx.lineWidth=2;ctx.strokeStyle=INK;
  if(p.t=='coin'){const w=Math.abs(Math.cos(tm*4+p.x))*5.4+1.2;aEll(x,y,w,6.4,'#ffd23c');aEll(x,y,w*.55,4,'#ffe98a',1);aEll(x-w*.3,y-2.6,w*.2,1.3,'#fff',1)}
  else if(p.t=='hp'){aRR(x-2.6,y-10,5.2,4.4,1,'#e9e2d0');aRR(x-3.4,y-11.4,6.8,2.4,1,WOOD);ctx.beginPath();ctx.moveTo(x-2.6,y-6);ctx.lineTo(x-7,y+3);ctx.quadraticCurveTo(x,y+9,x+7,y+3);ctx.lineTo(x+2.6,y-6);ctx.closePath();aFS('#ff4d6a');aEll(x-2.6,y+.6,1.6,2.6,'#ffb3c0',1,.5)}
- else{aPoly([x,y-9,x+6,y-1,x,y+9,x-6,y-1],'#4db8ff');aPoly([x,y-9,x+6,y-1,x,y-1],'#bfe6ff',1);aLine(x-6,y-1,x+6,y-1,INK,1)}}
+ else if(p.t=='shard'){glowAt('#a78bfa',x,y,18,.7);aStar(x,y,9,5,'#c4b5fd',tm*4,1);aCirc(x,y,3.2,'#7c3aed',1);aCirc(x-1.2,y-1.6,1.1,'#fff',1)}
+else{aPoly([x,y-9,x+6,y-1,x,y+9,x-6,y-1],'#4db8ff');aPoly([x,y-9,x+6,y-1,x,y-1],'#bfe6ff',1);aLine(x-6,y-1,x+6,y-1,INK,1)}}
 function drawChest(c){const x=c.x,y=c.y;softShadow(x,y+15,26,8);ctx.lineJoin='round';ctx.lineWidth=2.6;ctx.strokeStyle=INK;
  if(!c.open){glowAt('#ffd84d',x,y,40,.35+.2*Math.sin(tm*5));aRR(x-19,y-4,38,19,4,'#a8641f');aRR(x-19,y+6,38,9,[0,0,4,4],'#7d4a17',1);ctx.beginPath();ctx.moveTo(x-19,y-3);ctx.quadraticCurveTo(x-19,y-18,x,y-18);ctx.quadraticCurveTo(x+19,y-18,x+19,y-3);ctx.closePath();aFS('#c47a2a');
   for(const d of[-12,12])aRR(x+d-2.4,y-17,4.8,32,1.2,'#ffd84d');aRR(x-19,y-5,38,4,1,'#ffd84d');aRR(x-4.5,y-8,9,10,2,'#ffe98a');aCirc(x,y-3.6,1.6,INK,1);aStar(x+15+Math.sin(tm*5)*2,y-20,3.4,4,'#fff',tm*3,1)}
@@ -519,7 +520,7 @@ function drawWorld(){const M=MAPS[MAP],T=TH[M.th]||TH.sand,k=K*dpr;VW=cw/K;VH=ch
    if(Q.fx)for(const [a,l] of d.cr){ctx.beginPath();ctx.moveTo(Math.cos(a)*d.r*.15,Math.sin(a)*d.r*.15);ctx.lineTo(Math.cos(a+.15)*d.r*l*.55,Math.sin(a+.15)*d.r*l*.55);ctx.lineTo(Math.cos(a-.1)*d.r*l,Math.sin(a-.1)*d.r*l);ctx.stroke()}}
   ctx.restore()}
  ctx.globalAlpha=1;
- if(raid){if(portal)drawPortal(portal);if(chest)drawChest(chest);for(const p of pk)drawPickup(p)}
+ if(raid){if(portal)drawPortal(portal);if(chest)drawChest(chest);for(const p of pk)drawPickup(p)}else{for(const p of pk)if(p.t=='shard')drawPickup(p)}
   EVT.draw();
  if(lockT&&lockT.al&&touch){ctx.strokeStyle='#ff5a5a';ctx.lineWidth=3;ctx.globalAlpha=.55+.35*Math.sin(tm*8);ctx.beginPath();ctx.ellipse(lockT.x,lockT.y+20,26+Math.sin(tm*8)*2,11,0,0,7);ctx.stroke();ctx.globalAlpha=1}
  if(aim&&aim.on&&me.al){const sk=CH[me.ch].s[aim.key],ux=Math.cos(aim.a),uy=Math.sin(aim.a),rg=aimRange(sk);ctx.save();ctx.globalAlpha=.6;ctx.strokeStyle='#fff';ctx.fillStyle=CH[me.ch].col;ctx.lineWidth=3;ctx.setLineDash([10,8]);
