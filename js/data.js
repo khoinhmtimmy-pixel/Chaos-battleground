@@ -265,7 +265,9 @@ MAPS.push(
 {n:'Canyon Pass (BIG 2v2)',w:1400,h:900,sp:BSP,sea:['#7a3a1a','#2a1008'],rim:'#6a4a2a',sand:['#e0b878','#b88a4c'],rock:['#c98b5a','#5a3a22'],
  pil:[...wl(300,300,620,300),...wl(780,300,1100,300),...wl(300,600,620,600),...wl(780,600,1100,600),...wl(700,380,700,520),[500,450,40],[900,450,40],[220,160,34],[1180,160,34],[220,740,34],[1180,740,34]]},
 {n:'Sunken Temple (BIG 2v2)',w:1400,h:900,sp:BSP,sea:['#1b4d5a','#0a2a35'],rim:'#4a5a5a',sand:['#cdd5cf','#a8b5ad'],rock:['#9aa8a0','#44524c'],
- pil:[...Array.from({length:10},(_,i)=>[700+Math.cos(i*.6283)*210,450+Math.sin(i*.6283)*210,26]),...wl(300,160,460,160),...wl(940,160,1100,160),...wl(300,740,460,740),...wl(940,740,1100,740),[700,450,34]]});
+ pil:[...Array.from({length:10},(_,i)=>[700+Math.cos(i*.6283)*210,450+Math.sin(i*.6283)*210,26]),...wl(300,160,460,160),...wl(940,160,1100,160),...wl(300,740,460,740),...wl(940,740,1100,740),[700,450,34]]},
+{n:'Survival Wasteland (BIG)',w:2000,h:1500,sp:[[100,100],[1900,100],[100,1400],[1900,1400],[1000,750]],sea:['#1a2a1a','#0a150a'],rim:'#4a5a3a',sand:['#c8d8a8','#98a878'],rock:['#7a8a6a','#3a4a3a'],
+ pil:[...wl(400,300,400,1200,40),...wl(1600,300,1600,1200,40),...wl(600,750,1400,750,40),[1000,400,45],[1000,1100,45],[700,750,35],[1300,750,35],[500,500,30],[1500,500,30],[500,1000,30],[1500,1000,30]]});
 const BIG=MAPS.map((m,i)=>m.w?i:-1).filter(i=>i>=0),SMALL=MAPS.map((m,i)=>m.w?-1:i).filter(i=>i>=0);
 function mapFor(code){const h=[...code].reduce((a,c)=>a*31+c.charCodeAt(0),7);return code.endsWith('2v2')?BIG[h%BIG.length]:h%SMALL.length}
 function setOnline(code){onlineTeam=code.endsWith('2v2');onlineMap=mapFor(code)}
