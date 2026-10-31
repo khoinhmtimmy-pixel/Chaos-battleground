@@ -329,7 +329,7 @@ function showcaseFrame(cv,ch,yaw,tt,gq,gc,ga){
  vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(4,2,14,.5)');
  x.fillStyle=vg;x.fillRect(0,0,px,px);return cv}
 const figScale=(e,c)=>(c.lk&&c.lk.sc)||(e.boss?1.7:1);
-function hiddenE(e){if(raid||!e||e===me||e.dum||e.raidE)return false;if(tmode&&e.tm===me.tm)return false;return BUSH.some(b=>Math.hypot(e.x-b[0],e.y-b[1])<b[2])&&Math.hypot(e.x-me.x,e.y-me.y)>150&&tm>(e.rv||0)&&tm>(e.hft||0)+1}
+function hiddenE(e){return false}
 function drawChar(e,id){if(e.dum)return drawDummy(e);const c=CH[e.ch],bs=figScale(e,c),cd=c.col,fly=c.lk&&/bat|ghost|lord/.test(c.lk.sh||'');
  const mv=Math.hypot(e.x-(e.px==null?e.x:e.px),e.y-(e.py==null?e.y:e.py));e.px=e.x;e.py=e.y;e.mvs=(e.mvs||0)*.85+mv*.15;const walk=e.mvs>.35;
  let hv=e.hp+(e.sd||0);if(e.lhp!=null&&hv<e.lhp-.4)e.hft=tm+.12;e.lhp=hv;let hit=e.hft&&tm<e.hft,ph=tm*15+e.x*.1,sq=walk?1+Math.sin(ph)*.06:1+Math.sin(tm*3)*.025,bob=walk?-Math.abs(Math.sin(ph))*3:0;
@@ -451,9 +451,9 @@ function paintBush(x,y,r,T,sd){const [l,d,o]=T.bush,rnd=rng(sd);softShadow(x+r*.
  for(let i=0;i<5;i++){const a=rnd()*6.283,q=rnd()*r*.8,px=x+Math.cos(a)*q,py=y-r*.1+Math.sin(a)*q*.7;if(T.flower){ctx.fillStyle=['#fff','#ff9cc4','#ffe14d'][i%3];ctx.beginPath();ctx.arc(px,py,2.6,0,7);ctx.fill()}else if(T.ember){ctx.fillStyle='#ffb02e';ctx.beginPath();ctx.arc(px,py,2,0,7);ctx.fill()}else if(T.glowb){const g=ctx.createRadialGradient(px,py,0,px,py,7);g.addColorStop(0,'rgba(190,255,250,.9)');g.addColorStop(1,'rgba(120,255,240,0)');ctx.fillStyle=g;ctx.fillRect(px-7,py-7,14,14)}}}
 const BC={};
 function drawBush(b,i){const k=MAP+'|'+i;let p=BC[k];if(!p){const r=b[2],w=Math.ceil(r*2.9+16),h=Math.ceil(r*2.5+16),c=document.createElement('canvas');c.width=w*2;c.height=h*2;const x=c.getContext('2d'),o=ctx;x.scale(2,2);ctx=x;try{paintBush(w/2,h*.52,r,TH[MAPS[MAP].th]||TH.sand,MAP*131+i*17+5)}finally{ctx=o}p=BC[k]={c,w,h,ox:w/2,oy:h*.52}}
- const dx=me?me.x-b[0]:0,dy=me?me.y-b[1]:0,d=Math.hypot(dx,dy),push=d<150?(150-d)*.45:0,ang=Math.atan2(dy,dx);ctx.drawImage(p.c,b[0]-p.ox+Math.sin(tm*2+b[0]*.05)*1.6+Math.cos(ang+Math.PI)*push,b[1]-p.oy+Math.sin(ang+Math.PI)*push,p.w,p.h)}
+ ctx.drawImage(p.c,b[0]-p.ox+Math.sin(tm*2+b[0]*.05)*1.6,b[1]-p.oy,p.w,p.h)}
 function drawObjs(){const L=[],vis=(x,y,r)=>x+r>cam.x-60&&x-r<cam.x+VW+60&&y+r>cam.y-110&&y-r<cam.y+VH+70;for(const p of PIL)if(vis(p[0],p[1],p[2]))L.push([p[1]+p[2]*.5,()=>drawRock(p)]);BUSH.forEach((b,i)=>{if(vis(b[0],b[1],b[2]*1.6))L.push([b[1]+b[2]*.9,()=>drawBush(b,i)])});
- for(const [id,e] of all()){if(!e.al||hiddenE(e))continue;L.push([e.y+16,()=>{const inb=BUSH.some(b=>Math.hypot(e.x-b[0],e.y-b[1])<b[2]);if(inb&&(id=='me'||(tmode&&e.tm===me.tm)))ctx.globalAlpha=.62;drawChar(e,id);ctx.globalAlpha=1}])}
+ for(const [id,e] of all()){if(!e.al||hiddenE(e))continue;L.push([e.y+16,()=>{drawChar(e,id);ctx.globalAlpha=1}])}
  L.sort((a,b)=>a[0]-b[0]);for(const o of L)o[1]()}
 
 // ---------- projectiles: drawn pointing along +x, sized for a radius of 7
