@@ -257,7 +257,9 @@ const MAPS=[
 function setMap(i){const m=MAPS[i];MAP=i;PIL=m.pil;W=m.w||900;H=m.h||600;SP=m.sp||[[70,70],[830,70],[70,530],[830,530]];BUSH=genBush(i);genLights(i)}
 function genBush(i){const m=MAPS[i],w=m.w||900,h=m.h||600,sp=m.sp||[[70,70],[830,70],[70,530],[830,530]],out=[],n=m.bush||(m.w?18:9);let sd=i*977+13;const rnd=()=>(sd=(sd*9301+49297)%233280)/233280;
  for(let k=0;k<n*14&&out.length<n;k++){const x=110+rnd()*(w-220),y=90+rnd()*(h-180),r=30+rnd()*14;
-  if(!m.pil.some(p=>Math.hypot(x-p[0],y-p[1])<p[2]+r+26)&&!sp.some(p=>Math.hypot(x-p[0],y-p[1])<150)&&!out.some(b=>Math.hypot(x-b[0],y-b[1])<r+b[2]+30))out.push([x,y,r])}return out}
+  if(!m.pil.some(p=>Math.hypot(x-p[0],y-p[1])<p[2]+r+26)&&!sp.some(p=>Math.hypot(x-p[0],y-p[1])<150)&&!out.some(b=>Math.hypot(x-b[0],y-b[1])<r+b[2]+30))out.push([x,y,r])}
+ if(m.bushCorners){const corners=[[60,60],[w-60,60],[60,h-60],[w-60,h-60],[w/2,60],[w/2,h-60],[60,h/2],[w-60,h/2]];for(const [cx,cy] of corners)if(!out.some(b=>Math.hypot(cx-b[0],cy-b[1])<b[2]+40))out.push([cx,cy,34+rnd()*10])}
+ return out}
 const BSP=[[110,380],[1290,380],[110,520],[1290,520]];
 MAPS.push(
 {n:'Grand Arena (BIG 2v2)',w:1400,h:900,sp:BSP,sea:['#0e7ab0','#0a3d78'],rim:'#b98f55',sand:['#f6e3a8','#e0bf78'],rock:['#a3a9c4','#464c6e'],
@@ -266,7 +268,7 @@ MAPS.push(
  pil:[...wl(300,300,620,300),...wl(780,300,1100,300),...wl(300,600,620,600),...wl(780,600,1100,600),...wl(700,380,700,520),[500,450,40],[900,450,40],[220,160,34],[1180,160,34],[220,740,34],[1180,740,34]]},
 {n:'Sunken Temple (BIG 2v2)',w:1400,h:900,sp:BSP,sea:['#1b4d5a','#0a2a35'],rim:'#4a5a5a',sand:['#cdd5cf','#a8b5ad'],rock:['#9aa8a0','#44524c'],
  pil:[...Array.from({length:10},(_,i)=>[700+Math.cos(i*.6283)*210,450+Math.sin(i*.6283)*210,26]),...wl(300,160,460,160),...wl(940,160,1100,160),...wl(300,740,460,740),...wl(940,740,1100,740),[700,450,34]]},
-{n:'Survival Wasteland (BIG)',w:2000,h:1500,bush:110,sp:[[100,100],[1900,100],[100,1400],[1900,1400],[1000,750]],sea:['#1a2a1a','#0a150a'],rim:'#4a5a3a',sand:['#c8d8a8','#98a878'],rock:['#7a8a6a','#3a4a3a'],
+{n:'Survival Wasteland (BIG)',w:2000,h:1500,bush:110,bushCorners:true,sp:[[100,100],[1900,100],[100,1400],[1900,1400],[1000,750]],sea:['#1a2a1a','#0a150a'],rim:'#4a5a3a',sand:['#c8d8a8','#98a878'],rock:['#7a8a6a','#3a4a3a'],
  pil:[...wl(400,300,400,1200,40),...wl(1600,300,1600,1200,40),...wl(600,750,1400,750,40),[1000,400,45],[1000,1100,45],[700,750,35],[1300,750,35],[500,500,30],[1500,500,30],[500,1000,30],[1500,1000,30]]});
 const BIG=MAPS.map((m,i)=>m.w?i:-1).filter(i=>i>=0),SMALL=MAPS.map((m,i)=>m.w?-1:i).filter(i=>i>=0);
 function mapFor(code){const h=[...code].reduce((a,c)=>a*31+c.charCodeAt(0),7);return code.endsWith('2v2')?BIG[h%BIG.length]:h%SMALL.length}
