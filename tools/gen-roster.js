@@ -144,7 +144,47 @@ const K={
 
 // ---------------------------------------------------------------- the 100
 // [name, title, kit, weapon, gear, hair, acc, hp, sp, extras]
-const COLS=['#f87171','#fb923c','#facc15','#4ade80','#22d3ee','#60a5fa','#a78bfa','#f472b6'];
+// ---------------------------------------------------------------- palettes
+// Colour is what reads as identity at arena size: the torso is ~20px wide, so a gear token like
+// "+cape" is a couple of pixels and the body colour is what the player actually sees. The old code
+// hashed body and hair from the name length against one 8-colour wheel (col: COLS[n.length%8]),
+// which gave 100 heroes 6 body colours and put 37 of them on the same cyan. Pools are now per
+// element family so colour still means something, and assignment takes the first unused pair, so
+// no two generated heroes share a body/hair combination.
+const PAL={
+ iron:[['#8fa3c4','#e2e8f0'],['#7c6fa8','#ddd6fe'],['#5f7fa6','#dbeafe'],['#9aa6bb','#f1f5f9'],['#6f8fa8','#bae6fd'],['#a8957a','#fde68a'],['#8494b8','#c7d2fe'],['#7b8494','#e5e7eb']],
+ blade:[['#4fd1c5','#f0fdf4'],['#5eead4','#fbcfe8'],['#38bdf8','#d9f99d'],['#a3e635','#e9d5ff'],['#2dd4bf','#fde68a'],['#7dd3fc','#f9a8d4'],['#6ee7b7','#fca5a5'],['#93c5fd','#bef264']],
+ storm:[['#38bdf8','#a5f3fc'],['#22d3ee','#e0e7ff'],['#60a5fa','#c4b5fd'],['#7dd3fc','#fef08a'],['#0ea5e9','#e9d5ff'],['#67e8f9','#fbcfe8'],['#818cf8','#a7f3d0'],['#93c5fd','#fef3c7']],
+ fire:[['#f97316','#7c2d12'],['#ef4444','#fde68a'],['#f59e0b','#7f1d1d'],['#dc2626','#fbbf24'],['#ea580c','#450a0a'],['#fb7185','#fef3c7'],['#d97706','#1c1917'],['#f43f5e','#fef9c3']],
+ frost:[['#bfe8ff','#0ea5e9'],['#a5d8f3','#1e3a8a'],['#dbeafe','#38bdf8'],['#c7e9ff','#1e40af'],['#e0f2fe','#0369a1'],['#bae6fd','#312e81'],['#f0f9ff','#0c4a6e'],['#cfeeff','#4c1d95']],
+ void:[['#6d28d9','#c4b5fd'],['#4c1d95','#e9d5ff'],['#312e81','#a5b4fc'],['#1e1b4b','#8b5cf6'],['#5b21b6','#f5d0fe'],['#3730a3','#d8b4fe'],['#0f172a','#6366f1'],['#2e1065','#c084fc']],
+ light:[['#fbbf24','#fef9c3'],['#f59e0b','#fff7ed'],['#facc15','#fffbeb'],['#eab308','#fef3c7'],['#fcd34d','#7c2d12'],['#fde68a','#b45309'],['#fef3c7','#ca8a04'],['#f8fafc','#fbbf24']],
+ nature:[['#4ade80','#ecfccb'],['#22c55e','#fef08a'],['#16a34a','#dcfce7'],['#84cc16','#f0fdf4'],['#65a30d','#fde68a'],['#34d399','#a7f3d0'],['#a3e635','#365314'],['#10b981','#fef9c3']],
+ trick:[['#f472b6','#a3e635'],['#f0abfc','#fde047'],['#fb7185','#67e8f9'],['#e879f9','#bbf7d0'],['#f9a8d4','#c4b5fd'],['#fda4af','#fef08a'],['#d946ef','#a7f3d0'],['#fca5a5','#e9d5ff']],
+ gun:[['#94a3b8','#fbbf24'],['#64748b','#f97316'],['#78716c','#fca5a5'],['#a3a3a3','#4ade80'],['#57534e','#fde68a'],['#7c8b99','#38bdf8'],['#8b7d6b','#fef3c7'],['#6b7280','#a3e635']],
+ arcane:[['#c084fc','#fdf4ff'],['#a78bfa','#fde68a'],['#8b5cf6','#fbcfe8'],['#d8b4fe','#fff7ed'],['#7c3aed','#a5f3fc'],['#e879f9','#fef9c3'],['#b388ff','#d9f99d'],['#9f7aea','#fef3c7']]};
+// which pool a kit draws from, so a pyro hero still reads as fire and a frost hero as ice
+const FAM_OF={tank:'iron',guardian:'iron',blade:'blade',duelist:'blade',storm:'storm',mystic:'storm',pyro:'fire',brawler:'fire',cryo:'frost',shade:'void',assassin:'void',knight:'light',nature:'nature',beast:'nature',trickster:'trick',gunner:'gun',sniper:'gun',artillery:'gun',mage:'arcane',archer:'nature'};
+// silhouette, not colour, is what separates a tank from an assassin once the figures are 40px tall
+const BUILD={tank:2,brawler:2,artillery:2,blade:0,duelist:0,assassin:0,sniper:0,gunner:0,toxic:0,trickster:0};
+// lighten (d>0) or darken (d<0) a colour, used when a family has more heroes than palette entries
+const tone=(h,d)=>{const v=[1,3,5].map(o=>parseInt(h.slice(o,o+2),16)),f=n=>Math.max(0,Math.min(255,Math.round(d>0?n+(255-n)*d:n*(1+d))));
+ return '#'+v.map(n=>f(n).toString(16).padStart(2,'0')).join('')};
+const PAL_TAKEN=new Set();
+function pickPal(kit,i){
+ const pool=PAL[FAM_OF[kit]||'arcane'],cand=[];
+ // walk this family's pool from a per-hero offset first, then the whole table, so a busy family
+ // still never repeats a pair
+ for(let k=0;k<pool.length;k++)cand.push(pool[(i+k)%pool.length]);
+ for(const f in PAL)for(const p of PAL[f])cand.push(p);
+ const take=p=>{const key=p[0]+'/'+p[1];if(PAL_TAKEN.has(key))return null;PAL_TAKEN.add(key);return p};
+ for(const p of cand){const r=take(p);if(r)return r}
+ // 88 entries but 100 heroes, so the tail of the roster lands here: keep the element hue and
+ // shift its tone instead of handing out a colour somebody else already wears
+ for(const d of[.12,-.12,.22,-.22])for(const p of cand){const r=take([tone(p[0],d),p[1]]);if(r)return r}
+ for(const d of[.14,-.14])for(const p of cand){const r=take([p[0],tone(p[1],d)]);if(r)return r}
+ return [tone(cand[0][0],.3),cand[0][1]];
+}
 const ROSTER=[
  // 1-10 iron wall
  ['Aldric','Iron Vanguard','tank','hammer','armor','short','helm',148,185,{cc:'#475569'}],
@@ -258,6 +298,9 @@ const ROSTER=[
  ['Aurum','Gilded Shadow','shade','scythe','ninja+hood','long','crown',100,218,{cc:'#a16207'}],
 ];
 
+// ---------------------------------------------------------------- palettes, in roster order
+const PALA=ROSTER.map((r,i)=>pickPal(r[2],i));
+
 // ---------------------------------------------------------------- rarity tiers
 // Without this every generated character lands in "epic", because data.js only knows the
 // hand-written START/RARE/LEGEND lists. Tier follows the kit: bulky or cast-heavy kits are
@@ -356,6 +399,14 @@ for(const m of head.matchAll(/\{n:'([^']+)'/g))existing.add(m[1]);
 for(const m of head.matchAll(/^\s*'?([A-Za-z][A-Za-z ]*)'?:\s*\[/gm))existing.add(m[1]);
 for(const r of ROSTER)if(existing.has(r[0]))err.push('name collides with an existing character: '+r[0]+' (chi() would return the wrong index)');
 
+// ---- palettes: a repeat means two heroes read as the same character once they are 40px tall
+const palSeen=new Map();
+for(let i=0;i<ROSTER.length;i++){
+  const k=PALA[i][0]+'/'+PALA[i][1];
+  if(palSeen.has(k))err.push('duplicate body/hair palette: '+ROSTER[i][0]+' and '+palSeen.get(k));else palSeen.set(k,ROSTER[i][0]);
+  if(!/^#[0-9a-f]{6}$/.test(PALA[i][0])||!/^#[0-9a-f]{6}$/.test(PALA[i][1]))err.push(ROSTER[i][0]+': palette colours must be #rrggbb');
+}
+
 // ---- the server caps in api/_lib.js must stay above what the game can produce. They were written
 // when the roster was 71 heroes and gear was 31 pieces; clean() then truncated saves at 80 / 64 and
 // silently deleted 74 heroes and 121 accessories for anyone who owned everything. Content grows, so
@@ -379,20 +430,22 @@ if(!isFinite(CAPS.gw))err.push('api/_lib.js: MAXGW not found');
 console.log('server save caps: own '+CAPS.own+' vs '+playable+' heroes, gw '+CAPS.gw+' vs '+gearIds+' accessories, q '+CAPS.q+', stars '+CAPS.star);
 
 if(err.length){console.error('ROSTER PROBLEMS ('+err.length+'):\n  '+err.join('\n  '));process.exit(1)}
-console.log('roster ok: '+ROSTER.length+' characters, names valid, kits valid, looks within the art vocabulary');
+console.log('roster ok: '+ROSTER.length+' characters, '+palSeen.size+' distinct palettes, names valid, kits valid, looks within the art vocabulary');
 
 if(process.argv.includes('--check'))process.exit(0);
 
 // ---------------------------------------------------------------- emit
 const lit=o=>JSON.stringify(o).replace(/"/g,"'");
-const chars=ROSTER.map(([n,t,k,w,gr,hs,acc,hp,sp,ex])=>{
-  const kit=K[k]();
-  return`{n:'${n}',t:'${t}',col:'${COLS[n.length%8]}',hair:'${COLS[(n.length*3+2)%8]}'`+
+const chars=ROSTER.map(([n,t,k,w,gr,hs,acc,hp,sp,ex],i)=>{
+  const kit=K[k](),[col,hair]=PALA[i];
+  return`{n:'${n}',t:'${t}',col:'${col}',hair:'${hair}'`+
    (acc?`,acc:'${acc}'`:'')+`,hp:${hp},sp:${sp},s:{`+
    ['a','q','e','r','c'].map(q=>q+':'+lit(kit[q])).join(',')+'}}';
 });
-const looks=ROSTER.map(([n,t,k,w,gr,hs,acc,hp,sp,ex])=>
- `${n}:['${w}','${gr}','${hs}',{${Object.entries(ex).map(([a,b])=>a+':'+(typeof b=='string'?lit(b):b)).join(',')}}]`);
+const looks=ROSTER.map(([n,t,k,w,gr,hs,acc,hp,sp,ex])=>{
+ const ex2=Object.assign({},ex),bd=BUILD[k];
+ if(bd!==undefined&&bd!==1)ex2.bd=bd;
+ return`${n}:['${w}','${gr}','${hs}',{${Object.entries(ex2).map(([a,b])=>a+':'+(typeof b=='string'?lit(b):b)).join(',')}}]`});
 const rareR=ROSTER.filter(r=>RARE_KIT.has(r[2])).map(r=>"'"+r[0]+"'");
 const legR=ROSTER.filter(r=>LEGEND_KIT.has(r[2])).map(r=>"'"+r[0]+"'");
 

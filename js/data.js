@@ -643,6 +643,11 @@ LOOK.Sallow=['claws','light+tail','long',{acc:'none',tc:'#84cc16',fc:'#a3e635'}]
 LOOK.Nettle=['staff','robe+cape','long',{acc:'wizhat',cc:'#7e22ce',bc:'#fbbf24'}];
 Object.assign(LOOK,LOOK_R);
 for(const c of CH){const l=LOOK[c.n];c.lk=l?Object.assign({wp:l[0]||'none',gr:l[1]||'light',hs:l[2]||'bald'},l[3]):{wp:'sword',gr:'light',hs:'spiky'}}
+// ---- build: silhouette is what separates a tank from an assassin once a fighter is 40px tall, and
+// every hero used to share one body. Gear decides it (a look can still override with bd), and the
+// custom painters (monsters, bosses) are skipped because they do not use the human rig.
+for(const c of CH){const L=c.lk;if(L.bd!=null||L.sh)continue;const t=(L.gr||'').split('+');
+ L.bd=t.some(x=>x=='armor'||x=='gi'||x=='tech')?2:t.some(x=>x=='light'||x=='ninja')?0:1}
 // what a shot looks like (ps) and how a rained strike arrives (fs), guessed from the weapon and the skill's name unless the skill says otherwise
 {const elem=s=>/shadow|void|black|curse|soul|dark|hex/i.test(s.nm)?'dark':/ice|frost|snow/i.test(s.nm)?'ice':/fire|flame|ember|dragon|inferno|roar/i.test(s.nm)||s.dot?'fire':'orb';
  for(const c of CH){const w=c.lk.wp;for(const k in c.s){const s=c.s[k];

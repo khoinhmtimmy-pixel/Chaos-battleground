@@ -92,6 +92,9 @@ function gearCharm(a,ph){
 function human(e,c,L,o){
  const g=L.gr||'light',sk=L.sk||SKN,col=c.col,c2=L.c2||shade(col,-.34),hair=e.awt>0?'#fff3a0':(c.hair||'#333'),hs=L.hs||'spiky',acc=L.acc||c.acc,wp=L.wp||'none';
  const sw=o.walk?Math.sin(o.ph):0,la=o.la,sway=Math.sin(tm*3+e.x*.02)*1.6-(o.walk?3:0),u=o.atk,bare=/vest|rag|bare/.test(g),arm=/armor|tech/.test(g);
+ // build (L.bd): 0 slim, 1 standard, 2 bulky. Widens the torso and head and thickens the limbs, so
+ // a tank reads as a tank and an assassin as an assassin before you can see either one's weapon.
+ const bd=L.bd||1,bw=1+(bd-1)*.13,bh=1+(bd-1)*.08,lt=1+(bd-1)*.19;
  const slv=bare?sk:arm?STEEL:col,robe=g.includes('robe'),hood=g.includes('hood'),face=L.face,flap=Math.sin(tm*(o.walk?9:4))*3;
  ctx.lineJoin=ctx.lineCap='round';ctx.lineWidth=2.4;ctx.strokeStyle=INK;
  // back layer
@@ -110,17 +113,19 @@ function human(e,c,L,o){
  let rot=pair?la-.16:la,th=0,th2=0,rot2=la+.5;
  if(u>=0){const s=Math.sin(u*Math.PI);if(W_SWING.test(wp)){const q=(u<.45?-1.25+u/.45*2.35:1.1-(u-.45)/.55*1.1);alt?rot2=la+.5+q:rot=la+q}else if(W_THRUST.test(wp)){alt?th2=s*9:th=s*9}else th=-s*4}
  const bx=pair?sbx+Math.cos(la)*8:two?hx-Math.cos(rot)*7:-10,by=pair?sby+Math.sin(la)*7+3:two?hy-Math.sin(rot)*7:-13+sw*2;
- const drawW=()=>{aLimb(sfx,sfy,hx+Math.cos(rot)*th,hy+Math.sin(rot)*th,4.2,slv);ctx.save();ctx.translate(hx+Math.cos(rot)*th,hy+Math.sin(rot)*th);ctx.rotate(rot);(WPN[wp]||WPN.none)(c,L,u);if(L.fl){const f=Math.sin(tm*22);aPoly([10,-3,17,-8-f*2,22,-3,27,-7+f*2,30,0,10,3],'#ff8a3c',1);aPoly([12,-1,18,-4-f,26,0,12,2],'#ffe14d',1)}ctx.restore();if(wp!='fist')aCirc(hx+Math.cos(rot)*th,hy+Math.sin(rot)*th,3.3,bare||!arm?sk:STEEL2)};
- const drawB=()=>{aLimb(sbx,sby,bx+Math.cos(la)*th2,by+Math.sin(la)*th2,4.2,slv);if(pair){ctx.save();ctx.translate(bx+Math.cos(la)*th2,by+Math.sin(la)*th2);ctx.rotate(rot2);WPN[wp](c,L,u);ctx.restore()}if(wp!='fist'||!pair)aCirc(bx+Math.cos(la)*th2,by+Math.sin(la)*th2,3.3,sk)};
+ const drawW=()=>{aLimb(sfx,sfy,hx+Math.cos(rot)*th,hy+Math.sin(rot)*th,4.2*lt,slv);ctx.save();ctx.translate(hx+Math.cos(rot)*th,hy+Math.sin(rot)*th);ctx.rotate(rot);(WPN[wp]||WPN.none)(c,L,u);if(L.fl){const f=Math.sin(tm*22);aPoly([10,-3,17,-8-f*2,22,-3,27,-7+f*2,30,0,10,3],'#ff8a3c',1);aPoly([12,-1,18,-4-f,26,0,12,2],'#ffe14d',1)}ctx.restore();if(wp!='fist')aCirc(hx+Math.cos(rot)*th,hy+Math.sin(rot)*th,3.3,bare||!arm?sk:STEEL2)};
+ const drawB=()=>{aLimb(sbx,sby,bx+Math.cos(la)*th2,by+Math.sin(la)*th2,4.2*lt,slv);if(pair){ctx.save();ctx.translate(bx+Math.cos(la)*th2,by+Math.sin(la)*th2);ctx.rotate(rot2);WPN[wp](c,L,u);ctx.restore()}if(wp!='fist'||!pair)aCirc(bx+Math.cos(la)*th2,by+Math.sin(la)*th2,3.3,sk)};
  const wBack=Math.sin(la)<-.5;
  drawB();if(wBack)drawW();
  // legs / skirt
  if(!robe){const pc=g.includes('rag')||g.includes('bare')?sk:g.includes('armor')?STEEL2:c2,bc=g.includes('rag')?sk:g.includes('armor')?STEEL:'#3b2f4a';
-  for(const i of[0,1]){const s=i?-sw:sw,lx=(i?2:-7)+s*2.2,ly=Math.max(0,s)*3;aRR(lx,-12-ly,6.6,9,2.6,pc);aRR(lx-.6,-5-ly,8,5,2.2,bc)}}
+  for(const i of[0,1]){const s=i?-sw:sw,lx=(i?2:-7)+s*2.2,ly=Math.max(0,s)*3;aRR(lx,-12-ly,6.6*lt,9,2.6,pc);aRR(lx-.6,-5-ly,8*lt,5,2.2,bc)}}
  if(g.includes('coat')){aPoly([-10.5,-15,-3,-15,-5,-3,-13+sway*.4,-2],col);aPoly([3,-15,10.5,-15,13,-3,6,-4],col)}
  if(robe){aPoly([-10.5,-15,10.5,-15,13+sw*.8,-1,-13+sw*.8,-1],col);aPoly([-12.4,-5,12.4,-5,13+sw*.8,-1,-13+sw*.8,-1],c2,1);aLine(-12.4,-5,12.4,-5,INK,1.2);aRR(-1.6,-15,3.2,10,1,c2,1)}
  if(g.includes('dress')){aPoly([-10,-16,10,-16,15+sw,-7,-15+sw,-7],col);aPoly([-13.6,-9.5,13.6,-9.5,15+sw,-7,-15+sw,-7],c2,1)}
- // torso
+ // torso. Scaled horizontally about the chest: plate reads wider than light kit without redrawing
+ // every trim, strap and pauldron that lives in this block.
+ ctx.save();ctx.translate(0,-24);ctx.scale(bw,1);ctx.translate(0,24);
  const tc=bare?sk:g.includes('armor')?STEEL:g.includes('tech')?'#6b7388':g.includes('ninja')?shade(col,-.5):col;
  aRR(-10,-26,20,14.5,6,tc);aRR(-8.8,-17.2,17.6,4.6,3.6,shade(tc,-.16),1);aRR(-7.4,-24.4,6,3,1.5,shade(tc,.32),1);
  if(g.includes('armor')){aRR(-3.4,-25,6.8,12,1.4,col,1);aCirc(-9.6,-23.5,4.6,STEEL);aCirc(9.6,-23.5,4.6,STEEL);aRR(-10,-14.6,20,3,1.2,c2)}
@@ -135,7 +140,9 @@ function human(e,c,L,o){
  else if(!robe)aRR(-10,-14.8,20,3,1.2,c2,1);
  if(L.off=='shield')shield(-9.5,-17,c);
  if(acc=='scarf'){aRR(-9,-28.5,19,5.4,2.6,L.bc||'#e94a4a');aPoly([-7,-27,-19+sway,-24+sway*.4,-18+sway,-19,-7,-23.5],L.bc||'#e94a4a')}
- // head
+ ctx.restore();
+ // head, scaled about the neck so hair, eyes and headgear all follow together
+ ctx.save();ctx.translate(1,-26);ctx.scale(bh,bh);ctx.translate(-1,26);
  const hx0=1,hy0=-34,R=12;
  if(hood){aCirc(hx0,hy0,13.8,col);aPoly([-9,-44,-16+sway*.3,-51,-3,-47],col);aEll(hx0+2.5,hy0+1.5,8.8,8.6,face=='glow'?'#1a1030':sk)}else aCirc(hx0,hy0,R,sk);
  const lx=Math.cos(la)*1.3,ly=Math.sin(la)*1,ex=[-1.6+lx+(hood?1.5:0),6.6+lx+(hood?1.2:0)],ey=hy0+1.2+ly;
@@ -171,6 +178,7 @@ function human(e,c,L,o){
  else if(acc=='blind'){aRR(-10.6,-37.5,24,6.2,2,'#1b1030');aPoly([-10,-36,-19+sway,-34,-18+sway,-30,-10,-33],'#1b1030')}
  else if(acc=='gob'){aPoly([-10,-35,-25,-42,-11,-28],sk);aPoly([12,-35,24,-43,13,-28],sk)}
  if(e.gq)gearHead(e.gq,hy0,R,ey,sway);
+ ctx.restore();
   if(e.gc)gearCharm(e.gc,e.x*.05);
   if(!wBack)drawW()}
 
@@ -223,8 +231,8 @@ lord(e,c,L,o){const col=c.col,d=shade(col,-.55),w=Math.sin(tm*4)*2.5,la=o.la,a=o
  const ox=17+Math.cos(la)*(8+a*8),oy=-22+Math.sin(la)*(8+a*6);aLimb(12,-27,ox-5,oy+2,3.4,d);glowAt(col,ox,oy,20+a*10,.8);aCirc(ox,oy,7,'#0c0620');ctx.beginPath();ctx.ellipse(ox,oy,10.5,3.6,tm*3,0,7);ctx.lineWidth=1.6;ctx.strokeStyle='#e9d5ff';ctx.stroke();ctx.lineWidth=2.4;ctx.strokeStyle=INK;aCirc(ox-2,oy-2,1.6,'#e9d5ff',1)}};
 
 // ---------- one fighter: shadow, ring, body, status marks, bars
-function drawFig(e,c,sc,sq,bob,walk,hit,ph){const L=c.lk||LK0,fx=Math.cos(e.a)>=0?1:-1,at=e.at!=null?(tm-e.at)/.24:9;
- ctx.save();ctx.translate(e.x,e.y+20);ctx.scale(fx*sc/sq,sc*sq);ctx.translate(0,bob);HIT=hit?1:0;
+function drawFig(e,c,sc,sq,bob,walk,hit,ph,ox,oy){const L=c.lk||LK0,fx=Math.cos(e.a)>=0?1:-1,at=e.at!=null?(tm-e.at)/.24:9;
+ ctx.save();ctx.translate(e.x,e.y+20);ctx.scale(fx*sc/sq,sc*sq);ctx.translate(0,bob);if(ox||oy)ctx.translate(ox,oy);HIT=hit?1:0;
  try{(MON[L.sh]||human)(e,c,L,{walk,ph,la:fx>0?e.a:Math.PI-e.a,atk:at>=0&&at<1?at:-1})}finally{HIT=0;ctx.restore()}}
 const PT={};
 // static portrait (data URL) for the menus; works for heroes, monsters and bosses
@@ -343,6 +351,9 @@ if(hit)sq*=1+(e.hft-tm)/.12*.13;
  if(mine&&me.aw>=100&&!(me.awt>0)){ctx.globalAlpha=.5+.4*Math.sin(tm*8);ctx.strokeStyle='#ffd84d';ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(e.x,fy,28,11,0,0,7);ctx.stroke();ctx.globalAlpha=1}
  if(e.awt>0){const r=48+Math.sin(tm*12)*4;ctx.globalCompositeOperation='lighter';ctx.globalAlpha=.6;ctx.drawImage(glow(cd),e.x-r,e.y-r,r*2,r*2);ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over'}
  if(e.van>0){ctx.globalAlpha=.25;drawFig(e,c,bs,sq,bob,walk,0,ph);ctx.globalAlpha=1;return}
+ // rim light: the same figure in flat white (HIT mode), nudged toward the key light and added
+ // under the real one, so a fighter has a lit edge instead of reading as a sticker on the floor.
+ if(Q.fx&&!hit){ctx.save();ctx.globalCompositeOperation='lighter';ctx.globalAlpha=.2;drawFig(e,c,bs,sq,bob,walk,1,ph,2,1.5);ctx.restore()}
  drawFig(e,c,bs,sq,bob,walk,hit,ph);
  if(e.sbt&&tm<e.sbt){const u=(e.sbt-tm)/.25;ctx.globalCompositeOperation='lighter';ctx.globalAlpha=u*.9;ctx.strokeStyle='#a9dcff';ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(e.x,e.y-4,24*bs,30*bs,0,0,7);ctx.stroke();ctx.globalAlpha=u*.25;ctx.fillStyle='#a9dcff';ctx.fill();ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over'}
  if(e.sh>0){ctx.strokeStyle='#fff';ctx.fillStyle='#ffffff26';ctx.lineWidth=2.6;ctx.beginPath();for(let i=0;i<7;i++){const q=tm*2+i*.8976;ctx.lineTo(e.x+Math.cos(q)*28*bs,e.y-4+Math.sin(q)*31*bs)}ctx.closePath();ctx.fill();ctx.stroke()}
@@ -496,6 +507,63 @@ function drawPortal(p){const x=p.x,y=p.y;softShadow(x,y+30,30,10);glowAt('#b06bf
  ctx.fillStyle='#fff';ctx.font='900 11px system-ui';ctx.textAlign='center';ctx.lineWidth=3;ctx.strokeStyle=INK;const t=raid.mode!='stage'&&raid.room==5?'NEXT FLOOR':'NEXT ROOM';ctx.strokeText(t,x,y-42);ctx.fillText(t,x,y-42)}
 const hostile=o=>raid?!!raid.fid[o]:o!='me'&&!(tmode&&ent(o)&&ent(o).tm===me.tm);
 
+// ---------- light on the floor. Everything in this arena glows, but until now nothing lit the
+// ground: auras, fireballs and portals floated over a matte surface. One additive pool per source,
+// drawn over the terrain and under the figures, with LIGHT (.x/.y, down-right) deciding where it
+// lands. Cheap enough to keep on: a handful of drawImage calls against a cached glow sprite.
+const AURAC={gaur:'#8a7a5a',gaurf:'#ff9a2b',gaura:'#7fd8ff',gaurt:'#ffe14d',gaurn:'#5fd97a',gaurg:'#ffd94d',gaurd:'#6b3fa0',gaurh:'#ffffff',gaurv:'#8b5cf6',gaurdr:'#ef4444'};
+function lightSplash(){
+ const put=(x,y,r,col,a)=>{if(!(r>0)||!(a>.004))return;ctx.globalAlpha=a;ctx.drawImage(glow(col),x-r,y-r*.6,r*2,r*1.2)};
+ ctx.globalCompositeOperation='lighter';
+ for(const [id,e] of all()){if(!e.al||!CH[e.ch])continue;const fy=e.y+17,ec=CH[e.ch].col;
+  if(e.ga)put(e.x,fy,46,AURAC[e.ga]||ec,.13+.05*Math.sin(tm*2.6+e.x));
+  if(e.awt>0)put(e.x,fy,72,ec,.18);
+  if(e.brn>0)put(e.x,fy,34,'#ff8a3c',.15+.06*Math.sin(tm*14+e.x))}
+ for(const q of ents)if(q.t=='p')put(q.x,q.y+10,Math.max(18,q.r*2.8),q.col,.18);
+ if(portal)put(portal.x,portal.y+24,78,'#b06bff',.16);
+ if(chest&&!chest.open)put(chest.x,chest.y+13,44,'#ffd84d',.12);
+ ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over'}
+
+// ---------- bloom. Emissions are drawn into a quarter-size light buffer, that buffer is composited
+// back blurred and screened, and only then does light accumulate into halos.
+//
+// Blooming the finished frame instead was measured and rejected: the desert floor is already ~0.80
+// luminance, so adding a blurred copy of the frame clips the whole arena to white (a bright-pass
+// filter either keeps both the floor and the glow core at maximum, or drops the halo entirely,
+// because a halo IS midtone). A buffer that holds only the emitters leaves the floor untouched.
+const EM=[];let BB=null,BB2=null;
+function emitBloom(){
+ if(!Q.fx)return;
+ const s=4,bw=Math.max(1,Math.ceil(cw/s)),bh=Math.max(1,Math.ceil(chh/s));
+ if(!BB){BB=document.createElement('canvas');BB2=document.createElement('canvas')}
+ if(BB.width!=bw||BB.height!=bh){BB.width=bw;BB.height=bh;BB2.width=bw;BB2.height=bh}
+ const x=BB.getContext('2d'),k=K*dpr/s;
+ x.setTransform(1,0,0,1,0,0);x.globalCompositeOperation='source-over';x.globalAlpha=1;x.clearRect(0,0,bw,bh);
+ x.setTransform(k,0,0,k,-cam.x*k,-cam.y*k);
+ EM.length=0;
+ for(const [id,e] of all()){if(!e.al||!CH[e.ch])continue;const c=CH[e.ch].col;
+  if(e.ga)EM.push([e.x,e.y-14,26,AURAC[e.ga]||c,.55]);
+  if(e.awt>0)EM.push([e.x,e.y-16,36,c,.95]);
+  if(e.brn>0)EM.push([e.x,e.y-20,18,'#ff8a3c',.6])}
+ for(const q of ents){
+  if(q.t=='p')EM.push([q.x,q.y,Math.max(13,q.r*2.2),q.col||'#fff',.9]);
+  else if(q.t=='z')EM.push([q.x,q.y,q.r*1.1,q.col,.3])}
+ if(portal)EM.push([portal.x,portal.y,40,'#b06bff',.7]);
+ if(chest&&!chest.open)EM.push([chest.x,chest.y-4,24,'#ffd84d',.5]);
+ // 1.4x the sprite: the halo is the point, the core is already drawn by the effect itself
+ for(const e of EM){x.globalAlpha=e[4];const r=e[2]*1.4;x.drawImage(glow(e[3]),e[0]-r,e[1]-r,r*2,r*2)}
+ x.globalAlpha=1;
+ // blur the buffer, not the screen: a 4px blur here is ~16px at full size for 1/16 of the pixels
+ const y=BB2.getContext('2d');
+ y.setTransform(1,0,0,1,0,0);y.globalAlpha=1;y.globalCompositeOperation='source-over';y.clearRect(0,0,bw,bh);
+ y.filter='blur(1.8px)';
+ y.drawImage(BB,0,0);
+ y.filter='none';
+ ctx.save();ctx.setTransform(dpr,0,0,dpr,0,0);
+ ctx.globalCompositeOperation='lighter';ctx.globalAlpha=.85;
+ ctx.drawImage(BB2,0,0,cw,chh);
+ ctx.restore()}
+
 // ---------- the world pass: water, island, ground effects, sorted objects, air effects, weather
 function drawWorld(){const M=MAPS[MAP],T=TH[M.th]||TH.sand,k=K*dpr;VW=cw/K;VH=chh/K;
  cam.x=VW<W+60?Math.max(-30,Math.min(W+30-VW,me.x-VW/2)):(W-VW)/2;cam.y=VH<H+60?Math.max(-30,Math.min(H+30-VH,me.y-VH/2)):(H-VH)/2;
@@ -504,6 +572,7 @@ function drawWorld(){const M=MAPS[MAP],T=TH[M.th]||TH.sand,k=K*dpr;VW=cw/K;VH=ch
  {const wn=Q.fx?9:5,ws=Q.fx?26:40,lv=M.th=='lava';ctx.strokeStyle=lv?'rgba(255,190,90,.3)':'#ffffff26';ctx.lineWidth=lv?3:2;for(let j=0;j<wn;j++){const y=cam.y+j*VH/(wn-1);ctx.beginPath();for(let x=cam.x-40;x<=cam.x+VW+40;x+=ws)ctx.lineTo(x,y+Math.sin(x/45+tm*(lv?.8:1.6)+j)*5);ctx.stroke()}
   const e0=Math.sin(tm*2)*5+6;ctx.strokeStyle=lv?'rgba(255,200,90,.5)':'rgba(255,255,255,.5)';ctx.lineWidth=5;ctx.beginPath();ctx.roundRect(-22-e0,-22-e0,W+44+2*e0,H+52+2*e0,66);ctx.stroke();ctx.fillStyle=lv?'rgba(255,150,50,.22)':'rgba(255,255,255,.2)';ctx.beginPath();ctx.roundRect(-22-e0,-22-e0,W+44+2*e0,H+52+2*e0,66);ctx.fill()}
  ground(M);
+ lightSplash();
  // ---- ground layer
  ctx.lineCap='round';
  for(const q of ents){if(q.t!='z')continue;const u=Math.min(1,q.age/.4)*Math.min(1,(q.dur-q.age)*2+.2),bad=hostile(q.o)&&!q.heal;ctx.globalCompositeOperation='lighter';ctx.globalAlpha=.55*u;ctx.drawImage(glow(q.col),q.x-q.r,q.y-q.r,q.r*2,q.r*2);ctx.globalCompositeOperation='source-over';
@@ -567,4 +636,5 @@ function drawWorld(){const M=MAPS[MAP],T=TH[M.th]||TH.sand,k=K*dpr;VW=cw/K;VH=ch
  {const [mc,ma,vx,vy]=T.mote,n=Q.fx?22:9,gs=glow(mc),ww=VW+60,hh=VH+60;for(let i=0;i<n;i++){const s=i*97.31,x=cam.x-30+(((s*53+tm*(vx+(i%5)*2))%ww)+ww)%ww,y=cam.y-30+(((s*31+tm*(vy+(i%4)*3))%hh)+hh)%hh,z=4+(i%3)*2.4;ctx.globalAlpha=ma*(.45+.55*Math.sin(tm*1.7+i));ctx.drawImage(gs,x+Math.sin(tm*.9+i)*14-z,y-z,z*2,z*2)}}
  ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';
  if(T.tint){ctx.fillStyle=T.tint;ctx.fillRect(cam.x-40,cam.y-40,VW+80,VH+80)}
+ emitBloom();
  ctx.textAlign='center';ctx.lineJoin='round';for(const t of txts){const age=t.m-t.l,sc=(age<.14?1+(.14-age)*5:1)*(t.c=='#ff9d2e'?1.35:1);ctx.save();ctx.translate(t.x,t.y);ctx.scale(sc,sc);ctx.globalAlpha=Math.min(1,t.l*3);ctx.font=(t.big?'900 16px':'900 23px')+' system-ui';ctx.lineWidth=5;ctx.strokeStyle=INK;ctx.strokeText(t.s,0,0);ctx.fillStyle=t.big?t.c:(t.c||(t.s>=25?'#ffd84d':'#fff'));ctx.fillText(t.s,0,0);ctx.restore()}ctx.globalAlpha=1}
