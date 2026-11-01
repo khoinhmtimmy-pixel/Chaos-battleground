@@ -18,8 +18,14 @@ const MAXOWN=256,MAXGW=320,MAXQ=64,MAXSTAR=60,MAXPB=3;
 let mem=null;const FILE=path.join(__dirname,'..','.data','db.json');
 function local(cmd){if(!mem){try{mem=JSON.parse(fs.readFileSync(FILE,'utf8'))}catch(e){mem={}}}const [op,k,...a]=cmd;let r=null,w=false;
  switch(op){case'GET':r=mem[k]??null;break;case'SET':if(a[1]=='NX'&&k in mem)break;mem[k]=a[0];r='OK';w=true;break;case'DEL':r=k in mem?1:0;delete mem[k];w=true;break;
+  case'INCR':r=mem[k]=(+mem[k]||0)+1;w=true;break;case'EXPIRE':break; // the dev file never expires keys; the TTL only matters on Upstash
   case'SADD':mem[k]=[...new Set([...(mem[k]||[]),a[0]])];r=1;w=true;break;case'SREM':mem[k]=(mem[k]||[]).filter(x=>x!==a[0]);r=1;w=true;break;case'SMEMBERS':r=mem[k]||[];break;
-  case'MGET':r=[k,...a].map(x=>mem[x]??null);break}
+  case'MGET':r=[k,...a].map(x=>mem[x]??null);break;
+  // sorted sets, only what the ranked ladder needs
+  case'ZADD':{const z=mem[k]=mem[k]||{};z[a[1]]=String(a[0]);r=1;w=true;break}
+  case'ZSCORE':r=(mem[k]||{})[a[0]]??null;break;
+  case'ZREVRANK':{const z=mem[k]||{};if(!(a[0] in z))break;r=Object.keys(z).sort((x,y)=>z[y]-z[x]||(x<y?-1:1)).indexOf(a[0]);break}
+  case'ZREVRANGE':{const z=mem[k]||{},ks=Object.keys(z).sort((x,y)=>z[y]-z[x]||(x<y?-1:1)),sel=ks.slice(+a[0],+a[1]<0?undefined:+a[1]+1);r=a[2]=='WITHSCORES'?sel.flatMap(s=>[s,z[s]]):sel;break}}
  if(w){fs.mkdirSync(path.dirname(FILE),{recursive:true});fs.writeFileSync(FILE,JSON.stringify(mem))}return r}
 async function redis(...cmd){if(DEV)return local(cmd);
  const r=await fetch(URL_,{method:'POST',headers:{Authorization:'Bearer '+TOK,'Content-Type':'application/json'},body:JSON.stringify(cmd)}),j=await r.json();if(j.error)throw new Error(j.error);return j.result}

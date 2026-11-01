@@ -1,8 +1,8 @@
 // online play: every transport (WebRTC 1v1, MQTT broker, WebSocket server) exposes the same room interface to wire()
 function wire(){const my=R;begin(true);joinT=Date.now();
  my.onPeers(c=>{if(R!==my)return;const seen={};for(const p of c.peers){if(p.isMe||p.peer===myPeer()||p.presence.ch==null)continue;const q=p.presence,id=p.peer,qc=CH[q.ch];if(!qc||qc.boss||qc.foe)continue;q.nm=String(q.nm||'?').slice(0,14);seen[id]=1;
-  let e=others[id];if(!e){if(Object.keys(others).length>=3){leave('Room is full (4 players).');return}e=others[id]=mk(q.ch,q.x,q.y,q.nm,false)}
-  if(MAPS[q.mp]&&myPeer()=='G'&&MAP!=q.mp){setMap(q.mp);ents=[];respawn(me)}Object.assign(e,{t:q.t,awt:q.aw?1:0,ch:q.ch,tx:q.x,ty:q.y,hp:q.hp,mx:CH[q.ch].hp,sd:+q.sd||0,sm:+q.sm||0,k:q.k,al:q.al,sh:q.sh?1:0,a:q.a,nm:q.nm,gq:q.gq,gc:q.gc,ga:q.ga})}
+  let e=others[id];if(!e){if(Object.keys(others).length>=3){leave('Room is full (4 players).');return}e=others[id]=mk(q.ch,q.x,q.y,q.nm,false);if(rankedOn&&q.el)toast(t('rkVs',q.nm,q.el))}
+  if(MAPS[q.mp]&&myPeer()=='G'&&MAP!=q.mp){setMap(q.mp);ents=[];respawn(me)}Object.assign(e,{t:q.t,awt:q.aw?1:0,ch:q.ch,tx:q.x,ty:q.y,hp:q.hp,mx:CH[q.ch].hp,sd:+q.sd||0,sm:+q.sm||0,k:q.k,al:q.al,sh:q.sh?1:0,a:q.a,nm:q.nm,gq:q.gq,gc:q.gc,ga:q.ga,el:+q.el||0,acct:String(q.acct||'').slice(0,16)})}
   for(const id in others)if(!others[id].bot&&!seen[id])delete others[id]});
  my.on('fx',m=>{if(R!==my)return;const d=m.data;if(m.isMe||!d||!CH[d.c]||!CH[d.c].s[d.s]||!others[m.peer])return;cast(others[m.peer],m.peer,d,false)});
  my.on('kill',m=>{if(R!==my)return;if(!m.isMe&&m.data&&m.data.k&&m.data.k===myPeer()&&me.al){me.k++;feedKill(me,others[m.peer]||{nm:'Enemy',tm:1})}});
@@ -20,7 +20,7 @@ const perr=e=>'Failed: '+(e&&e.name||'')+' '+(e&&e.message||e)+(typeof RTCPeerCo
 const enc=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o)))),dec=t=>JSON.parse(decodeURIComponent(escape(atob(t.replace(/\s+/g,'')))));
 const gather=p=>new Promise(r=>{if(p.iceGatheringState=='complete')return r();p.addEventListener('icegatheringstatechange',()=>{if(p.iceGatheringState=='complete')r()});setTimeout(r,4000)});
 function setupP(host){pcx=new RTCPeerConnection(ICE);const pc=pcx;pc.onconnectionstatechange=()=>{if(pc.connectionState=='failed')$('pmsg').textContent='Connection failed (strict network or firewall). Try another network.';if(pc.connectionState=='connected')$('pmsg').textContent='Connected!';if(pc.connectionState=='disconnected')$('pmsg').textContent='Connection lost.'};
- return ch=>{const go=()=>{R=mkRTC(pc,ch,host?'H':'G',host?'G':'H');$('pmsg').textContent='';{const mv=$('mpsel').value;onlineTeam=false;onlineMap=host?(mv=='r'?Math.random()*MAPS.length|0:(+mv||0)):0}wire()};ch.onopen=go;if(ch.readyState=='open')go()}}
+ return ch=>{const go=()=>{rankedOn=false;R=mkRTC(pc,ch,host?'H':'G',host?'G':'H');$('pmsg').textContent='';{const mv=$('mpsel').value;onlineTeam=false;onlineMap=host?(mv=='r'?Math.random()*MAPS.length|0:(+mv||0)):0}wire()};ch.onopen=go;if(ch.readyState=='open')go()}}
 $('ph').onclick=async()=>{try{const open=setupP(1);open(pcx.createDataChannel('g'));await pcx.setLocalDescription(await pcx.createOffer());await gather(pcx);showCode(enc(pcx.localDescription));$('pmsg').textContent='Code copied. Send it to your friend, paste their reply above, press Connect.'}catch(e){$('pmsg').textContent=perr(e)}};
 $('pc').onclick=async()=>{try{if(!pcx)throw new Error('Press Host first');await pcx.setRemoteDescription(dec($('pin').value));$('pmsg').textContent='Connecting…'}catch(e){$('pmsg').textContent=perr(e)}};
 $('pj').onclick=async()=>{try{const open=setupP(0);pcx.ondatachannel=e=>open(e.channel);await pcx.setRemoteDescription(dec($('pin').value));await pcx.setLocalDescription(await pcx.createAnswer());await gather(pcx);showCode(enc(pcx.localDescription));$('pmsg').textContent='Send this reply code to the host. The game starts when connected.'}catch(e){$('pmsg').textContent=perr(e)}};
@@ -49,7 +49,7 @@ function mkMQ(c,room,myId){const base='tb1/'+room+'/',cbs={},pcbs=[],rp={},seen=
   emit(n,d){c.pub(base+myId+'/e',JSON.stringify({n,d}))},on(n,f){(cbs[n]=cbs[n]||[]).push(f)},onPeers(f){pcbs.push(f)},
   peers(){const keep=order().slice(0,4),ids=Object.keys(rp).filter(id=>keep.includes(id));return[{isMe:true,peer:myId,presence:mine||{}}].concat(ids.map(id=>({isMe:false,peer:id,presence:rp[id]})))},
   leave(){clearInterval(iv);try{c.pub(base+myId+'/x','x')}catch(e){}c.close()}};return R4}
-$('bm').onclick=async()=>{if(joining)return;joining=1;try{await joinMQ()}finally{joining=0}};
+$('bm').onclick=async()=>{if(joining)return;rankedOn=false;joining=1;try{await joinMQ()}finally{joining=0}};
 function closeOld(){if(R){try{R.leave()}catch(e){}R=null}}
 async function joinMQ(){closeOld();const url=$('brk').value,code=rcode(),M=$('mmsg');
  if(!code){M.textContent='Enter a room code above.';return}if(typeof WebSocket=='undefined'){M.textContent='WebSocket is not available here.';return}
@@ -64,7 +64,7 @@ function mkWS(ws,myId){const cbs={},pcbs=[],rp={},seen={};let mine=null;
  ws.onmessage=ev=>{let m;try{m=JSON.parse(ev.data)}catch(e){return}if(m.t=='p'){rp[m.id]=m.d;seen[m.id]=Date.now();notify()}else if(m.t=='e'){seen[m.id]=Date.now();(cbs[m.n]||[]).forEach(f=>f({isMe:false,peer:m.id,data:m.d}))}else if(m.t=='left'){delete rp[m.id];notify()}};
  ws.onclose=()=>{clearInterval(iv);if(R===R3)leave('Disconnected from server.')};return R3}
 try{$('srv').value=localStorage.getItem('tbsrv')||''}catch(e){}
-$('bs').onclick=()=>{closeOld();const url=$('srv').value.trim(),code=rcode(),M=$('smsg');
+$('bs').onclick=()=>{closeOld();rankedOn=false;const url=$('srv').value.trim(),code=rcode(),M=$('smsg');
  if(!/^wss?:\/\//i.test(url)){M.textContent='Enter the server address, starting with wss://';return}if(!code){M.textContent='Enter a room code above.';return}
  try{localStorage.setItem('tbsrv',url)}catch(e){}M.textContent='Connecting…';let ws;try{ws=new WebSocket(url)}catch(e){M.textContent=perr(e);return}
  const to=setTimeout(()=>{M.textContent='No answer from the server (free servers can take ~30s to wake up, try again).';try{ws.close()}catch(e){}},20000);

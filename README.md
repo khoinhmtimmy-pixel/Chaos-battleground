@@ -103,7 +103,7 @@ Muốn đổi sang năm sau chỉ cần sửa `EV.s` và `EV.e`.
 | `js/net.js` | Online PvP (WebRTC, MQTT, WebSocket) |
 | `js/meta.js` | Tài khoản, lưu tiến trình, cấp độ, cửa hàng, nhiệm vụ, các màn hình, âm thanh, song ngữ Việt / Anh |
 | `js/config.js` | Cấu hình công khai (mã băm mật khẩu admin chế độ thiết bị) |
-| `api/` | API tài khoản trên Vercel: `auth` (đăng ký / đăng nhập), `save` (tiến trình), `admin` |
+| `api/` | API tài khoản trên Vercel: `auth` (đăng ký / đăng nhập), `save` (tiến trình), `admin`, `ranked` (thang ELO & bảng xếp hạng) |
 | `dev-server.js`, `tools/` | Chạy thử trên máy, đổi mật khẩu admin, kiểm tra phụ kiện, sinh lại roster (không deploy) |
 
 Muốn chỉnh độ khó hay kinh tế: `stagePlan()` trong `js/data.js` (số quái, hệ số máu / sát thương theo màn) và nhóm hằng số ở phần "progression rules" trong `js/meta.js` (XP mỗi cấp, giá rương, tỉ lệ rương, danh sách nhiệm vụ `QUESTS`, thưởng).
@@ -152,8 +152,19 @@ Thuần client-side (game đã có sẵn tài khoản cloud/device nhưng tính 
 
 Chạy `node tools/test-daily.js` để kiểm tra tính tất định theo ngày, ghi điểm, sắp hạng, dữ liệu hỏng và glue contract mà không cần mở trình duyệt.
 
-Muốn có bảng xếp hạng thật trong tương lai: thêm endpoint `/api/leaderboard` (Upstash Redis qua `api/_lib.js`), chấm điểm **trên server** từ replay hoặc checksum lượt chơi, ghi theo `dateKey` UTC, giới hạn mỗi tài khoản N lượt/ngày, và chỉ hiển thị tên nhân vật đã public. Không nên tin điểm do client gửi lên.
+Muốn có bảng xếp hạng thật trong tương lai: thêm endpoint `/api/leaderboard` (Upstash Redis qua `api/_lib.js`), chấm điểm **trên server** từ replay hoặc checksum lượt chơi, ghi theo `dateKey` UTC, giới hạn mỗi tài khoản N lượt/ngày, và chỉ hiển thị tên nhân vật đã public. Không nên tin điểm do client gửi lên. (Bộ khung server cho việc này đã có ở mục **Xếp hạng ELO** bên dưới.)
 
+
+### Xếp hạng ELO (Ranked)
+
+Đấu 1v1 online có điểm số toàn cầu — mọi thứ nằm trên server, không tin client tự chấm điểm.
+
+- **Vào trận:** Đấu trường → ⚔️ **Vào phòng Xếp hạng**. Cần tài khoản **cloud** (khách và chế độ lưu trên thiết bị không tham gia). Nút tự tạo mã phòng ngẫu nhiên; gửi mã cho đối thủ rồi vào phòng như Online PvP bình thường. Trận vẫn là lượt đấu quen thuộc (ai hạ 5 mạng trước thắng), nhưng `rankedOn` được bật nên cả hai bên thấy ELO của nhau trong trận (`el` trong presence) và lượt thắng được ghi điểm.
+- **ELO:** khởi điểm 1.000, K=32, sàn 100. `POST /api/ranked {act:'report',win:1,opp}` — **chỉ người thắng báo**, server tự tính cả hai phía nên mỗi trận đúng một lần cập nhật (người thua trừ điểm ngay dù không gửi gì). Điểm nằm trong sorted set `cb:rk` (`ZADD`/`ZSCORE`), thứ hạng là `ZREVRANK`, bảng top 50 là `ZREVRANGE ... WITHSCORES`.
+- **Chống lạm dụng (mức vừa phải, đúng mô hình "chạy trên trình duyệt" của game):** đối thủ phải là tài khoản đăng ký thật (không phải khách, không phải chính mình); tối đa **100 trận/ngày** mỗi tài khoản và **10 trận thắng/ngày** với cùng một đối thủ (không cày alt vô hạn). Server cộng/trừ điểm đúng công thức nhưng không thể chứng minh trận đấu "thật" — cũng như mọi tiến trình khác trong game.
+- **Huy hiệu theo ELO:** 🥉 Đồng < 800 ≤ 🥈 Bạc < 1.200 ≤ 🥇 Vàng < 1.600 ≤ 💠 Bạch Kim < 2.000 ≤ 💎 Kim Cương < 2.500 ≤ 👑 Cao Thủ. Số 1 bảng xếp hạng được vương miện 👑 và nền vàng.
+- **Phía client chỉ làm ba việc:** `rankedRefresh()` khi mở Đấu trường (hiện ELO + hạng), `rankedReport()` sau mỗi lượt thắng online (toast hiển thị mức thay đổi), `rankedBoard()` cho bảng xếp hạng. Điểm **không** nằm trong save — server là nguồn duy nhất, xoá localStorage không mất hạng.
+- Chạy local (`node dev-server.js`): `local()` trong `api/_lib.js` đã có đủ lệnh (`ZADD`/`ZSCORE`/`ZREVRANK`/`ZREVRANGE`/`INCR`), dữ liệu vẫn ở `.data/db.json`.
 
 Muốn thêm hoặc chỉnh phụ kiện: bảng `GEAR` trong `js/data.js` (`id` khớp regex `GEARID` ở `api/_lib.js`, `art` là khoá vẽ trong `js/art.js`, `b` là phần thưởng). Chạy `node tools/check-gear.js` để kiểm tra id trùng, slot thiếu món, khoá vẽ chưa dùng, và bộ huyền thoại có vượt trục chỉ số hay không.
 
