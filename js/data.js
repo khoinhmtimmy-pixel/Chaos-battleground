@@ -145,6 +145,17 @@ CH.push({n:'Nettle',t:'Candle Witch',col:'#fb923c',sec:'halloween',hair:'#3b0764
  r:{k:'rain',cd:14,n:12,rad:190,r:46,dmg:24,gap:.08,fs:'bomb',nm:'Candy Storm'},
  c:{k:'zone',cd:22,cur:1,r:230,dur:7,dps:30,sl:2,pull:140,nm:'Hex Renaissance'}
 }});
+// ---- Khoi: the basketball hero. Every slot is the same ball doing a different thing: a bounce
+// pass that never stops, a full-court throw, a dunk he lands ON the target, and a crossover that
+// takes the defender's ankles and leaves them standing still. The C is the player he models: a
+// crowned 8s form, and the only skill whose announcement replaces the usual "<NAME> FORM!".
+CH.push({n:'Khoi',t:'Hoops Legend',col:'#f97316',hair:'#1f2937',acc:'band',hp:105,sp:240,s:{
+a:{k:'proj',cd:.42,spd:640,r:8,dmg:8,life:.5,ps:'ball',nm:'Bounce Pass'},
+q:{k:'proj',cd:4.5,spd:900,r:12,dmg:19,life:.8,pierce:1,ps:'ball',kb:50,nm:'Basketball Throw'},
+e:{k:'strike',cd:6,rng:210,r:108,dmg:30,delay:.35,st:.4,kb:70,nm:'Slam Dunk'},
+r:{k:'cone',cd:9,r:150,arc:1.7,dmg:24,st:1.1,kb:95,nm:'Break Ankle'},
+ c:{k:'nova',cd:22,cur:1,r:230,dmg:62,delay:.45,kb:130,st:0.45,form:{dur:8,mul:1.55,hp:.35,sh:.5,hst:7,ann:'LEBRON JAMES!'},nm:'LeBron James'}
+}});
 const MOD={Ren:{a:{kb:20},q:{n:1,spread:0,spd:820,dmg:8,life:.5,nm:'Grapple Pull',kb:-90},r:{st:.8}},
 Monko:{a:{kb:25},r:{kb:170}},Kuro:{q:{kb:70},r:{pierce:1}},Nara:{q:{st:.6},r:{kb:-60}},
 Kaen:{a:{dot:{d:4,t:2}},q:{dot:{d:4,t:2}},e:{nova:{r:70,dmg:16,dot:{d:5,t:2}}},r:{dot:{d:8,t:3}}},
@@ -600,7 +611,7 @@ const BAL2={"Ren":[0.577,0.677],"Monko":[1.026,1.204],"Kuro":[1.023,1.202],"Nara
 for(const c of CH){const b=BAL[c.n];if(b&&!c.boss&&!c.foe)balScale(c,b[0],b[1])}
 for(const c of CH){const b=BAL2[c.n];if(b&&!c.boss&&!c.foe)balScale(c,b[0],b[1])}
 // ---- unlock tiers: 0 starter, 1 rare, 2 epic, 3 legendary (unlock order only, kits stay PvP-balanced)
-const START=['Ren','Kaen','Yuki','Sakura'],RARE=[...RARE_R,'Monko','Kuro','Nara','Raiden','Shion','Aoi','Gaia','Hikari','Zephyr','Noir','Neko','Ryuu'],LEGEND=[...LEGEND_R,'Riku','Kaito','Mei','Toru','Aya','Nao','Oren','Rex','Sora','Arashi'];
+const START=['Ren','Kaen','Yuki','Sakura','Khoi'],RARE=[...RARE_R,'Monko','Kuro','Nara','Raiden','Shion','Aoi','Gaia','Hikari','Zephyr','Noir','Neko','Ryuu'],LEGEND=[...LEGEND_R,'Riku','Kaito','Mei','Toru','Aya','Nao','Oren','Rex','Sora','Arashi'];
 for(const i of NORM){const c=CH[i];c.rar=c.sec?4:START.includes(c.n)?0:RARE.includes(c.n)?1:LEGEND.includes(c.n)?3:2}
 // ---- campaign: 5 chapters x 10 stages, a boss closes every chapter
 const CHAP=[{n:'Tide Coast',v:'Bờ Biển Sóng',maps:[1,0,8],foes:['Goblin','Imp Archer','Bat'],boss:'Gluttony Maw',col:'#38bdf8'},
@@ -638,6 +649,8 @@ Bat:[0,0,0,{sh:'bat',h:40}],Slime:[0,0,0,{sh:'slime',h:30}],'Fire Imp':['orb','r
 'Gluttony Maw':[0,0,0,{sh:'maw',h:56,ps:.8}],'Iron Brute':[0,0,0,{sh:'golem',h:50,ps:.85}],'Ember Tyrant':[0,0,0,{sh:'dragon',h:62,ps:.76}],'Void Sovereign':[0,0,0,{sh:'lord',h:72,ps:.74}],
 'Mad Giant':['fist','bare','wild',{sk:'#e8a07a',face:'rage',sc:1.85,fc:'#e8a07a',fr:7.5,acc:'none'}]};
 LOOK.Vaen=['katana','coat+cape','short',{acc:'mask',cc:'#334155',pair:1}];
+// facc is the headgear he wears only while a form is running: Khoi's LeBron C puts the crown on
+LOOK.Khoi=['fist','vest','short',{acc:'band',facc:'crown',bc:'#1d4ed8',bd:0}];
 LOOK.Marrow=['hammer','armor','bald',{acc:'none',fc:'#e7e5e4',fr:8,bc:'#57534e'}];
 LOOK.Sallow=['claws','light+tail','long',{acc:'none',tc:'#84cc16',fc:'#a3e635'}];
 LOOK.Nettle=['staff','robe+cape','long',{acc:'wizhat',cc:'#7e22ce',bc:'#fbbf24'}];

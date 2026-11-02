@@ -90,7 +90,7 @@ function gearCharm(a,ph){
 
 // ---------- the shared hero rig. Origin = feet, facing +x (the caller mirrors it)
 function human(e,c,L,o){
- const g=L.gr||'light',sk=L.sk||SKN,col=c.col,c2=L.c2||shade(col,-.34),hair=e.awt>0?'#fff3a0':(c.hair||'#333'),hs=L.hs||'spiky',acc=L.acc||c.acc,wp=L.wp||'none';
+ const g=L.gr||'light',sk=L.sk||SKN,col=c.col,c2=L.c2||shade(col,-.34),hair=e.awt>0?'#fff3a0':(c.hair||'#333'),hs=L.hs||'spiky',acc=(e.tn>0&&L.facc)||L.acc||c.acc,wp=L.wp||'none';
  const sw=o.walk?Math.sin(o.ph):0,la=o.la,sway=Math.sin(tm*3+e.x*.02)*1.6-(o.walk?3:0),u=o.atk,bare=/vest|rag|bare/.test(g),arm=/armor|tech/.test(g);
  // build (L.bd): 0 slim, 1 standard, 2 bulky. Widens the torso and head and thickens the limbs, so
  // a tank reads as a tank and an assassin as an assassin before you can see either one's weapon.
@@ -482,6 +482,7 @@ fist(q){aRR(-6,-6,13,12,4.5,q.fc||'#e94a4a');aLine(1,-4,1,4,INK,1.3);aLine(4,-3,
 lance(q){aPoly([-16,0,-2,-3.4,16,0,-2,3.4],'#fff8d6');aLine(-12,0,13,0,GOLD,1.4)},
 needle(q){aPoly([-13,0,-2,-2,12,0,-2,2],q.col);aLine(-9,0,9,0,'#fff',1)},
 note(q){aEll(-2,3,4,3,q.col,0,-.4);aLine(1.6,3,1.6,-8,INK,2);aPoly([1.6,-8,8,-5,8,-1.5,1.6,-4.4],q.col)},
+ball(q){aCirc(0,0,7.1,'#f2762a');ctx.strokeStyle=INK;ctx.lineWidth=1.3;ctx.beginPath();ctx.ellipse(0,0,3.4,7.1,0,0,7);ctx.stroke();aLine(-7.1,0,7.1,0,INK,1.3);aCirc(-2.2,-2.5,2.1,'#ffb37a',1)},
 rock(q){ctx.rotate(tm*5);aPoly([-7,-3,-3,-7,4,-6,7,-1,5,6,-2,7,-7,3],'#9aa3b8');aPoly([-5,-3,-2,-5,3,-4,1,0,-4,1],'#c6cee0',1)},
 vortex(q){}};
 function drawProj(q){const sp=Math.hypot(q.vx,q.vy)||1,ux=q.vx/sp,uy=q.vy/sp,r=q.r,ps=q.ps||'orb';

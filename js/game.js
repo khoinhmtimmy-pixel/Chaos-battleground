@@ -104,7 +104,7 @@ function cast(e,o,d,local){const c=CH[d.c],s=c.s[d.s],ba=d.s=='a'?1:0;if(e){e.rv
  else if(s.k=='shield'&&local&&e)e.sh=s.dur;else if(s.k=='heal'){if(local&&e)e.hp=Math.min(e.mx,e.hp+s.amt);burst(d.x,d.y,'#7dffb0',26)}else if(s.k=='haste'){if(local&&e){e.hst=s.dur;if(s.sh)e.sh=s.sh}burst(d.x,d.y,c.col,20)}
   // Titan form: swap in boosted stats, remember the base so tick() can put them back
   if(s.form&&local&&e){if(!e.tb)e.tb={mx:e.mx,sm:e.sm};e.tn=s.form.dur;e.fm=s.form.mul||1;e.mx=Math.round(e.mx*(1+(s.form.hp||0)));e.sm=Math.round(e.sm*(1+(s.form.sh||0)));e.sd=Math.min(e.sd,e.sm);e.hp=e.mx;
-   if(s.form.hst)e.hst=s.form.dur;shake=.5;burst(d.x,d.y,c.col,50);burst(d.x,d.y,'#ffffff',30);ann(c.n.toUpperCase()+" FORM!",c.col)}
+   if(s.form.hst)e.hst=s.form.dur;shake=.5;burst(d.x,d.y,c.col,50);burst(d.x,d.y,'#ffffff',30);ann(s.form.ann||(c.n.toUpperCase()+" FORM!"),c.col)}
  else if(s.k=='cone'){let dm=s.dmg,r=s.r,arc=s.arc,emp=0;
   // passive combo: every third basic swing is a bigger, harder cut
   if(c.pas&&ba&&e){e.cmb=(e.cmb||0)%3+1;if(e.cmb==3){dm*=c.pas.x3;r*=1.25;arc=Math.min(6.3,arc*1.35);emp=1}}
