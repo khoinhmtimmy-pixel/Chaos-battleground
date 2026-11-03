@@ -6,7 +6,7 @@ const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),fmt=n=>Math.floor(n).toLocaleStri
 const TX={vi:{tapStart:'NHẤN ĐỂ BẮT ĐẦU',login:'Đăng nhập',register:'Đăng ký',username:'Tên tài khoản',password:'Mật khẩu',password2:'Nhập lại mật khẩu',or:'hoặc',guest:'🎮 Chơi nhanh (Khách)',
  hintCloud:'☁️ Tài khoản lưu trên máy chủ: đăng nhập ở máy nào cũng giữ nguyên tiến trình.',hintDev:'💾 Chưa kết nối máy chủ tài khoản: tài khoản và tiến trình chỉ lưu trên thiết bị này.',
  tagCloud:'☁️ Lưu cloud',tagDev:'💾 Lưu trên thiết bị',wait:'Đang xử lý…',
- errName:'Tên 3–16 ký tự: chữ không dấu, số, gạch dưới',errPass:'Mật khẩu tối thiểu 6 ký tự',errPass2:'Hai mật khẩu không khớp',errTaken:'Tên này đã có người dùng',errLogin:'Sai tên hoặc mật khẩu',errNet:'Không kết nối được máy chủ, thử lại sau',errRate:'Thử quá nhiều lần, đợi vài phút rồi thử lại',errAdminOff:'Tài khoản admin chưa được cấu hình',errAuth:'Phiên đăng nhập hết hạn, hãy đăng nhập lại',offline:'Đang chơi ngoại tuyến, tiến trình sẽ đồng bộ khi có mạng',errRankOpp:'Đối thủ không hợp lệ để ghi điểm xếp hạng',errRankCap:'Đã đạt giới hạn 100 trận Xếp hạng hôm nay',
+ errName:'Tên 3–16 ký tự: chữ không dấu, số, gạch dưới',errPass:'Mật khẩu tối thiểu 6 ký tự',errPass2:'Hai mật khẩu không khớp',errTaken:'Tên này đã có người dùng',errLogin:'Sai tên hoặc mật khẩu',errNet:'Không kết nối được máy chủ, thử lại sau',errRate:'Thử quá nhiều lần, đợi vài phút rồi thử lại',errAdminOff:'Tài khoản admin chưa được cấu hình',errAuth:'Phiên đăng nhập hết hạn, hãy đăng nhập lại',offline:'Đang chơi ngoại tuyến, tiến trình sẽ đồng bộ khi có mạng',errRankOpp:'Đối thủ không hợp lệ để ghi điểm xếp hạng',errRankCap:'Đã đạt giới hạn 100 trận Xếp hạng hôm nay',errRankShort:'Trận quá ngắn để tính điểm xếp hạng',
  nHome:'Sảnh',nStages:'Màn chơi',nHeroes:'Nhân vật',nStats:'Nâng cấp',nShop:'Cửa hàng',nGear:'Trang bị',
   gearSub:'3 chỗ: đầu · vùi người · hào quang. Chỉ áp dụng cho Màn chơi và Raid, đấu PvP luôn cân bằng.',
   slHead:'Đầu',slCharm:'Vùi người',slAura:'Hào quang',gearOwned:'Đã sở hữu',gearWear:'Trang bị',gearTakeOff:'Tháo ra',
@@ -27,11 +27,11 @@ const TX={vi:{tapStart:'NHẤN ĐỂ BẮT ĐẦU',login:'Đăng nhập',registe
  q_wins:'Thắng {0} trận Đấu trường',q_rf:'Lên tới tầng {0} trong Raid',q_rb:'Thắng trọn Raid: hạ cả {0} boss trong một lượt',q_lvl:'Đạt cấp {0}',q_cleared:'Qua {0} màn Chiến dịch',q_kills:'Hạ {0} quái',q_heroes:'Sở hữu {0} nhân vật',q_stars:'Thu thập {0} ★',lucky:'Buff May Mắn',luckyd:'Nhận 1 buff ngẫu nhiên, tự kích hoạt ở lượt chơi kế tiếp (giữ tối đa 3).',luckyFull:'Đã giữ đủ 3 buff, hãy vào trận dùng trước',allOwned:'Bạn đã có tất cả nhân vật!',owned:'Đã có {0}/{1} nhân vật',newHero:'NHÂN VẬT MỚI!',useNow:'Dùng ngay',got:'Nhận được {0}',
  settings:'Cài đặt',language:'Ngôn ngữ',sound:'Âm thanh',graphics:'Đồ hoạ',qAuto:'Tự động',qHigh:'Cao',qMed:'Vừa',qLow:'Thấp (mượt nhất)',autoAim:'📱 Tự ngắm trên điện thoại (ATK và chiêu tự nhắm địch gần nhất)',fullscreen:'⛶ Toàn màn hình',howto:'❓ Cách chơi',account:'Tài khoản',logout:'Đăng xuất',adminPanel:'🛠 Quản trị',accCloud:'Tài khoản cloud',accDev:'Tài khoản trên thiết bị này',accGuest:'Khách (chưa có tài khoản)',mkAcc:'Tạo tài khoản để giữ tiến trình',
  arenaSub:'Đấu đối kháng: ai hạ 5 mạng trước sẽ thắng. Thắng nhận 🪙 và XP.',map:'Bản đồ',mBots:'🤖 Đấu 3 Bot',m2v2:'👥 2v2 cùng Bot',mDummy:'🎯 Tập luyện',mLocal:'⌨️ 2 người 1 máy',online:'Online PvP (tối đa 4 người)',onlineSub:'Mọi người chọn CÙNG máy chủ trung gian và nhập CÙNG mã phòng.',room:'Mã phòng',team2:'👥 Chia đội 2v2 (bản đồ lớn)',broker:'Máy chủ trung gian',joinOnline:'🌐 Vào phòng Online',advServer:'🖥️ Dùng server riêng',advServerSub:'Dán địa chỉ server WebSocket của bạn (wss://…). Mọi người dùng chung địa chỉ và mã phòng.',joinServer:'Vào bằng server',advCode:'🌍 1v1 bằng mã copy-paste',advCodeSub:'Chủ phòng: bấm Host, gửi mã cho bạn, dán mã trả lời rồi bấm Connect. Khách: dán mã của chủ phòng, bấm Join, gửi lại mã trả lời.',pasteHere:'Dán mã vào đây',yourCode:'Mã của bạn hiện ở đây',
- rkTitle:'XẾP HẠNG',rkSub:'Đấu 1v1 online có điểm ELO. Ai hạ 5 mạng trước thắng. Tối đa 100 trận/ngày.',rkYou:'ELO của bạn',rkQueue:'⚔️ Vào phòng Xếp hạng',rkBoard:'🏆 Bảng xếp hạng',
+ rkTitle:'XẾP HẠNG',rkSub:'Đấu 1v1 online theo thang ELO 6 bậc (Đồng → Cao Thủ), mỗi bậc 3 hạng. Ai hạ 5 mạng trước thắng. Tối đa 100 trận/ngày.',rkYou:'ELO của bạn',rkQueue:'⚔️ Vào phòng Xếp hạng',rkBoard:'🏆 Bảng xếp hạng',
  rkNeedCloud:'Xếp hạng cần tài khoản cloud — đang chơi ở chế độ lưu trên máy',rkNeedAcc:'Xếp hạng chỉ dành cho tài khoản đăng ký — Khách không tham gia được',
  rkCode:'Phòng Xếp hạng: {0} — gửi mã này cho đối thủ. Ai hạ 5 mạng trước thắng, điểm ELO.',rkVs:'⚔️ Xếp hạng vs {0} · {1} ELO',rkDelta:'Xếp hạng: {0} ELO → {1}',rkNoOpp:'Không tìm thấy đối thủ trong phòng — trận không được ghi điểm',
  rkBoardTitle:'BẢNG XẾP HẠNG',rkEmpty:'Chưa có ai xếp hạng. Hãy là Number 1!',rkWL:'Thắng/Thua',rkMeLine:'{0} · ELO {1} · {2} thắng · {3} thua',rkUnranked:'chưa xếp hạng',
- rkMeRank:'#{0} · {1} · ELO {2}',rkNote:'Điểm ELO tính trên máy chủ từ kết quả hai phía tự báo cáo (giới hạn 100 trận/ngày) — không chống gian lận tuyệt đối.',
+ rkMeRank:'#{0} · {1} · ELO {2}',rkNote:'Điểm ELO tính trên máy chủ từ kết quả hai phía tự báo cáo (giới hạn 100 trận/ngày) — không chống gian lận tuyệt đối.',rkRecord:'{0} thắng · {1} thua',rkStreak:'chuỗi {0}',rkPlace:'Định hạng {0}/{1} trận',rkNext:'còn {0} ELO tới {1}',rkOpp:'{0}: {1} ELO',
  rkBronze:'Đồng',rkSilver:'Bạc',rkGold:'Vàng',rkPlat:'Bạch Kim',rkDia:'Kim Cương',rkGM:'Cao Thủ',
  paused:'TẠM DỪNG',resume:'TIẾP TỤC',restart:'Chơi lại từ đầu',quit:'Thoát về sảnh',onlineNoPause:'Trận online vẫn đang diễn ra!',chooseBuff:'CHỌN 1 BUFF',levelUp:'LÊN CẤP! ',lvFmt:'CẤP {0} - CHỌN NÂNG CẤP',runUps:'NÂNG CẤP TRONG TRẬN',downed:'BẠN ĐÃ GỤC NGÃ',reviveQ:'Hồi sinh với 50% máu và đầy khiên? (1 lần mỗi lượt)',noRevive:'Đã dùng lượt hồi sinh',revive:'HỒI SINH',giveup:'Bỏ cuộc',
  victory:'CHIẾN THẮNG!',defeat:'THẤT BẠI',raidOver:'KẾT THÚC RAID',raidReach:'Tới tầng {0} · phòng {1}',newBest:'Kỷ lục mới!',gold:'Vàng',kills:'Hạ gục',time:'Thời gian',lvup:'LÊN CẤP {0}! +{1} điểm nâng cấp · +{2} 🪙',nextStage:'MÀN TIẾP ▶',again:'Chơi lại',retry:'THỬ LẠI',toStats:'💪 Nâng cấp',toHub:'Về sảnh',pvpWin:'Thắng trận! +{0} 🪙 · +{1} XP',failTip:'Mẹo: nâng điểm chỉ số, nâng cấp nhân vật hoặc mua Buff May Mắn rồi thử lại.',
@@ -41,7 +41,7 @@ const TX={vi:{tapStart:'NHẤN ĐỂ BẮT ĐẦU',login:'Đăng nhập',registe
 en:{tapStart:'TAP TO START',login:'Log in',register:'Sign up',username:'Username',password:'Password',password2:'Repeat password',or:'or',guest:'🎮 Quick play (Guest)',
  hintCloud:'☁️ Cloud account: your progress follows you to any device.',hintDev:'💾 Account server not connected: accounts and progress stay on this device only.',
  tagCloud:'☁️ Cloud saves',tagDev:'💾 Saved on this device',wait:'Working…',
- errName:'Name must be 3–16 letters, digits or underscores',errPass:'Password needs at least 6 characters',errPass2:'Passwords do not match',errTaken:'That name is taken',errLogin:'Wrong name or password',errNet:'Could not reach the server, try again later',errRate:'Too many attempts, wait a few minutes',errAdminOff:'The admin account is not configured',errAuth:'Session expired, please log in again',offline:'Playing offline, progress will sync when you are back online',errRankOpp:'Invalid opponent for a ranked report',errRankCap:'Daily ranked limit reached (100 matches)',
+ errName:'Name must be 3–16 letters, digits or underscores',errPass:'Password needs at least 6 characters',errPass2:'Passwords do not match',errTaken:'That name is taken',errLogin:'Wrong name or password',errNet:'Could not reach the server, try again later',errRate:'Too many attempts, wait a few minutes',errAdminOff:'The admin account is not configured',errAuth:'Session expired, please log in again',offline:'Playing offline, progress will sync when you are back online',errRankOpp:'Invalid opponent for a ranked report',errRankCap:'Daily ranked limit reached (100 matches)',errRankShort:'Match too short to count for ranked',
  nHome:'Lobby',nStages:'Stages',nHeroes:'Heroes',nStats:'Upgrade',nShop:'Shop',nGear:'Gear',
   gearSub:'3 slots: head · charm · aura. Applies to Stages and Raid only; PvP is always even.',
   slHead:'Head',slCharm:'Charm',slAura:'Aura',gearOwned:'Owned',gearWear:'Wear',gearTakeOff:'Take off',
@@ -62,11 +62,11 @@ en:{tapStart:'TAP TO START',login:'Log in',register:'Sign up',username:'Username
  q_wins:'Win {0} Arena matches',q_rf:'Reach floor {0} in the Raid',q_rb:'Beat the full Raid: defeat all {0} bosses in one run',q_lvl:'Reach level {0}',q_cleared:'Clear {0} Campaign stages',q_kills:'Defeat {0} monsters',q_heroes:'Own {0} heroes',q_stars:'Collect {0} ★',lucky:'Lucky Buff',luckyd:'Get a random buff that triggers on your next run (hold up to 3).',luckyFull:'Already holding 3 buffs, go use them first',allOwned:'You own every hero!',owned:'{0}/{1} heroes owned',newHero:'NEW HERO!',useNow:'Use now',got:'Got {0}',
  settings:'Settings',language:'Language',sound:'Sound',graphics:'Graphics',qAuto:'Auto',qHigh:'High',qMed:'Medium',qLow:'Low (smoothest)',autoAim:'📱 Mobile auto-aim (ATK and skills target the nearest enemy)',fullscreen:'⛶ Fullscreen',howto:'❓ How to play',account:'Account',logout:'Log out',adminPanel:'🛠 Admin',accCloud:'Cloud account',accDev:'Account on this device',accGuest:'Guest (no account yet)',mkAcc:'Create an account to keep progress',
  arenaSub:'Deathmatch: first to 5 KOs wins. Wins pay 🪙 and XP.',map:'Map',mBots:'🤖 vs 3 Bots',m2v2:'👥 2v2 with Bots',mDummy:'🎯 Training',mLocal:'⌨️ Local 2-Player',online:'Online PvP (up to 4 players)',onlineSub:'Everyone picks the SAME relay and types the SAME room code.',room:'Room code',team2:'👥 2v2 teams (big map)',broker:'Relay',joinOnline:'🌐 Join online room',advServer:'🖥️ Use your own server',advServerSub:'Paste your WebSocket server address (wss://…). Everyone uses the same address and room code.',joinServer:'Join with server',advCode:'🌍 1v1 with copy-paste codes',advCodeSub:'Host: press Host, send the code, paste the reply, press Connect. Guest: paste the host code, press Join, send your reply back.',pasteHere:'Paste a code here',yourCode:'Your code appears here',
- rkTitle:'RANKED',rkSub:'Rated 1v1 online with an ELO ladder. First to 5 KOs wins. 100 matches a day max.',rkYou:'Your ELO',rkQueue:'⚔️ Enter a Ranked room',rkBoard:'🏆 Leaderboard',
+ rkTitle:'RANKED',rkSub:'Rated 1v1 online on a six-tier ELO ladder (Bronze → Grandmaster), three divisions each. First to 5 KOs wins. 100 matches a day max.',rkYou:'Your ELO',rkQueue:'⚔️ Enter a Ranked room',rkBoard:'🏆 Leaderboard',
  rkNeedCloud:'Ranked needs a cloud account — you are playing with device saves',rkNeedAcc:'Ranked is for registered accounts — guests cannot join',
  rkCode:'Ranked room: {0} — send this code to your opponent. First to 5 KOs wins, ELO on the line.',rkVs:'⚔️ Ranked vs {0} · {1} ELO',rkDelta:'Rating: {0} ELO → {1}',rkNoOpp:'No opponent found in this room — match not recorded',
  rkBoardTitle:'LEADERBOARD',rkEmpty:'Nobody is ranked yet. Be Number 1!',rkWL:'W-L',rkMeLine:'{0} · ELO {1} · {2}W {3}L',rkUnranked:'unranked',
- rkMeRank:'#{0} · {1} · ELO {2}',rkNote:'ELO is computed on the server from self-reported results (100 matches/day cap) — not fully cheat-proof.',
+ rkMeRank:'#{0} · {1} · ELO {2}',rkNote:'ELO is computed on the server from self-reported results (100 matches/day cap) — not fully cheat-proof.',rkRecord:'{0}W {1}L',rkStreak:'streak {0}',rkPlace:'placements {0}/{1}',rkNext:'{0} ELO to {1}',rkOpp:'{0}: {1} ELO',
  rkBronze:'Bronze',rkSilver:'Silver',rkGold:'Gold',rkPlat:'Platinum',rkDia:'Diamond',rkGM:'Grandmaster',
  paused:'PAUSED',resume:'RESUME',restart:'Restart run',quit:'Quit to lobby',onlineNoPause:'The online match is still running!',chooseBuff:'CHOOSE A BUFF',levelUp:'LEVEL UP! ',lvFmt:'LEVEL {0} - CHOOSE AN UPGRADE',runUps:'RUN UPGRADES',downed:'YOU WERE DOWNED',reviveQ:'Revive with 50% health and a full shield? (once per run)',noRevive:'Revive already used',revive:'REVIVE',giveup:'Give up',
  victory:'VICTORY!',defeat:'DEFEAT',raidOver:'RAID OVER',raidReach:'Reached floor {0} · room {1}',newBest:'New best!',gold:'Gold',kills:'Kills',time:'Time',lvup:'LEVEL {0}! +{1} upgrade points · +{2} 🪙',nextStage:'NEXT STAGE ▶',again:'Play again',retry:'RETRY',toStats:'💪 Upgrade',toHub:'Lobby',pvpWin:'Match won! +{0} 🪙 · +{1} XP',failTip:'Tip: spend stat points, level your hero or grab a Lucky Buff, then try again.',
@@ -186,20 +186,35 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden){push(1);if
 // ---- ranked ladder. The rating itself lives on the server (/api/ranked); this side only picks
 // the entry point, reports a won duel and draws the board. rankedOn (game.js) marks the current
 // online match as rated so presence carries the rating and the round end reports the result.
-const rkTier=e=>e<800?['🥉','rkBronze']:e<1200?['🥈','rkSilver']:e<1600?['🥇','rkGold']:e<2000?['💠','rkPlat']:e<2500?['💎','rkDia']:['👑','rkGM'];
+const RKT=[[800,'🥉','rkBronze'],[1200,'🥈','rkSilver'],[1600,'🥇','rkGold'],[2000,'💠','rkPlat'],[2500,'💎','rkDia'],[1e9,'👑','rkGM']];
+const RKPLACE=10;   // rated matches before the ladder stops showing you as unplaced
+// six tiers of three divisions each: a ladder is read by name (Bạc II) far more than by a raw number,
+// and a division gives every player a short-term goal even inside a long tier
+// the top tier has no ceiling, so it gets a flat 900-point band per division instead of a share of
+// infinity: a Grandmaster III becomes II at 2.800 and I at 3.100, and the bar still means something
+function rkTier(e){let lo=100;for(const[hi,ic,key]of RKT){const top=hi===1e9,band=top?900:hi-lo;
+ if(e<hi||top){const d=Math.min(2,Math.max(0,(e-lo)/(band/3)|0));return{ic,key,div:['III','II','I'][d],lo:lo+band/3*d,hi:lo+band/3*(d+1)}}lo=hi}
+ return{ic:'👑',key:'rkGM',div:'I',lo:2500,hi:2600}}
+const rkTierName=x=>x.ic+' '+t(x.key)+' '+x.div;
+// one card for the arena panel and the leaderboard footer, so the two can never disagree
+function rkCard(m,elo){const x=rkTier(elo),g=(m.w|0)+(m.l|0),p=Math.max(0,Math.min(1,(elo-x.lo)/Math.max(1,x.hi-x.lo)));
+ const bar='<span style="display:block;height:8px;border-radius:4px;background:#120c30;border:1px solid #ffffff22;overflow:hidden;margin:6px 0 4px"><i style="display:block;height:100%;width:'+Math.round(p*100)+'%;background:linear-gradient(90deg,#4fd1ff,#7c5cff)"></i></span>';
+ return rkTierName(x)+(m.rank!=null?' · #'+m.rank:' · '+t('rkUnranked'))+'<br><b>ELO '+fmt(elo)+'</b> · '+t('rkRecord',m.w|0,m.l|0)+' · 🔥 '+t('rkStreak',m.s|0)+bar+
+  '<small>'+(g<RKPLACE?t('rkPlace',g,RKPLACE):t('rkNext',fmt(Math.max(1,Math.ceil(x.hi-elo))),rkTierName(rkTier(x.hi))))+'</small>'}
 async function rankedRefresh(){const el=$('rkme');if(!el)return;
  if(!ACC||ACC.mode=='guest'){el.textContent=t('rkNeedAcc');return}
  if(!cloudOK){el.textContent=t('rkNeedCloud');return}
  el.textContent=t('wait');
- try{const j=await api('ranked');if(!j.ok)throw 0;rkElo=j.me.elo;const[i2,n2]=rkTier(rkElo),tier=i2+' '+t(n2);
-  el.textContent=j.me.rank!=null?t('rkMeRank',j.me.rank,tier,rkElo):tier+' · ELO '+rkElo+' · '+t('rkUnranked')
+ try{const j=await api('ranked');if(!j.ok)throw 0;rkElo=j.me.elo;
+  el.innerHTML=rkCard(j.me,rkElo)
  }catch(e){el.textContent=t('errNet')}}
 // only the winner reports: the server then moves both ratings, so one duel counts exactly once
 async function rankedReport(){if(!cloudOK||!ACC||ACC.mode=='guest')return;
  const opp=Object.values(others).find(e=>e&&e.acct);
  if(!opp){toast(t('rkNoOpp'),1);return}
- try{const j=await api('ranked',{act:'report',win:1,opp:opp.acct});
-  if(j.ok){rkElo=j.elo;toast(t('rkDelta',(j.d>0?'+'+j.d:''+j.d),j.elo));sfx('win')}
+ try{const j=await api('ranked',{act:'report',win:1,opp:opp.acct,dur:Math.round(matchT||0)});
+  // the server moved both ratings, so report both deltas and refresh the card from the reply
+  if(j.ok){rkElo=j.elo;toast(t('rkDelta',(j.d>0?'+'+j.d:''+j.d),fmt(j.elo)));if(j.o)toast(t('rkOpp',j.o.n,(j.o.d>0?'+'+j.o.d:''+j.o.d)));sfx('win');rankedRefresh()}
   else toast(t(j.err||'errNet'),1)
  }catch(e){toast(t('errNet'),1)}}
 
@@ -313,7 +328,7 @@ quests(){const l=QUESTS.map(q=>{const v=Math.min(q.n,qVal(q.k)),done=S.q[q.id],o
  ${done?`<span class="mut">${t('qDone')}</span>`:`<button class="btn sm green${ok?' pulse':' off'}" data-a="quest" data-v="${q.id}">${t('qClaim')}</button>`}</div>`]}).sort((a,b)=>a[0]-b[0]);
  return`<div><p class="mut" style="margin-bottom:10px">${t('questSub')}</p><div class="qlist">${l.map(x=>x[1]).join('')}</div></div>`}};
 
-function enterHub(){sel=chi(S.sel);if(sel<0||!NORM.includes(sel))sel=NORM[0];heroSel=sel;$('nm').value=ACC.name;chapSel=clamp((Math.min(S.stage,NSTAGE)-1)/10|0,0,CHAP.length-1);stSel=Math.min(S.stage,NSTAGE);page='home';show('s-hub');render();if(!LS.get('cb_seen',0)){LS.set('cb_seen',1);ACT.howto()}}
+function enterHub(){sel=chi(S.sel);if(sel<0||!NORM.includes(sel))sel=NORM[0];heroSel=sel;$('nm').value=ACC.name;chapSel=clamp((Math.min(S.stage,NSTAGE)-1)/10|0,0,CHAP.length-1);stSel=Math.min(S.stage,NSTAGE);page='home';show('s-hub');render();rankedRefresh();if(!LS.get('cb_seen',0)){LS.set('cb_seen',1);ACT.howto()}}
 function spend(n){if(S.gold<n){toast(t('noGold'),1);sfx('err');return false}S.gold-=n;return true}
 // heroes a chest can still give: the regular roster plus the chest-only secrets
 const chestPool=()=>NORM.filter(i=>!S.own[CH[i].n]&&CH[i].sec!='quest'&&CH[i].sec!='halloween'),onlySecret=()=>{const p=chestPool();return p.length>0&&p.every(i=>CH[i].sec)};
@@ -350,12 +365,11 @@ go(v){page=v;render();$('page').scrollTop=0},lang(){setLang(LANG=='vi'?'en':'vi'
   let j=null;try{j=await api('ranked')}catch(e){}
   if(!j||!j.ok){b.querySelector('p').textContent=t((j&&j.err)||'errNet');return}
   rkElo=j.me.elo;
-  const rows=j.top.map((r,i)=>{const[ic,nm]=rkTier(r.elo),mine=r.name.toLowerCase()===ACC.name.toLowerCase(),bg=i==0?'#ffd84d22':mine?'#ffffff14':'';
-   return `<tr${bg?` style="background:${bg}"`:''}><td>${i==0?'👑':'#'+(i+1)}</td><td><b>${esc(r.name)}</b></td><td>${ic} ${t(nm)}</td><td>${fmt(r.elo)}</td><td>${r.w}-${r.l}</td></tr>`}).join('');
-  const[ic,nm]=rkTier(j.me.elo);
+  const rows=j.top.map((r,i)=>{const tk=rkTier(r.elo),mine=r.name.toLowerCase()===ACC.name.toLowerCase(),bg=i==0?'#ffd84d22':mine?'#ffffff14':'';
+   return `<tr${bg?` style="background:${bg}"`:''}><td>${i==0?'👑':'#'+(i+1)}</td><td><b>${esc(r.name)}</b></td><td>${rkTierName(tk)}</td><td>${fmt(r.elo)}</td><td>${r.w}-${r.l}</td></tr>`}).join('');
   b.innerHTML=`<button class="x" data-a="close">✕</button><h3>🏆 ${t('rkBoardTitle')}</h3>`+
    (j.top.length?`<div style="overflow:auto"><table><tr><th>#</th><th>${t('name')}</th><th></th><th>ELO</th><th>${t('rkWL')}</th></tr>${rows}</table></div>`:`<p class="mut">${t('rkEmpty')}</p>`)+
-   `<p class="mut">${t('rkMeLine',ic+' '+t(nm),rkElo,j.me.w,j.me.l)}${j.me.rank!=null?' · #'+j.me.rank:' · '+t('rkUnranked')}</p><p class="mut">${t('rkNote')}</p>`},
+   `<p class="mut">${rkCard(j.me,j.me.elo)}</p><p class="mut">${t('rkNote')}</p>`},
 settings(){$('st-lang').value=LANG;$('st-vol').value=Math.round(SFX.vol*100);$('st-q').value=qset;$('st-admin').hidden=ACC.role!='admin';
   const row=$('st-darkrow');if(row){row.hidden=!evOn();$('st-dark').checked=!!S.dk}
  $('st-acc').innerHTML=`<b>${esc(ACC.name)}</b> · ${t(ACC.mode=='cloud'?'accCloud':ACC.mode=='device'?'accDev':'accGuest')}${ACC.mode=='guest'?`<br><button class="btn sm green" data-a="toAuth" style="margin-top:6px">${t('mkAcc')}</button>`:''}`;modal('md-set')},

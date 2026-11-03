@@ -280,6 +280,22 @@ function move(e,dx,dy){let x=e.x+dx,y=e.y+dy;[x,y]=clearPillars(x,y);e.x=Math.ma
 // a form must not survive death: hand the boosted stats back first, or the next life starts with a
 // raised max health and the form's damage multiplier still ticking
 function respawn(e){if(e.tb){e.mx=e.tb.mx;e.sm=e.tb.sm;e.tb=0}e.tn=0;e.fm=0;const p=tmode?SP[(e.tm||0)+2*(Math.random()*2|0)]:rs();e.x=p[0];e.y=p[1];e.hp=e.mx;e.sd=e.sm;e.al=1;e.sh=1.2;e.sl=0;e.brn=0;e.van=0;if(e.cg)for(const k in e.cg)e.cg[k]=CH[e.ch].s[k].chg}
+// Remote fighters are drawn from a short buffer of snapshots, about two packets in the past, and slid
+// between them at a steady rate. Chasing the newest packet (the old way) snapped the avatar forward on
+// every arrival, so one late packet read as a stutter and a pair arriving together read as a jump:
+// that is what "online feels laggy" actually was. A fixed delay costs a little latency and buys motion
+// that is identical every frame. Damage is untouched: a hit is settled on the defender from the
+// attacker's cast event, not from where the avatar happens to be drawn.
+const NETLAG=120;
+function netMove(e,dt){const s=e.snap;
+ if(!s||s.length<2){const k=Math.min(1,dt*12);e.x+=(e.tx-e.x)*k;e.y+=(e.ty-e.y)*k;return}
+ const now=performance.now()-NETLAG;
+ while(s.length>2&&s[1].t<now)s.shift();
+ const A=s[0],B=s[1]||A,k=B.t>A.t?Math.min(1,Math.max(0,(now-A.t)/(B.t-A.t))):1;
+ // a death, a respawn or a room change is a teleport: land on it instead of sliding across the map
+ if(Math.hypot(B.x-A.x,B.y-A.y)>170){if(k>.5){e.x=B.x;e.y=B.y}}
+ else{e.x=A.x+(B.x-A.x)*k;e.y=A.y+(B.y-A.y)*k}
+ e.a=A.a+Math.atan2(Math.sin(B.a-A.a),Math.cos(B.a-A.a))*k}
 function update(dt){if(choice)return;allC=null;matchT+=dt;
   if(hold>0)hold-=dt;lockT=null;if(touch){if(aim&&aim.on){me.a=aim.a;mouse.x=me.x+Math.cos(me.a)*220;mouse.y=me.y+Math.sin(me.a)*220}
   else if(hold>0){mouse.x=me.x+Math.cos(me.a)*220;mouse.y=me.y+Math.sin(me.a)*220}
@@ -294,7 +310,7 @@ function update(dt){if(choice)return;allC=null;matchT+=dt;
   if(mouse.down||keys.f)tryCast(me,'me','a',mouse.x,mouse.y)}
  else if(!raid){me.rt-=dt;if(me.rt<=0)respawn(me)}
  for(const id in others){const e=others[id];
-  if(!e.bot&&!e.loc){e.x+=(e.tx-e.x)*Math.min(1,dt*14);e.y+=(e.ty-e.y)*Math.min(1,dt*14);continue}
+  if(!e.bot&&!e.loc){netMove(e,dt);continue}
   if(!e.al){if(e.raidE){raid.score+=e.boss?200*raid.wave:30;raid.kills++;if(e.boss){raid.bk=(raid.bk||0)+1;if(raid.mode=='raid'&&raid.bk==5){say(450,200,'RAID CONQUERED!','#ffd84d');sfx('win')}}sfx(e.boss?'boom':'kill');dropLoot(e);delete others[id];allC=null;continue}e.rt-=dt;if(e.rt<=0)respawn(e);continue}
   if(e.dash){const d=e.dash;d.t+=dt/.15;const u=Math.min(1,d.t);e.x=d.x0+(d.x1-d.x0)*u;e.y=d.y0+(d.y1-d.y0)*u;if(u>=1){e.dash=null;move(e,0,0)}continue}
   if(e.dum){e.log=e.log.filter(x=>tm-x.t<3);e.nm='DPS '+Math.round(e.log.reduce((a,x)=>a+x.d,0)/3)+' | Total '+Math.round(e.tot);e.hp=e.mx;continue}
@@ -337,7 +353,7 @@ if(e.bossAI==='warden'){bossWardenAI(e,id,t,bd,dt);continue}
  ents=ents.filter(q=>q.life>0);
  if(raid){}else if(!over){const w=tmode?(teamScore(me.tm)>=10?[0,{nm:'YOUR TEAM'}]:teamScore(1-me.tm)>=10?[0,{nm:'ENEMY TEAM'}]:null):all().find(([i,e])=>e.k>=5);if(w){over=5;winner=w[1].nm;UI.pvpEnd(tmode?teamScore(me.tm)>=10:w[1]===me,!!R,loc2||train)}}
  else{over-=dt;if(over<=0){over=0;for(const [i,e] of all()){e.k=0;if(i=='me'||e.bot)respawn(e)}ents=[]}}
- if(RMM.matches){flash=0;shake=0}else{flash=Math.max(0,flash-dt);shake=Math.max(0,shake-dt);}{let n=0;for(let i=0;i<parts.length;i++){const p=parts[i];p.x+=p.vx*dt;p.y+=p.vy*dt;p.l-=dt;if(p.l>0)parts[n++]=p}parts.length=n}for(const d of decals)d.l-=dt;decals=decals.filter(d=>d.l>0);if(decals.length>70)decals.splice(0,decals.length-70);for(const f of kf)f.l-=dt;kf=kf.filter(f=>f.l>0);for(const a of an)a.l-=dt;an=an.filter(a=>a.l>0);for(const t of txts){t.y-=38*dt;t.l-=dt}txts=txts.filter(t=>t.l>0);pt+=dt;if(R&&pt>.07){pt=0;sendPres()}}
+ if(RMM.matches){flash=0;shake=0}else{flash=Math.max(0,flash-dt);shake=Math.max(0,shake-dt);}{let n=0;for(let i=0;i<parts.length;i++){const p=parts[i];p.x+=p.vx*dt;p.y+=p.vy*dt;p.l-=dt;if(p.l>0)parts[n++]=p}parts.length=n}for(const d of decals)d.l-=dt;decals=decals.filter(d=>d.l>0);if(decals.length>70)decals.splice(0,decals.length-70);for(const f of kf)f.l-=dt;kf=kf.filter(f=>f.l>0);for(const a of an)a.l-=dt;an=an.filter(a=>a.l>0);for(const t of txts){t.y-=38*dt;t.l-=dt}txts=txts.filter(t=>t.l>0);pt+=dt;if(R&&pt>.05){pt=0;sendPres()}}
 function rr(x,y,w,h,r,f){ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fillStyle=f;ctx.fill()}
 function drawDummy(e){softShadow(e.x,e.y+22,20,7);
  ctx.fillStyle='#8a5a2b';ctx.fillRect(e.x-4,e.y-4,8,26);ctx.fillRect(e.x-26,e.y-18,52,7);
