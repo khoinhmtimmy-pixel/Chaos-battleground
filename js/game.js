@@ -63,6 +63,9 @@ const comboMul=e=>1+(e.ck>1?(e.ck-1)*CBON:0);
 const DCD=22,DHP=.5;
 const desOpen=e=>(e.hp<=e.mx*DHP||e.ck>=CMX);
 const desReady=e=>e.cd.c<=0&&desOpen(e);
+// banner of a desperation move: the hero's own line when it has one (Levi's ACKERMAN!, Khoi's
+// LEBRON JAMES!), otherwise the hero's own epithet, so no two characters shout the same thing
+const ULT=(c,s)=>s.ann||(s.form&&s.form.ann)||(c.t||c.n).toUpperCase()+'!';
 function bumpCombo(e,key){
  const keep=e.ckt>0&&e.ckk!==key;
  e.ck=keep?Math.min(CMX,(e.ck||0)+1):1;
@@ -82,6 +85,9 @@ function tryCast(e,id,key,tx,ty){const s=CH[e.ch].s[key];if(!e.al||e.dash||e.stn
 const ally=(o,e)=>raid?!!(e.raidE&&raid.fid[o]):tmode?!!(ent(o)&&ent(o)!==e&&ent(o).tm===e.tm):false;
 function cast(e,o,d,local){const c=CH[d.c],s=c.s[d.s],ba=d.s=='a'?1:0;if(e){e.rv=tm+1.2;e.at=tm;e.atn=(e.atn||0)+1}if(local&&o=='me')sfx(d.s=='a'?'atk':d.s=='r'?'ult':'skl');
  if(d.s!='a')say(d.x,d.y-50,s.nm+'!',c.col);if(d.s=='r'&&local)shake=.3;
+ // slot c announces itself with the caster's own line. Only the local player's casts do it: a bot
+ // ulting across the arena would otherwise spam the banner
+ if(d.s=='c'&&o=='me')ann(ULT(c,s),c.col);
  if(s.k=='proj')burst(d.x+Math.cos(d.a)*20,d.y+Math.sin(d.a)*20,c.col,d.s=='a'?4:14);
  if(s.k=='dash'||s.k=='blink')for(let i=0;i<16;i++){const u=i/15;P(d.x+(d.tx-d.x)*u,d.y+(d.ty-d.y)*u,0,-25,.35+u*.25,c.col,11-u*5)}
  if(s.k=='dash'||s.k=='blink')for(let i=0;i<5;i++){const u=i/4;decals.push({x:d.x+(d.tx-d.x)*u,y:d.y+(d.ty-d.y)*u,col:c.col,g:1,l:.45+u*.35,m:.8,r:0,cr:[],rot:0})}
@@ -104,7 +110,7 @@ function cast(e,o,d,local){const c=CH[d.c],s=c.s[d.s],ba=d.s=='a'?1:0;if(e){e.rv
  else if(s.k=='shield'&&local&&e)e.sh=s.dur;else if(s.k=='heal'){if(local&&e)e.hp=Math.min(e.mx,e.hp+s.amt);burst(d.x,d.y,'#7dffb0',26)}else if(s.k=='haste'){if(local&&e){e.hst=s.dur;if(s.sh)e.sh=s.sh}burst(d.x,d.y,c.col,20)}
   // Titan form: swap in boosted stats, remember the base so tick() can put them back
   if(s.form&&local&&e){if(!e.tb)e.tb={mx:e.mx,sm:e.sm};e.tn=s.form.dur;e.fm=s.form.mul||1;e.mx=Math.round(e.mx*(1+(s.form.hp||0)));e.sm=Math.round(e.sm*(1+(s.form.sh||0)));e.sd=Math.min(e.sd,e.sm);e.hp=e.mx;
-   if(s.form.hst)e.hst=s.form.dur;shake=.5;burst(d.x,d.y,c.col,50);burst(d.x,d.y,'#ffffff',30);ann(s.form.ann||(c.n.toUpperCase()+" FORM!"),c.col)}
+   if(s.form.hst)e.hst=s.form.dur;shake=.5;burst(d.x,d.y,c.col,50);burst(d.x,d.y,'#ffffff',30)}
  else if(s.k=='cone'){let dm=s.dmg,r=s.r,arc=s.arc,emp=0;
   // passive combo: every third basic swing is a bigger, harder cut
   if(c.pas&&ba&&e){e.cmb=(e.cmb||0)%3+1;if(e.cmb==3){dm*=c.pas.x3;r*=1.25;arc=Math.min(6.3,arc*1.35);emp=1}}

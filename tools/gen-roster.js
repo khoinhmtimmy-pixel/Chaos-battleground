@@ -10,8 +10,9 @@ const fs=require('fs'),path=require('path'),root=path.join(__dirname,'..');
 
 // ---------------------------------------------------------------- kit archetypes
 // cd bands mirror the hand-written roster: a .24-.6, q 3.5-6, e 3.5-10, r 13-16
-// slot c is the desperation move: cd 22, and the engine only lets it fire at <=50% hp or on a
-// 5-stack combo, so it may be far stronger than r without inflating how often a hero is strong.
+// slot c is the desperation move: cd 22 here (data.js shortens it to 20 at load), and the engine only
+// lets it fire at <=50% hp or on a 5-stack combo, so it may be far stronger than r without
+// inflating how often a hero is strong.
 // x5* options override its numbers; they are deliberately named x5 and not cd, which is the field.
 const K={
  blade:(o={})=>{const s=o.spd||520;
@@ -436,8 +437,25 @@ if(process.argv.includes('--check'))process.exit(0);
 
 // ---------------------------------------------------------------- emit
 const lit=o=>JSON.stringify(o).replace(/"/g,"'");
+// Per-hero signature. Four blade heroes used to be literally the same fighter: identical cooldowns,
+// identical damage, only the palette differed. Each kit is now nudged by a hash of its own name - up
+// to +-6% damage and +-2.5% cooldown, the two moving in opposite directions, so a hero with a
+// shorter cooldown hits softer and nobody is strictly better than their archetype.
+const sig=(n,slot)=>{let h=7;for(let i=0;i<n.length;i++)h=(h*31+n.charCodeAt(i)+i*13)%997;
+ const r=((h+slot*89)%13)-6;                    // -6..+6
+ return{d:1-r/105,cd:1-r/260}};
+const tune=(n,slot,o)=>{const t=sig(n,['a','q','e','r','c'].indexOf(slot)+1),r=Object.assign({},o);
+ if(r.dmg!=null)r.dmg=+(r.dmg*t.d).toFixed(3);if(r.dps!=null)r.dps=+(r.dps*t.d).toFixed(3);
+ if(r.amt!=null)r.amt=+(r.amt*t.d).toFixed(3);
+ if(r.nova&&r.nova.dmg!=null)r.nova=Object.assign({},r.nova,{dmg:+(r.nova.dmg*t.d).toFixed(3)});
+ if(r.path&&r.path.dmg!=null)r.path=Object.assign({},r.path,{dmg:+(r.path.dmg*t.d).toFixed(3)});
+ if(r.dot&&r.dot.d!=null)r.dot=Object.assign({},r.dot,{d:+(r.dot.d*t.d).toFixed(3)});
+ r.cd=+(r.cd*t.cd).toFixed(2);return r};
 const chars=ROSTER.map(([n,t,k,w,gr,hs,acc,hp,sp,ex],i)=>{
   const kit=K[k](),[col,hair]=PALA[i];
+  for(const q of['a','q','e','r','c'])kit[q]=tune(n,q,kit[q]);
+  // the line the ultimate shouts in game (js/game.js ULT); data.js adds one to hand-written heroes
+  kit.c.ann=(kit.c.ann||t).toUpperCase()+'!';
   return`{n:'${n}',t:'${t}',col:'${col}',hair:'${hair}'`+
    (acc?`,acc:'${acc}'`:'')+`,hp:${hp},sp:${sp},s:{`+
    ['a','q','e','r','c'].map(q=>q+':'+lit(kit[q])).join(',')+'}}';
