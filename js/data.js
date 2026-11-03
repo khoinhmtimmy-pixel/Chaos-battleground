@@ -524,6 +524,17 @@ q:{k:'mine',r:100,dmg:34,st:.9,cd:4.5,nm:'Eclipse Seal'},
 e:{k:'blink',dist:320,to:1,cd:3.5,nm:'Umbra Step'},
 r:{k:'orbit',n:6,rad:82,dur:7,dmg:14,cd:13,nm:'Lunar Halo'},
  c:{k:'orbit',cd:22,n:12,rad:120,dur:8.5,dmg:27,ls:0.2,nm:'Total Eclipse'}
+}},
+// ---- Levi: the ODM duelist. Twin blades up close, and movement borrowed from the gear rather than
+// from speed: Q zips INTO the target and cuts on arrival, E is a shorter hop with no damage, so the
+// pair covers distance the way the show's gear does — in bursts, not in a sprint. The C is the
+// Ackerman burst: a spinning cut plus an 8s form that speeds him up, announced with his own line.
+{n:'Levi',t:'Ackerman',sec:'quest',col:'#334155',hair:'#0f172a',acc:'none',hp:122,sp:252,pas:{ba:1,n:10,heal:.12},s:{
+a:{k:'cone',r:88,arc:2,dmg:11,ls:.08,cd:.3,nm:'Twin Slash'},
+q:{k:'dash',dist:340,to:1,nova:{r:70,dmg:22,st:.25},cd:4,nm:'ODM Slash'},
+e:{k:'blink',dist:300,to:1,cd:3.6,nm:'Maneuver Gear'},
+r:{k:'nova',r:155,dmg:46,delay:.3,sl:.6,cd:13,nm:'Blade Cyclone'},
+ c:{k:'nova',cd:22,r:250,dmg:74,delay:.4,kb:80,st:.5,form:{dur:8,mul:1.6,hp:.3,sh:.5,hst:6,ann:'ACKERMAN!'},nm:'Ackerman Awakening'}
 }});
 for(const c of CH)if(c.foe)for(const k of['a','q','e','r','c'])if(!c.s[k])c.s[k]={k:'shield',dur:.01,cd:999,nm:'-'};
 const NORM=[...CH.keys()].filter(i=>!CH[i].boss&&!CH[i].foe),BASE=NORM.filter(i=>!CH[i].sec),BOSS=[...CH.keys()].filter(i=>CH[i].boss),FOE=[...CH.keys()].filter(i=>CH[i].foe);
@@ -654,6 +665,9 @@ LOOK.Khoi=['fist','vest','short',{acc:'band',facc:'crown',bc:'#1d4ed8',bd:0}];
 LOOK.Marrow=['hammer','armor','bald',{acc:'none',fc:'#e7e5e4',fr:8,bc:'#57534e'}];
 LOOK.Sallow=['claws','light+tail','long',{acc:'none',tc:'#84cc16',fc:'#a3e635'}];
 LOOK.Nettle=['staff','robe+cape','long',{acc:'wizhat',cc:'#7e22ce',bc:'#fbbf24'}];
+// Levi: dual blades and the scout cloak. pair:1 is the same dual-wield flag Ren, Zann and Vaen use;
+// no headgear, because his silhouette is the point.
+LOOK.Levi=['sword','coat+cape','short',{pair:1,acc:'none',cc:'#14532d',bc:'#334155'}];
 Object.assign(LOOK,LOOK_R);
 for(const c of CH){const l=LOOK[c.n];c.lk=l?Object.assign({wp:l[0]||'none',gr:l[1]||'light',hs:l[2]||'bald'},l[3]):{wp:'sword',gr:'light',hs:'spiky'}}
 // ---- build: silhouette is what separates a tank from an assassin once a fighter is 40px tall, and

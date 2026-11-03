@@ -105,7 +105,7 @@ const QUESTS=[{id:'w1',ic:'⚔️',k:'wins',n:1,g:100},{id:'w10',ic:'⚔️',k:'
  {id:'l10',ic:'⭐',k:'lvl',n:10,g:300},{id:'l25',ic:'⭐',k:'lvl',n:25,g:900},{id:'l50',ic:'⏳',k:'lvl',n:50,hero:'Eon'},
  {id:'l100',ic:'👑',k:'lvl',n:100,g:6000},
  {id:'c10',ic:'🗺️',k:'cleared',n:10,g:300},{id:'c30',ic:'🗺️',k:'cleared',n:30,g:1000},{id:'c50',ic:'🌙',k:'cleared',n:50,hero:'Nyx'},
- {id:'k100',ic:'💀',k:'kills',n:100,g:150},{id:'k1000',ic:'💀',k:'kills',n:1000,g:700},{id:'k5000',ic:'💀',k:'kills',n:5000,g:2500},
+ {id:'k100',ic:'💀',k:'kills',n:100,g:150},{id:'k1000',ic:'💀',k:'kills',n:1000,g:700},{id:'k800',ic:'🗡️',k:'kills',n:800,hero:'Levi'},{id:'k5000',ic:'💀',k:'kills',n:5000,g:2500},
  {id:'h10',ic:'🦸',k:'heroes',n:10,g:400},{id:'h25',ic:'🦸',k:'heroes',n:25,g:1500},{id:'h44',ic:'🦸',k:'heroes',n:44,g:6000},
  {id:'s60',ic:'★',k:'stars',n:60,g:800},{id:'s150',ic:'★',k:'stars',n:150,g:6000}];
 const qVal=k=>k=='wins'?S.wins:k=='rf'?Math.ceil(S.raid/5):k=='rb'?S.rb:k=='lvl'?S.lvl:k=='cleared'?S.stage-1:k=='kills'?S.kills:k=='heroes'?Object.keys(S.own).length:Object.values(S.stars).reduce((a,b)=>a+b,0);
