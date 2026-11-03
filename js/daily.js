@@ -46,7 +46,10 @@ const DAILY_MODIFIERS = [
   { id: 'glass_cannon', name: 'Glass Cannon', desc: '+50% Damage, -30% Max HP', dmMul: 1.5, hpMul: 0.7 },
   { id: 'heavy_weight', name: 'Titan Armor', desc: '+40% Max HP, -15% Speed', hpMul: 1.4, spMul: 0.85 },
   { id: 'vampiric', name: 'Vampiric Pact', desc: '+10% Lifesteal, +25% Enemy Damage', lsAdd: 0.10, enemyDmMul: 1.25 },
-  { id: 'berserk', name: 'Berserker', desc: '+35% Damage, +20% CDR', dmMul: 1.35, cdMul: 1.2 }
+  { id: 'berserk', name: 'Berserker', desc: '+35% Damage, +20% CDR', dmMul: 1.35, cdMul: 1.2 },
+  // rule modifiers, no multiplier: they change what you are allowed to press
+  { id: 'sealed', name: 'Sealed Ultimate', desc: 'Desperation move disabled', noUlt: 1 },
+  { id: 'frenzy', name: 'Frenzy', desc: '+15% Speed, +15% Enemy Damage', spMul: 1.15, enemyDmMul: 1.15 }
 ];
 
 const DAILY_TITLES_PREFIX = ['Overclocked', 'Abyssal', 'Celestial', 'Shattered', 'Blazing', 'Frozen', 'Shadow', 'Radiant'];
@@ -68,8 +71,21 @@ function getDailyChallenge(dateInput) {
   const smallMaps = (typeof SMALL !== 'undefined' && Array.isArray(SMALL) && SMALL.length) ? SMALL : [0, 1, 2];
   const mapIndex = smallMaps[Math.floor(rand() * smallMaps.length)];
 
-  // Pick deterministic modifier
-  const modifier = DAILY_MODIFIERS[Math.floor(rand() * DAILY_MODIFIERS.length)];
+  // Two deterministic modifiers a day, stacked. One alone stopped being a modifier and became a
+  // number; two is a rule you have to play around (Sealed Ultimate + Glass Cannon is a different
+  // run from Berserker + Titan Armor).
+  const i1 = Math.floor(rand() * DAILY_MODIFIERS.length);
+  let i2 = Math.floor(rand() * (DAILY_MODIFIERS.length - 1));
+  if (i2 >= i1) i2++;
+  const m1 = DAILY_MODIFIERS[i1], m2 = DAILY_MODIFIERS[i2];
+  const mul = (x, y) => (x || 1) * (y || 1);
+  const modifier = {
+    id: m1.id + '+' + m2.id, name: m1.name + ' + ' + m2.name, desc: m1.desc + ' · ' + m2.desc,
+    spMul: mul(m1.spMul, m2.spMul), dmMul: mul(m1.dmMul, m2.dmMul), hpMul: mul(m1.hpMul, m2.hpMul),
+    cdMul: mul(m1.cdMul, m2.cdMul), enemySpMul: mul(m1.enemySpMul, m2.enemySpMul),
+    enemyDmMul: mul(m1.enemyDmMul, m2.enemyDmMul), lsAdd: (m1.lsAdd || 0) + (m2.lsAdd || 0),
+    noUlt: (m1.noUlt || m2.noUlt) ? 1 : 0
+  };
 
   // Pick deterministic title
   const prefix = DAILY_TITLES_PREFIX[Math.floor(rand() * DAILY_TITLES_PREFIX.length)];
@@ -83,6 +99,7 @@ function getDailyChallenge(dateInput) {
     mapIndex,
     mapName: (typeof MAPS !== 'undefined' && MAPS[mapIndex]) ? MAPS[mapIndex].n : 'Arena',
     modifier,
+    mods: [m1, m2],
     title,
     goldMultiplier: 1.5
   };
@@ -249,6 +266,7 @@ function startDailyRun() {
     cdMul: m.cdMul || 1,
     lsAdd: m.lsAdd || 0,
     enemyDmMul: m.enemyDmMul || 1,
+    noUlt: m.noUlt || 0,
     goldMul: ch.goldMultiplier || 1
   });
 }

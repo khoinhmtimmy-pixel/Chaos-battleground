@@ -14,7 +14,8 @@ const moveSrc = game.slice(a, b);
 
 // source assertions
 ok('game.js spawns the warden with bossAI', /b\.bossAI=CH\[bi\]\.bossAI/.test(game));
-ok('game.js dispatches to bossWardenAI', /if\(e\.bossAI==='warden'\)\{bossWardenAI\(e,id,t,bd,dt\);continue\}/.test(game));
+// every boss now runs the state machine (phases + telegraph), not only the one with bossAI set
+ok('game.js dispatches to bossWardenAI', /if\(e\.boss\|\|e\.bossAI==='warden'\)\{bossWardenAI\(e,id,t,bd,dt\);continue\}/.test(game));
 ok('boss.js defines bossWardenAI', /function bossWardenAI/.test(bossSrc));
 ok('boss.js has one-shot phase transitions', /e\.bossPhase===1&&hp<=0\.6/.test(bossSrc) && /e\.bossPhase===2&&hp<=0\.25/.test(bossSrc));
 

@@ -588,6 +588,15 @@ const GEAR=[
  {id:'au_vod',sl:'aura',rar:4,n:'Void Aura',v:'Hào Quang Hư Vô',p:5200,art:'gaurv',b:{hp:.05,sh:.05,dm:.05,sp:.05}},
  {id:'au_drg',sl:'aura',rar:4,n:'Dragon Aura',v:'Hơi Rồng',p:5200,art:'gaurdr',b:{dm:.12}}];
 const GBY=Object.fromEntries(GEAR.map(g=>[g.id,g])),GSLOTS=['head','charm','aura'];
+// ---- accessory sets. Wearing `need` pieces of a themed set adds a flat bonus on top of each piece,
+// so a build is a choice (two ember pieces vs one strong void piece) instead of three best-in-slot
+// numbers. Read by gearMul() in js/meta.js, which is the only place gear stats are applied.
+const GEAR_SETS=[
+ {id:'ember',n:'Ember',v:'Hỏa',ic:'🔥',ids:['ch_fir','au_emb','au_drg'],need:2,b:{dm:.05},d:'+5% damage',dv:'+5% sát thương'},
+ {id:'frost',n:'Frost',v:'Băng',ic:'❄️',ids:['ch_frz','au_frz','hb_hod'],need:2,b:{sh:.08,hp:.04},d:'+8% shield, +4% HP',dv:'+8% khiên, +4% máu'},
+ {id:'storm',n:'Storm',v:'Sấm',ic:'⚡',ids:['au_thu','hb_ant','ch_shu'],need:2,b:{cd:.94},d:'Skills recharge 6% faster',dv:'Hồi chiêu nhanh hơn 6%'},
+ {id:'royal',n:'Royal',v:'Vương giả',ic:'👑',ids:['hb_crn','ch_run','au_gld'],need:2,b:{hp:.06,sp:.04},d:'+6% HP, +4% speed',dv:'+6% máu, +4% tốc độ'},
+ {id:'void',n:'Void',v:'Hư không',ic:'🌌',ids:['ch_vod','au_vod','hb_ast'],need:2,b:{dm:.04,ls:.02},d:'+4% damage, +2% lifesteal',dv:'+4% sát thương, +2% hút máu'}];
 // ---- Halloween event. Every seasonal thing is gated on this window and simply goes dormant
 // afterwards. Nothing is ever deleted: whatever you already own stays owned, so nobody gets
 // locked out of progress the moment the clock runs out.
@@ -639,6 +648,21 @@ for(const c of CH){const b=BAL2[c.n];if(b&&!c.boss&&!c.foe)balScale(c,b[0],b[1])
   if(s.dot&&s.dot.d!=null)s.dot.d=+(s.dot.d*1.08).toFixed(3);
   if(/^(haste|shield|heal)$/.test(s.k)){if(!s.form)s.form=Object.assign({},FORM)}
   else if(!s.st&&!s.sl&&!s.form)s.sl=.7}})();
+// ---- archetype passives. Every hero without a hand-written pas gets one derived from its own kit,
+// so an archetype is a promise (tanks hold, casters cycle, assassins reposition) instead of four
+// heroes with the same numbers. Only fields the engine already reads are used: arm (shield regen),
+// cdr (cooldown), mv (movement), plus the existing cone x3 / n+heal / inf hooks.
+(function(){for(const c of CH){
+ if(c.boss||c.foe||!c.s||c.pas)continue;
+ const ks=['a','q','e','r','c'].map(k=>c.s[k]&&c.s[k].k),has=t=>ks.indexOf(t)>=0;
+ let p;
+ if(has('shield')||c.hp>=150)p={arm:1.7,nm:'Bulwark',d:'Khiên tự hồi nhanh hơn 70%',en:'Shield recharges 70% faster'};
+ else if(has('cone'))p={x3:1.4,n:9,heal:.05,nm:'Momentum',d:'Nhát thứ 3 mạnh hơn 40% và rộng hơn; mỗi 9 đòn trúng hồi 5% máu',en:'Every third swing +40% wider and harder; every 9 landed hits heal 5%'};
+ else if(has('heal')||has('haste'))p={cdr:.9,n:10,heal:.04,nm:'Devotion',d:'Hồi chiêu nhanh hơn 10%; mỗi 10 đòn trúng hồi 4% máu',en:'10% faster cooldowns; every 10 landed hits heal 4%'};
+ else if(has('beam')||has('zone')||has('rain')||has('orbit'))p={cdr:.92,nm:'Focus',d:'Hồi chiêu nhanh hơn 8%',en:'8% faster cooldowns'};
+ else if(has('blink')||has('dash')||has('strike'))p={mv:1.08,nm:'Footwork',d:'Chạy nhanh hơn 8%',en:'8% faster movement'};
+ else p={mv:1.05,n:8,heal:.04,nm:'Resolve',d:'Chạy nhanh hơn 5%; mỗi 8 đòn trúng hồi 4% máu',en:'5% faster movement; every 8 landed hits heal 4%'};
+ c.pas=p}})();
 // ---- unlock tiers: 0 starter, 1 rare, 2 epic, 3 legendary (unlock order only, kits stay PvP-balanced)
 const START=['Ren','Kaen','Yuki','Sakura','Khoi'],RARE=[...RARE_R,'Monko','Kuro','Nara','Raiden','Shion','Aoi','Gaia','Hikari','Zephyr','Noir','Neko','Ryuu'],LEGEND=[...LEGEND_R,'Riku','Kaito','Mei','Toru','Aya','Nao','Oren','Rex','Sora','Arashi'];
 for(const i of NORM){const c=CH[i];c.rar=c.sec?4:START.includes(c.n)?0:RARE.includes(c.n)?1:LEGEND.includes(c.n)?3:2}

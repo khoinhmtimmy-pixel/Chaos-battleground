@@ -13,9 +13,16 @@
 // were the cheapest way to climb.
 const L=require('./_lib');
 const START=1000,RANK_CAP=100,RANK_PAIR=10,TOPN=50,MIN_DUR=20;
+// Seasons: the ladder is keyed by UTC month, so a new month starts an empty ladder (everyone back
+// to START) and last month's table stays readable instead of being wiped. Nothing is deleted, and
+// the client is told which season it is looking at.
+const SEASON=()=>new Date().toISOString().slice(0,7);
+const ZK=()=>'cb:rk:'+SEASON();
+const SK=n=>'cb:rk:'+SEASON()+':'+n;
+const daysLeft=()=>{const d=new Date(),e=new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth()+1,0));return Math.max(1,Math.ceil((e-d)/864e5))};
 const kOf=g=>g<11?40:g<31?32:24;
-async function rating(name){const v=await L.redis('ZSCORE','cb:rk',name);return v==null?START:Math.round(+v)}
-async function stats(name){const r=await L.redis('GET','cb:rk:'+name);try{return r?JSON.parse(r):null}catch(e){return null}}
+async function rating(name){const v=await L.redis('ZSCORE',ZK(),name);return v==null?START:Math.round(+v)}
+async function stats(name){const r=await L.redis('GET',SK(name));try{return r?JSON.parse(r):null}catch(e){return null}}
 // per-day counters stored as {d:'YYYY-MM-DD',n}; they roll over by rewriting the date, so no TTL is needed locally
 async function bump(key,today,cap){const r=await L.redis('GET',key),c=r?JSON.parse(r):{d:'',n:0},d=c.d===today?c.n:0;
  if(d>=cap)return null;await L.redis('SET',key,JSON.stringify({d:today,n:d+1}));await L.redis('EXPIRE',key,172800);return d+1}
@@ -23,13 +30,13 @@ module.exports=async(req,res)=>{try{
  const p=L.who(req);if(!p)return L.send(res,401,{ok:false,err:'errAuth'});
  if(!L.hasDb())return L.send(res,503,{ok:false,err:'errNet'});
  if(p.r=='admin')return L.send(res,200,{ok:true,me:{elo:START,w:0,l:0,rank:null},top:[]});  // the admin is an env-var identity, it never plays ranked
- const [ur,pr]=await L.redis('MGET','cb:u:'+p.n,'cb:rk:'+p.n),u=ur?JSON.parse(ur):null;
+ const [ur,pr]=await L.redis('MGET','cb:u:'+p.n,SK(p.n)),u=ur?JSON.parse(ur):null;
  if(!u||(u.pv||1)!==p.v)return L.send(res,401,{ok:false,err:'errAuth'});
  if(req.method=='GET'){
-  const top=[],raw=await L.redis('ZREVRANGE','cb:rk',0,TOPN-1,'WITHSCORES')||[];
+  const top=[],raw=await L.redis('ZREVRANGE',ZK(),0,TOPN-1,'WITHSCORES')||[];
   for(let i=0;i+1<raw.length;i+=2){const s=await stats(raw[i]);top.push({name:(s&&s.nm)||raw[i],elo:Math.round(+raw[i+1]),w:s?s.w|0:0,l:s?s.l|0:0})}
-  const rank=await L.redis('ZREVRANK','cb:rk',p.n),st=pr?JSON.parse(pr):null;
-  return L.send(res,200,{ok:true,me:{elo:await rating(p.n),w:st?st.w|0:0,l:st?st.l|0:0,s:st?st.s|0:0,rank:rank==null?null:rank+1},top})}
+  const rank=await L.redis('ZREVRANK',ZK(),p.n),st=pr?JSON.parse(pr):null;
+  return L.send(res,200,{ok:true,season:SEASON(),days:daysLeft(),me:{elo:await rating(p.n),w:st?st.w|0:0,l:st?st.l|0:0,s:st?st.s|0:0,rank:rank==null?null:rank+1},top})}
  if(req.method!='POST')return L.send(res,405,{ok:false,err:'errNet'});
  const b=await L.body(req);
  if(b.act!='report'||!b.win)return L.send(res,400,{ok:false,err:'errNet'});
@@ -48,11 +55,11 @@ module.exports=async(req,res)=>{try{
  const k=kOf((st.w|0)+(st.l|0));
  const ra=await rating(p.n),rb=await rating(opp),d=Math.round(k*(1-1/(1+Math.pow(10,(rb-ra)/400)))),na=Math.max(100,ra+d),nb=Math.max(100,rb-d);
  // the loser's rating drops by the same amount even though they never reported
- await L.redis('ZADD','cb:rk',na,p.n);await L.redis('ZADD','cb:rk',nb,opp);
+ await L.redis('ZADD',ZK(),na,p.n);await L.redis('ZADD',ZK(),nb,opp);
  st.nm=u.name;st.w=(st.w|0)+1;st.l=st.l|0;st.s=(st.s|0)+1;st.bs=Math.max(st.bs|0,st.s);
- await L.redis('SET','cb:rk:'+p.n,JSON.stringify(st));
- const os=await stats(opp);if(os){os.l=(os.l|0)+1;os.s=0;os.nm=onm;await L.redis('SET','cb:rk:'+opp,JSON.stringify(os))}
- else await L.redis('SET','cb:rk:'+opp,JSON.stringify({nm:onm,w:0,l:1,s:0}));
+ await L.redis('SET',SK(p.n),JSON.stringify(st));
+ const os=await stats(opp);if(os){os.l=(os.l|0)+1;os.s=0;os.nm=onm;await L.redis('SET',SK(opp),JSON.stringify(os))}
+ else await L.redis('SET',SK(opp),JSON.stringify({nm:onm,w:0,l:1,s:0}));
  // both deltas go back, so the winner can show what the ladder did to each side
- L.send(res,200,{ok:true,elo:na,d,w:st.w,l:st.l,s:st.s,o:{n:onm,elo:nb,d:-d}})
+ L.send(res,200,{ok:true,season:SEASON(),days:daysLeft(),elo:na,d,w:st.w,l:st.l,s:st.s,o:{n:onm,elo:nb,d:-d}})
 }catch(e){console.error(e);L.send(res,500,{ok:false,err:'errNet'})}};

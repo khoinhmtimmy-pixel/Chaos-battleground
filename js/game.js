@@ -33,14 +33,17 @@ function begin(online,loc,dummy,raidMode,teamArg,again){
  if(run&&!again)return;
  // taking a local match over from an online one has to close the transport, or its socket leaks
  if(R){try{R.leave()}catch(e){}R=null}
- tmode=!!(online?onlineTeam:teamArg);kf=[];an=[];fb=0;matchT=0;choice=null;chest=null;portal=null;pk=[];decals=[];parts=[];txts=[];aim=null;hold=0;paused=0;allC=null;flash=0;shake=0;hsT=0;fxs.length=0;autoAim=!!($('aa')&&$('aa').checked);shards=[];{const mv=$('mpsel').value;setMap(online?onlineMap:(raidMode&&raidMode.map!=null)?raidMode.map:(survivalMode?MAPS.findIndex(m=>m.n&&m.n.indexOf('Survival Wasteland')>=0): (mv=='r'?Math.random()*MAPS.length|0:(+mv||0))));if(tmode&&!online&&!MAPS[MAP].w)setMap(BIG[Math.random()*BIG.length|0])}loc2=!online&&!!loc;train=!online&&!!dummy;if(!online&&!raidMode)pvpCfg={loc:loc?1:0,dummy:dummy?1:0,team:teamArg?1:0};
+ tmode=!!(online?onlineTeam:teamArg);kf=[];an=[];fb=0;matchT=0;choice=null;chest=null;portal=null;pk=[];decals=[];parts=[];txts=[];aim=null;hold=0;paused=0;allC=null;flash=0;shake=0;hsT=0;fxs.length=0;REC={t:0,f:[],c:[],end:0};REP=null;rmMe=0;rmPeer=0;autoAim=!!($('aa')&&$('aa').checked);shards=[];{const mv=$('mpsel').value;setMap(online?onlineMap:(raidMode&&raidMode.map!=null)?raidMode.map:(survivalMode?MAPS.findIndex(m=>m.n&&m.n.indexOf('Survival Wasteland')>=0): (mv=='r'?Math.random()*MAPS.length|0:(+mv||0))));if(tmode&&!online&&!MAPS[MAP].w)setMap(BIG[Math.random()*BIG.length|0])}loc2=!online&&!!loc;train=!online&&!!dummy;if(!online&&!raidMode)pvpCfg={loc:loc?1:0,dummy:dummy?1:0,team:teamArg?1:0};
  const nm=$('nm').value.trim()||'Hero',hSel=(raidMode&&raidMode.hero!=null)?raidMode.hero:sel;me=mk(hSel,450,300,nm);setGear(me);me.tm=0;me.x=SP[0][0];me.y=SP[0][1];others={};ents=[];over=0;lastHit=null;EVT.reset();
- if(!online&&dummy){const d=mk(0,450,150,'Dummy',true);d.dum=1;d.hp=d.mx=99999;d.sd=d.sm=0;d.log=[];d.tot=0;others.d0=d;d.x=450;d.y=60}else if(!online&&teamArg){const pool=BASE.filter(i=>i!=hSel).sort(()=>Math.random()-.5),al=mk(pool.pop(),SP[2][0],SP[2][1],'Ally',true),e1=mk(pool.pop(),SP[1][0],SP[1][1],'Enemy 1',true),e2=mk(pool.pop(),SP[3][0],SP[3][1],'Enemy 2',true);al.tm=0;e1.tm=e2.tm=1;others.b0=al;others.b1=e1;others.b2=e2}else if(!online){const nb=loc?2:3,pool=BASE.filter(i=>i!=hSel).sort(()=>Math.random()-.5);if(loc){const p=SP[1];others.p2=mk(pool.pop(),p[0],p[1],'Player 2');others.p2.loc=1;me.nm=nm+' (P1)'}for(let i=0;i<nb;i++){const p=SP[i+(loc?2:1)];others['b'+i]=mk(pool.pop(),p[0],p[1],'Bot '+(i+1),true)}}
+ if(!online&&dummy){const d=mk(0,450,150,'Dummy',true);d.dum=1;d.hp=d.mx=99999;d.sd=d.sm=0;d.log=[];d.tot=0;others.d0=d;d.x=450;d.y=60}else if(!online&&teamArg){ // 2v2 and 3v3: teamArg is the team size (2 or 3)
+ const sz=Math.max(2,Math.min(3,+teamArg||2)),pool=BASE.filter(i=>i!=hSel).sort(()=>Math.random()-.5);let n=0;
+ for(let k=1;k<sz;k++){const p=SP[2+((k-1)%2)],a2=mk(pool.pop(),p[0]+(k-1)*26,p[1]+(k>2?30:0),'Ally '+(k+1),true);a2.tm=0;others['b'+(n++)]=a2}
+ for(let k=0;k<sz;k++){const p=SP[1+(k%2)],e3=mk(pool.pop(),p[0]+(k>1?-26:0),p[1]+(k>1?26:0),'Enemy '+(k+1),true);e3.tm=1;others['b'+(n++)]=e3}}else if(!online){const nb=loc?2:3,pool=BASE.filter(i=>i!=hSel).sort(()=>Math.random()-.5);if(loc){const p=SP[1];others.p2=mk(pool.pop(),p[0],p[1],'Player 2');others.p2.loc=1;me.nm=nm+' (P1)'}for(let i=0;i<nb;i++){const p=SP[i+(loc?2:1)];others['b'+i]=mk(pool.pop(),p[0],p[1],'Bot '+(i+1),true)}}
  $('m').style.display='none';$('mb').style.display='block';if(!online&&raidMode){others={};newRun(raidMode);spawnRoom()}else raid=null;allC=null;resize();lab();UI.game();if(!run){run=1;last=performance.now();cancelAnimationFrame(raf);raf=requestAnimationFrame(loop)}}
 // a PvE run (campaign stage or endless raid); account stats and pre-bought buffs come from pveStats()
 function bfStr(r){r.bfs=Object.entries(r.bf).map(([k,v])=>(BUFFS.find(b=>b.n==k)||{}).ic+(v>1?'×'+v:'')).join(' ')}
 function newRun(cfg){const s=pveStats(cfg&&cfg.hero),c=CH[me.ch];if(cfg&&cfg.daily&&typeof dailyRunReset=='function')dailyRunReset();me.mx=me.hp=Math.round(c.hp*s.hp*((cfg&&cfg.hpMul)||1));me.sm=me.sd=Math.round(shOf(c)*s.sh);
- const r=raid={mode:cfg.mode,stage:cfg.stage||0,daily:cfg.daily?1:0,eDm:(cfg&&cfg.enemyDmMul)||1,plan:cfg.mode=='stage'?stagePlan(cfg.stage):null,wave:1,floor:1,room:1,revived:0,score:0,gold:0,kills:0,rooms:0,hit:0,state:'fight',t:0,lv:1,xp:0,nxt:xpNeed(1),uc:0,dm:s.dm*((cfg&&cfg.dmMul)||1),cd:(s.cd||1)*((cfg&&cfg.cdMul)||1),sp:s.sp*((cfg&&cfg.spMul)||1),ls:(s.ls||0)+((cfg&&cfg.lsAdd)||0),cr:0,mg:1,sr:1,gm:(cfg&&cfg.goldMul)||1,bf:{},fid:{},queue:[],spawnT:0};
+ const r=raid={mode:cfg.mode,stage:cfg.stage||0,daily:cfg.daily?1:0,noUlt:cfg.noUlt?1:0,eDm:(cfg&&cfg.enemyDmMul)||1,plan:cfg.mode=='stage'?stagePlan(cfg.stage):null,wave:1,floor:1,room:1,revived:0,score:0,gold:0,kills:0,rooms:0,hit:0,state:'fight',t:0,lv:1,xp:0,nxt:xpNeed(1),uc:0,dm:s.dm*((cfg&&cfg.dmMul)||1),cd:(s.cd||1)*((cfg&&cfg.cdMul)||1),sp:s.sp*((cfg&&cfg.spMul)||1),ls:(s.ls||0)+((cfg&&cfg.lsAdd)||0),cr:0,mg:1,sr:1,gm:(cfg&&cfg.goldMul)||1,bf:{},fid:{},queue:[],spawnT:0};
  for(const n of s.buffs){const b=BUFFS.find(b=>b.n==n);if(b){b.f(r);r.bf[b.n]=(r.bf[b.n]||0)+1}}bfStr(r)}
 $('bp').onclick=()=>begin(false);$('bl').onclick=()=>begin(false,1);$('bd').onclick=()=>begin(false,0,1);$('bt2').onclick=()=>begin(false,0,0,0,1);$('bw').addEventListener('pointerdown',e=>{awaken();e.preventDefault()});
 function leave(t){if(R){try{R.leave()}catch(e){}}R=null;rankedOn=false;clearInput();run=0;paused=0;raid=null;choice=null;$('m').style.display='block';$('mb').style.display='none';UI.home(t||'')}
@@ -60,8 +63,8 @@ const comboMul=e=>1+(e.ck>1?(e.ck-1)*CBON:0);
 // ---- slot c, the desperation move. A 5th skill that is strong on purpose but welded shut most of
 // the time: it only opens at <=50% hp or on a full 5-stack chain, and costs 22s. That raises the
 // ceiling without raising uptime, so nothing had to be nerfed to make room for it.
-const DCD=22,DHP=.5;
-const desOpen=e=>(e.hp<=e.mx*DHP||e.ck>=CMX);
+const DCD=22,DHP=.5;let ultT=0,ultCol='#ffd84d';let REC=null,REP=null,rmMe=0,rmPeer=0;
+const desOpen=e=>(e.hp<=e.mx*DHP||e.ck>=CMX||(train&&e===me));
 const desReady=e=>e.cd.c<=0&&desOpen(e);
 // banner of a desperation move: the hero's own line when it has one (Levi's ACKERMAN!, Khoi's
 // LEBRON JAMES!), otherwise the hero's own epithet, so no two characters shout the same thing
@@ -72,11 +75,12 @@ function bumpCombo(e,key){
  e.ckk=key;e.ckt=CBW;
  if(e.ck>1&&e.ckm!==e.ck){e.ckm=e.ck;if(key=='a'||e.al)say(e.x,e.y-46-e.ck*4,'×'+e.ck,e.ck>=CMX?'#ffd84d':'#c7d2fe')}
  return e.ck}
-function tryCast(e,id,key,tx,ty){const s=CH[e.ch].s[key];if(!e.al||e.dash||e.stn>0||e.van>0||s.nm=='-')return;
+function tryCast(e,id,key,tx,ty){const s=CH[e.ch].s[key];if(!e.al||e.dash||e.stn>0||e.van>0||s.nm=='-')return;const pc=CH[e.ch].pas,cdm=(pc&&pc.cdr)||1;
  // the desperation move refuses politely rather than firing into an empty screen
+ if(key=='c'&&raid&&raid.noUlt)return;   // daily modifier: the ultimate is sealed for this run
  if(key=='c'&&!desReady(e)){if(id=='me'&&e.cd.c<=0)say(e.x,e.y-52,'✖','#ff7b8a');return}
  // chg = stored charges that refill one at a time; fa = quickened basic attacks left
- if(s.chg){if(!(e.cg&&e.cg[key]>0)||tm<(e.cgt||0))return;e.cg[key]--;e.cgt=tm+.3;if(e.cd[key]<=0)e.cd[key]=s.cd}else{if(e.cd[key]>0)return;e.cd[key]=s.cd;if(key=='a'&&e.fa>0){e.fa--;e.cd.a=s.cd*.55}}
+ if(s.chg){if(!(e.cg&&e.cg[key]>0)||tm<(e.cgt||0))return;e.cg[key]--;e.cgt=tm+.3;if(e.cd[key]<=0)e.cd[key]=s.cd*cdm}else{if(e.cd[key]>0)return;e.cd[key]=s.cd*cdm;if(key=='a'&&e.fa>0){e.fa--;e.cd.a=s.cd*.55}}
  if(s.k=='strike'){const dd=Math.hypot(tx-e.x,ty-e.y);if(dd>s.rng){tx=e.x+(tx-e.x)/dd*s.rng;ty=e.y+(ty-e.y)/dd*s.rng}}
  const d={c:e.ch,s:key,x:e.x,y:e.y,a:e.a,tx:s.cur?tx:e.x,ty:s.cur?ty:e.y};
  if(s.k=='dash'||s.k=='blink'){[d.tx,d.ty]=dest(e,s,tx,ty)}
@@ -84,10 +88,12 @@ function tryCast(e,id,key,tx,ty){const s=CH[e.ch].s[key];if(!e.al||e.dash||e.stn
 // same side: raid enemies with each other, or teammates in 2v2
 const ally=(o,e)=>raid?!!(e.raidE&&raid.fid[o]):tmode?!!(ent(o)&&ent(o)!==e&&ent(o).tm===e.tm):false;
 function cast(e,o,d,local){const c=CH[d.c],s=c.s[d.s],ba=d.s=='a'?1:0;if(e){e.rv=tm+1.2;e.at=tm;e.atn=(e.atn||0)+1}if(local&&o=='me')sfx(d.s=='a'?'atk':d.s=='r'?'ult':'skl');
+ // replay tape: local casts only, so a replay shows what actually happened on this screen
+ if(REC&&!R&&local){REC.c.push({t:matchT,c:d.c,s:d.s,x:d.x,y:d.y,a:d.a});if(REC.c.length>700)REC.c.shift()}
  if(d.s!='a')say(d.x,d.y-50,s.nm+'!',c.col);if(d.s=='r'&&local)shake=.3;
  // slot c announces itself with the caster's own line. Only the local player's casts do it: a bot
  // ulting across the arena would otherwise spam the banner
- if(d.s=='c'&&o=='me')ann(ULT(c,s),c.col);
+ if(d.s=='c'&&o=='me'){ann(ULT(c,s),c.col,1);ultT=(RMM.matches||R)?0:.55;ultCol=c.col}
  if(s.k=='proj')burst(d.x+Math.cos(d.a)*20,d.y+Math.sin(d.a)*20,c.col,d.s=='a'?4:14);
  if(s.k=='dash'||s.k=='blink')for(let i=0;i<16;i++){const u=i/15;P(d.x+(d.tx-d.x)*u,d.y+(d.ty-d.y)*u,0,-25,.35+u*.25,c.col,11-u*5)}
  if(s.k=='dash'||s.k=='blink')for(let i=0;i<5;i++){const u=i/4;decals.push({x:d.x+(d.tx-d.x)*u,y:d.y+(d.ty-d.y)*u,col:c.col,g:1,l:.45+u*.35,m:.8,r:0,cr:[],rot:0})}
@@ -221,7 +227,7 @@ function tick(id,e,dt){e.stn=Math.max(0,(e.stn||0)-dt);e.hst=Math.max(0,(e.hst||
  if(e.ckt>0){e.ckt-=dt;if(e.ckt<=0){e.ckt=0;e.ck=0;e.ckk='';e.ckm=0}}
  // Titan form (s.form): e.tn = seconds left, e.fm = damage multiplier; base stats restored when it runs out
  if(e.tn>0){e.tn-=dt;if(e.tn<=0){e.tn=0;e.fm=0;if(e.tb){e.mx=e.tb.mx;e.sm=e.tb.sm;e.tb=0}e.hp=Math.min(e.hp,e.mx);burst(e.x,e.y,'#fff',14)}}
- if(e.sm>0&&e.al){const k=id=='me'&&raid?raid.sr:1;e.sdt-=dt*k;if(e.sdt<=0&&e.sd<e.sm)e.sd=Math.min(e.sm,e.sd+e.sm*SHR*k*dt)}
+ if(e.sm>0&&e.al){const k=id=='me'&&raid?raid.sr:1;e.sdt-=dt*k;if(e.sdt<=0&&e.sd<e.sm)e.sd=Math.min(e.sm,e.sd+e.sm*SHR*k*dt*((CH[e.ch]&&CH[e.ch].pas&&CH[e.ch].pas.arm)||1))}
  if(e.brn>0&&e.al){e.brn-=dt;dmgTo(e,e.bd*dt,1);if(Math.random()<dt*14)P(e.x+(Math.random()-.5)*14,e.y-6,0,-50,.4,'#ff8a3c',4);
   if(e.hp<=0){if(id=='me'){lastHit=e.bo;die()}else slay(e,e.bo)}}}
 const ent=o=>o=='me'?me:others[o];
@@ -238,7 +244,7 @@ function upd2(q,dt){q.age=(q.age||0)+dt;const oe=ent(q.o);
   if(mine){if(q.pull&&dd>4){const f=Math.min(q.pull*dt,dd);move(e,(q.x-e.x)/dd*f,(q.y-e.y)/dd*f)}if(q.dps){const zd=dmgTo(e,q.dps*(q.dm||1)*dt,1);if(id=='me'){lastHit=q.o;if(raid)raid.hit+=zd}if(e.hp<=0){if(id=='me')die();else slay(e,q.o)}}if(q.sl)e.sl=Math.max(e.sl,.2)}}
   if(Math.random()<dt*20){const an=Math.random()*6.283,rd=q.r*Math.random();P(q.x+Math.cos(an)*rd,q.y+Math.sin(an)*rd,-Math.sin(an)*60,Math.cos(an)*60,.5,q.col,3)}}}
 function credit(o,v){const kr=o=='me'?me:others[o];if(o=='me'){me.k++;me.aw=Math.min(100,(me.aw||0)+15)}else if(others[o]&&(others[o].bot||others[o].loc))others[o].k++;if(kr&&v)feedKill(kr,v);if(v&&v.al===0){pk.push({x:v.x,y:v.y,t:'shard',v:Math.random()<.2?2:1})}}
-function ann(t,c){an.push({s:t,c,l:2.4,m:2.4});if(an.length>3)an.shift()}
+function ann(t,c,big){an.push({s:t,c,l:2.4,m:2.4,big:big?1:0});if(an.length>3)an.shift()}
 function feedKill(k,v){if(raid)return;kf.unshift({a:k.nm,b:v.nm,ta:k.tm,tb:v.tm,l:6});if(kf.length>5)kf.pop();
  k.ks=(k.kt&&tm-k.kt<7)?(k.ks||0)+1:1;k.kt=tm;const mine=k===me||(tmode&&k.tm===me.tm),N=['','','DOUBLE KILL','TRIPLE KILL','QUADRA KILL','PENTA KILL','LEGENDARY!'];
  if(!fb){fb=1;ann('FIRST BLOOD!',mine?'#ffd84d':'#ff7a7a')}else if(k.ks>=2)ann((mine?'':'ENEMY ')+N[Math.min(6,k.ks)],mine?'#ffd84d':'#ff7a7a');else if(k===me)ann('YOU SLAYED '+v.nm.toUpperCase(),'#7dffb0')}
@@ -308,11 +314,11 @@ function update(dt){if(choice)return;allC=null;matchT+=dt;
   else{let t=null,bd=1e9;if(autoAim)for(const [i,o] of all())if(i!='me'&&o.al&&!(tmode&&o.tm===me.tm)){const d=Math.hypot(o.x-me.x,o.y-me.y);if(d<bd){bd=d;t=o}}
    if(t){lockT=t;me.a=Math.atan2(t.y-me.y,t.x-me.x);mouse.x=t.x;mouse.y=t.y}else{if(Math.abs(joy.x)+Math.abs(joy.y)>.2)me.a=Math.atan2(joy.y,joy.x);mouse.x=me.x+Math.cos(me.a)*220;mouse.y=me.y+Math.sin(me.a)*220}}}
  if(raid)raidTick(dt);if(tmode&&R)assignTeams();me.a=Math.atan2(mouse.y-me.y,mouse.x-me.x);if(me.al&&!(me.awt>0))me.aw=Math.min(100,(me.aw||0)+(train?8:1)*(raid?raid.mg:1)*dt);
- for(const [id,e] of all()){for(const k in e.cd)e.cd[k]=Math.max(0,e.cd[k]-dt*(e.awt>0?2.5:1)*(id=='me'&&raid?raid.cd:1));e.sh=Math.max(0,e.sh-dt);e.sl=Math.max(0,e.sl-dt);if(e.van>0)e.van=Math.max(0,e.van-dt);
+ for(const [id,e] of all()){for(const k in e.cd)e.cd[k]=Math.max(0,e.cd[k]-dt*(e.awt>0?2.5:1)*(id=='me'&&raid?raid.cd:1)*(id=='me'&&train?4:1));e.sh=Math.max(0,e.sh-dt);e.sl=Math.max(0,e.sl-dt);if(e.van>0)e.van=Math.max(0,e.van-dt);
   if(e.cg)for(const k in e.cg){const sk=CH[e.ch].s[k];if(e.cg[k]<sk.chg&&e.cd[k]<=0){e.cg[k]++;if(e.cg[k]<sk.chg)e.cd[k]=sk.cd}}
   if(id=='me'||e.bot||e.loc)tick(id,e,dt);if(e.awt>0&&e.al&&Math.random()<dt*40)P(e.x+(Math.random()-.5)*24,e.y+10,(Math.random()-.5)*20,-90,.5,'#ffe14d',3)}
  if(me.al){if(me.dash){const d=me.dash;d.t+=dt/.15;const u=Math.min(1,d.t);me.x=d.x0+(d.x1-d.x0)*u;me.y=d.y0+(d.y1-d.y0)*u;if(u>=1){me.dash=null;SY.dash({x0:d.x0,y0:d.y0});move(me,0,0)}}
-  else if(!(me.stn>0)&&!(me.van>0)){let dx=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0)+joy.x,dy=(keys.s||keys.arrowdown?1:0)-(keys.w||keys.arrowup?1:0)+joy.y;const l=Math.max(1,Math.hypot(dx,dy)),sp=CH[me.ch].sp*(me.sl>0?.5:1)*(me.hst>0?1.6:1)*(me.awt>0?1.3:1)*(me.tn>0?1.35:1)*(raid?raid.sp:1);move(me,dx/l*sp*dt,dy/l*sp*dt)}
+  else if(!(me.stn>0)&&!(me.van>0)){let dx=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0)+joy.x,dy=(keys.s||keys.arrowdown?1:0)-(keys.w||keys.arrowup?1:0)+joy.y;const l=Math.max(1,Math.hypot(dx,dy)),sp=CH[me.ch].sp*((CH[me.ch].pas&&CH[me.ch].pas.mv)||1)*(me.sl>0?.5:1)*(me.hst>0?1.6:1)*(me.awt>0?1.3:1)*(me.tn>0?1.35:1)*(raid?raid.sp:1);move(me,dx/l*sp*dt,dy/l*sp*dt)}
   if(mouse.down||keys.f)tryCast(me,'me','a',mouse.x,mouse.y)}
  else if(!raid){me.rt-=dt;if(me.rt<=0)respawn(me)}
  for(const id in others){const e=others[id];
@@ -336,11 +342,11 @@ function update(dt){if(choice)return;allC=null;matchT+=dt;
   const live=raid?raid.state=='fight':over<=0;
   if(e.foe){if(live)foeAI(e,id,t,bd,dt);continue}
   if(!live)continue;
-if(e.bossAI==='warden'){bossWardenAI(e,id,t,bd,dt);continue}
+if(e.boss||e.bossAI==='warden'){bossWardenAI(e,id,t,bd,dt);continue}
   if(e.boss){e.a=Math.atan2(t.y-e.y,t.x-e.x);const dir=bd>260?1:bd<140?-1:0,sp=CH[e.ch].sp*.62*(e.sl>0?.5:1);move(e,Math.cos(e.a)*dir*sp*dt,Math.sin(e.a)*dir*sp*dt);
    if(bd<560){if(Math.random()<dt*1.8)tryCast(e,id,'a',t.x,t.y);if(Math.random()<dt*.45)tryCast(e,id,'q',t.x,t.y);if(Math.random()<dt*.2)tryCast(e,id,'e',t.x,t.y);if(Math.random()<dt*.16)tryCast(e,id,'r',t.x,t.y);if(desOpen(e)&&Math.random()<dt*.5)tryCast(e,id,'c',t.x,t.y)}continue}
   if(e.err==null||Math.random()<dt*1.5)e.err=(Math.random()-.5)*.9;e.a=Math.atan2(t.y-e.y,t.x-e.x)+e.err;
-  const dir=bd>240?1:bd<150?-1:0,st=Math.sin(tm*1.3+(id.charCodeAt(1)||id.charCodeAt(0)||0))*.7,sp=CH[e.ch].sp*.5*(e.sl>0?.5:1)*(e.hst>0?1.6:1);
+  const dir=bd>240?1:bd<150?-1:0,st=Math.sin(tm*1.3+(id.charCodeAt(1)||id.charCodeAt(0)||0))*.7,sp=CH[e.ch].sp*.5*((CH[e.ch].pas&&CH[e.ch].pas.mv)||1)*(e.sl>0?.5:1)*(e.hst>0?1.6:1);
   move(e,(Math.cos(e.a)*dir-Math.sin(e.a)*st)*sp*dt,(Math.sin(e.a)*dir+Math.cos(e.a)*st)*sp*dt);
   if(bd<380){if(Math.random()<dt*1.6)tryCast(e,id,'a',t.x,t.y);if(Math.random()<dt*.18)tryCast(e,id,'q',t.x,t.y);if(Math.random()<dt*.08)tryCast(e,id,'r',t.x,t.y)}
   if(Math.random()<dt*.12||(e.hp<30&&Math.random()<dt*.5))tryCast(e,id,'e',t.x,t.y)}
@@ -359,7 +365,10 @@ if(e.bossAI==='warden'){bossWardenAI(e,id,t,bd,dt);continue}
  ents=ents.filter(q=>q.life>0);
  if(raid){}else if(!over){const w=tmode?(teamScore(me.tm)>=10?[0,{nm:'YOUR TEAM'}]:teamScore(1-me.tm)>=10?[0,{nm:'ENEMY TEAM'}]:null):all().find(([i,e])=>e.k>=5);if(w){over=5;winner=w[1].nm;UI.pvpEnd(tmode?teamScore(me.tm)>=10:w[1]===me,!!R,loc2||train)}}
  else{over-=dt;if(over<=0){over=0;for(const [i,e] of all()){e.k=0;if(i=='me'||e.bot)respawn(e)}ents=[]}}
- if(RMM.matches){flash=0;shake=0}else{flash=Math.max(0,flash-dt);shake=Math.max(0,shake-dt);}{let n=0;for(let i=0;i<parts.length;i++){const p=parts[i];p.x+=p.vx*dt;p.y+=p.vy*dt;p.l-=dt;if(p.l>0)parts[n++]=p}parts.length=n}for(const d of decals)d.l-=dt;decals=decals.filter(d=>d.l>0);if(decals.length>70)decals.splice(0,decals.length-70);for(const f of kf)f.l-=dt;kf=kf.filter(f=>f.l>0);for(const a of an)a.l-=dt;an=an.filter(a=>a.l>0);for(const t of txts){t.y-=38*dt;t.l-=dt}txts=txts.filter(t=>t.l>0);pt+=dt;if(R&&pt>.05){pt=0;sendPres()}}
+ if(RMM.matches){flash=0;shake=0}else{flash=Math.max(0,flash-dt);shake=Math.max(0,shake-dt);}{let n=0;for(let i=0;i<parts.length;i++){const p=parts[i];p.x+=p.vx*dt;p.y+=p.vy*dt;p.l-=dt;if(p.l>0)parts[n++]=p}parts.length=n}for(const d of decals)d.l-=dt;decals=decals.filter(d=>d.l>0);if(decals.length>70)decals.splice(0,decals.length-70);for(const f of kf)f.l-=dt;kf=kf.filter(f=>f.l>0);for(const a of an)a.l-=dt;an=an.filter(a=>a.l>0);for(const t of txts){t.y-=38*dt;t.l-=dt}txts=txts.filter(t=>t.l>0);// replay tape: one sample every 100ms of where every fighter was. Cheap, and it is the only
+ // recording a replay needs: the viewer draws those positions back, it does not re-simulate.
+ if(REC&&!REP&&!R&&matchT-(REC.t||0)>=.1){REC.t=matchT;if(REC.f.length<1800)REC.f.push({t:+matchT.toFixed(2),a:all().map(([i2,e2])=>[Math.round(e2.x),Math.round(e2.y),+(e2.a||0).toFixed(2),e2.al?1:0,e2.ch])})}
+ pt+=dt;if(R&&pt>.05){pt=0;sendPres()}}
 function rr(x,y,w,h,r,f){ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fillStyle=f;ctx.fill()}
 function drawDummy(e){softShadow(e.x,e.y+22,20,7);
  ctx.fillStyle='#8a5a2b';ctx.fillRect(e.x-4,e.y-4,8,26);ctx.fillRect(e.x-26,e.y-18,52,7);
@@ -372,12 +381,12 @@ const SHC={};function shade(c,f){const k=c+f;if(SHC[k])return SHC[k];if(c.length
 function skillBtns(){const sk=CH[me.ch].s;
  for(const [k,x,y,r] of [['a',cw-70,chh-76,38],['q',cw-152,chh-50,27],['e',cw-140,chh-118,27],['r',cw-78,chh-152,27],['c',cw-212,chh-176,27]]){const s=sk[k],cg=s.chg?me.cg[k]:-1,cd=cg>0?0:me.cd[k],fr=cd>0?Math.min(1,cd/s.cd):0;
   // the desperation button reads sealed unless the condition is actually met
-  const lockd=k=='c'&&!desOpen(me),rdy=k=='c'&&desReady(me);
+  const sealed=k=='c'&&!!(raid&&raid.noUlt),lockd=k=='c'&&(!desOpen(me)||sealed),rdy=k=='c'&&!sealed&&desReady(me);
   ctx.fillStyle='rgba(0,0,0,.35)';ctx.beginPath();ctx.arc(x,y+4,r+3,0,7);ctx.fill();
   const g=ctx.createRadialGradient(x-r*.3,y-r*.35,2,x,y,r);g.addColorStop(0,k=='a'?'#ffa070':shade(CH[me.ch].col,.4));g.addColorStop(1,k=='a'?'#d13a1e':shade(CH[me.ch].col,-.28));ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill();ctx.strokeStyle=lockd?'#1b1030':rdy?'#ffd84d':'#1b1030';ctx.lineWidth=lockd?4:rdy?5:4;ctx.stroke();
   if(rdy){ctx.globalAlpha=.35+.25*Math.sin(tm*8);ctx.fillStyle='#ffd84d';ctx.beginPath();ctx.arc(x,y,r+6,0,7);ctx.fill();ctx.globalAlpha=1}
   ctx.fillStyle=lockd?'#5b5470':'#fff';ctx.font='900 '+(r*.95|0)+'px system-ui';ctx.textAlign='center';ctx.fillText(lockd?'🔒':IC[s.k]||'✦',x,y+r*.32);
-  if(lockd){ctx.font='900 8px system-ui';ctx.strokeStyle='#1b1030';ctx.lineWidth=2.5;ctx.strokeText('≤50% HP',x,y+r+13);ctx.fillStyle='#c9b6ff';ctx.fillText('≤50% HP',x,y+r+13);continue}
+  if(lockd){const lb2=sealed?'SEALED':'≤50% HP';ctx.font='900 8px system-ui';ctx.strokeStyle='#1b1030';ctx.lineWidth=2.5;ctx.strokeText(lb2,x,y+r+13);ctx.fillStyle='#c9b6ff';ctx.fillText(lb2,x,y+r+13);continue}
   if(fr>0){ctx.fillStyle='rgba(10,5,30,.74)';ctx.beginPath();ctx.moveTo(x,y);ctx.arc(x,y,r-1,-Math.PI/2,-Math.PI/2+Math.PI*2*fr);ctx.closePath();ctx.fill();ctx.fillStyle='#fff';ctx.font='900 '+(r*.7|0)+'px system-ui';ctx.fillText(cd.toFixed(cd<10?1:0),x,y+r*.25)}
   if(cg>=0){ctx.fillStyle='#7fe4ff';ctx.strokeStyle='#1b1030';ctx.lineWidth=3;ctx.beginPath();ctx.arc(x+r*.72,y-r*.72,9,0,7);ctx.fill();ctx.stroke();ctx.fillStyle='#1b1030';ctx.font='900 11px system-ui';ctx.fillText(cg,x+r*.72,y-r*.72+4)}
   ctx.font='900 10px system-ui';ctx.lineWidth=3;ctx.strokeStyle='#1b1030';const lb=k=='a'?'MOUSE':k.toUpperCase();ctx.strokeText(lb,x,y+r+13);ctx.fillStyle='#fff';ctx.fillText(lb,x,y+r+13);
@@ -400,7 +409,7 @@ function scoreboard(){const t0=teamScore(me.tm),t1=teamScore(1-me.tm),mm=Math.fl
  ctx.fillStyle='#1b1030';ctx.beginPath();ctx.roundRect(cx-94,y-4,188,36,12);ctx.fill();ctx.fillStyle='#2c6fe0';ctx.beginPath();ctx.roundRect(cx-92,y-2,62,32,[10,0,0,10]);ctx.fill();ctx.fillStyle='#e04a4a';ctx.beginPath();ctx.roundRect(cx+30,y-2,62,32,[0,10,10,0]);ctx.fill();
  ctx.fillStyle='#fff';ctx.textAlign='center';ctx.font='900 22px system-ui';ctx.fillText(t0,cx-61,y+22);ctx.fillText(t1,cx+61,y+22);ctx.font='900 14px system-ui';ctx.fillText(tt,cx,y+20);ctx.font='bold 9px system-ui';ctx.fillStyle='#ccd';ctx.fillText('FIRST TO 10 KOs',cx,y+45)}
 function hudFeed(){let y=64;ctx.textAlign='right';for(const f of kf){ctx.globalAlpha=Math.min(1,f.l);ctx.font='bold 12px system-ui';const t=f.a+'  ⚔  '+f.b,w=t.length*6.6+18;ctx.fillStyle='rgba(27,16,48,.85)';ctx.beginPath();ctx.roundRect(cw-w-8,y-13,w,21,8);ctx.fill();ctx.fillStyle=tmode?(f.ta===me.tm?'#9ccbff':'#ff9a9a'):'#fff';ctx.fillText(t,cw-17,y+2);y+=25}ctx.globalAlpha=1;
- let ay=chh*.22;for(const a of an){const age=a.m-a.l,sc=age<.2?1.7-age*3.5:1;ctx.save();ctx.translate(cw/2,ay);ctx.scale(sc,sc);ctx.globalAlpha=Math.min(1,a.l*2);ctx.font='900 32px system-ui';ctx.textAlign='center';ctx.lineWidth=8;ctx.lineJoin='round';ctx.strokeStyle='#1b1030';ctx.strokeText(a.s,0,0);ctx.fillStyle=a.c;ctx.fillText(a.s,0,0);ctx.restore();ay+=40}ctx.globalAlpha=1}
+ let ay=chh*.22;for(const a of an){const age=a.m-a.l,sc=age<.2?1.7-age*3.5:1;ctx.save();ctx.translate(cw/2,ay);ctx.scale(sc,sc);ctx.globalAlpha=Math.min(1,a.l*2);ctx.font='900 '+(a.big?44:32)+'px system-ui';ctx.textAlign='center';ctx.lineWidth=a.big?10:8;ctx.lineJoin='round';ctx.strokeStyle='#1b1030';ctx.strokeText(a.s,0,0);ctx.fillStyle=a.c;ctx.fillText(a.s,0,0);ctx.restore();ay+=a.big?54:40}ctx.globalAlpha=1}
 // ---- Halloween darkness. Off unless the player turns it on, and only while the event window
 // is open. The hero keeps a small bubble of light plus a cone along the aim, so anything that
 // can hit you from the dark is always at least a few steps inside your bubble.
@@ -435,6 +444,54 @@ function drawDark(){
  x.globalCompositeOperation='source-over';
  ctx.drawImage(DK,0,0,cw,chh);
 }
+// ---- ultimate entrance. A short cut-in around the caster's own line: letterbox bars in the hero's
+// colour, a corner slash and a brief slow motion. Purely decoration: no damage or timing changes,
+// and it stands down for prefers-reduced-motion and for online matches (a slowed local clock would
+// desync from peers, the same reason hitstop does).
+function drawUltCut(){if(ultT<=0||RMM.matches)return;
+ const fe=Math.pow(Math.min(1,ultT/.55),.6),h=chh*.2*fe;
+ ctx.save();
+ ctx.fillStyle='rgba(8,4,20,'+(.72*fe)+')';ctx.fillRect(0,0,cw,h);ctx.fillRect(0,chh-h,cw,h);
+ ctx.globalAlpha=.16*fe;ctx.fillStyle=ultCol;ctx.fillRect(0,0,cw,chh);
+ ctx.globalAlpha=.5+.35*fe;ctx.strokeStyle=ultCol;ctx.lineWidth=6;ctx.strokeRect(3,3,cw-6,chh-6);
+ ctx.globalAlpha=.85*fe;ctx.lineWidth=4;const q=90*fe;
+ for(const [x,y,sx,sy] of[[10,10,1,1],[cw-10,10,-1,1],[10,chh-10,1,-1],[cw-10,chh-10,-1,-1]]){
+  ctx.beginPath();ctx.moveTo(x,y+sy*q);ctx.lineTo(x,y);ctx.lineTo(x+sx*q,y);ctx.stroke()}
+ ctx.restore()}
+function trainedHud(){ctx.textAlign='center';ctx.lineWidth=3;ctx.font='900 11px system-ui';
+ otext('TRAINING · CD ×4 · C ALWAYS READY',cw/2,chh-(touch?92:116),'#a7f3d0')}
+// ---- online rematch. Both sides have to ask: one player pressing it alone would yank the other
+// out of a fight they are still playing.
+function askRematch(){if(!R)return;rmMe=1;try{R.emit('rm',1)}catch(e){}say(me.x,me.y-70,'REMATCH?','#ffd84d');tryRematch()}
+function tryRematch(){if(rmMe&&rmPeer){rmMe=rmPeer=0;resetArena()}}
+function resetArena(){if(!R)return;for(const [i,e] of all()){e.k=0;if(e.cd)for(const k in e.cd)e.cd[k]=0;respawn(e)}
+ ents=[];parts=[];txts=[];an=[];kf=[];fb=0;over=0;matchT=0;shake=0;flash=0;hsT=0;lastHit=null;
+ ann('REMATCH!','#ffd84d');sfx('clear')}
+// ---- replay viewer. It reads the tape REC wrote during the match (positions every 100ms plus the
+// local casts) and draws it back; it never re-runs the simulation, so it cannot disagree with what
+// was on screen.
+function startReplay(){if(!REC||REC.f.length<4)return;clearInput();REP={t:0,d:REC,end:REC.f[REC.f.length-1].t||1}}
+function drawReplay(){const d=REP.d,fr=d.f;
+ ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle='#0a0618';ctx.fillRect(0,0,cw,chh);
+ const s2=Math.min((cw-30)/W,(chh-96)/H),ox=(cw-W*s2)/2,oy=(chh-H*s2)/2+6;
+ ctx.fillStyle='#141032';ctx.fillRect(ox,oy,W*s2,H*s2);
+ ctx.strokeStyle='#ffffff33';ctx.lineWidth=2;ctx.strokeRect(ox,oy,W*s2,H*s2);
+ ctx.fillStyle='#2b2250';for(const p of PIL){ctx.beginPath();ctx.arc(ox+p[0]*s2,oy+p[1]*s2,p[2]*s2,0,7);ctx.fill()}
+ let i=0;while(i+1<fr.length&&fr[i+1].t<=REP.t)i++;
+ const A=fr[i],B=fr[Math.min(fr.length-1,i+1)],k=B.t>A.t?Math.min(1,(REP.t-A.t)/(B.t-A.t)):1,nc=Math.min(A.a.length,B.a.length);
+ for(let j=0;j<nc;j++){const a=A.a[j],b=B.a[j];if(!a[3])continue;
+  const x=a[0]+(b[0]-a[0])*k,y=a[1]+(b[1]-a[1])*k,ch=CH[a[4]]||CH[0];
+  ctx.fillStyle=ch.col;ctx.beginPath();ctx.arc(ox+x*s2,oy+y*s2,9,0,7);ctx.fill();
+  ctx.strokeStyle='#0a0618';ctx.lineWidth=2;ctx.stroke();
+  ctx.fillStyle='#fff';ctx.font='900 10px system-ui';ctx.textAlign='center';ctx.fillText((ch.n||'?')[0],ox+x*s2,oy+y*s2+4)}
+ for(const ev of d.c){const dt2=REP.t-ev.t;if(dt2<0||dt2>.3)continue;const u=dt2/.3,ch=CH[ev.c]||CH[0];
+  ctx.globalAlpha=.7*(1-u);ctx.strokeStyle=ch.col;ctx.lineWidth=3;
+  ctx.beginPath();ctx.arc(ox+ev.x*s2,oy+ev.y*s2,18+40*u,0,7);ctx.stroke();ctx.globalAlpha=1}
+ ctx.fillStyle='#fff';ctx.font='900 12px system-ui';ctx.textAlign='left';ctx.fillText('▶ REPLAY',ox+6,oy-10);
+ const p=Math.min(1,REP.t/Math.max(.1,d.end));
+ ctx.fillStyle='#ffffff22';ctx.fillRect(ox,oy+H*s2+10,W*s2,6);ctx.fillStyle='#ffd84d';ctx.fillRect(ox,oy+H*s2+10,W*s2*p,6);
+ ctx.fillStyle='#cbd5e1';ctx.font='bold 11px system-ui';ctx.textAlign='center';
+ ctx.fillText(REP.t>=d.end?'END · ESC · skip':'ESC · skip',cw/2,oy+H*s2+34)}
 function draw(){
  allC=null;drawWorld();
  ctx.setTransform(dpr,0,0,dpr,0,0);
@@ -450,9 +507,10 @@ function draw(){
  else{for(const k of['q','e','r','c']){const b=$('b'+k),cd=me.cd[k]||0,chg=sk[k].chg&&me.cg[k]>0,rdy=!chg&&cd<=0,v=chg?0:Math.round(cd/sk[k].cd*20)*5;if(TB[k]!==v){TB[k]=v;b.lastChild.style.height=v+'%'}if(TB['r'+k]!==rdy){TB['r'+k]=rdy;b.classList.toggle('rdy',rdy);b.classList.toggle('locked',!!chg)}const ds=rdy?'':(cd>0?String(Math.ceil(cd)):'🔒');if(TB['d'+k]!==ds){TB['d'+k]=ds;if(ds)b.setAttribute('data-cd',ds);else b.removeAttribute('data-cd')}}
   const av=Math.round(100-(me.awt>0?100:me.aw||0)),rdy=me.aw>=100&&!(me.awt>0);if(TB.w!==av){TB.w=av;$('bw').lastChild.style.height=av+'%'}if(TB.g!==rdy){TB.g=rdy;$('bw').style.boxShadow=rdy?'0 0 14px 4px #ffd84d':''}}
  if(touch&&!raid){const on=me.awt>0,by=chh-16,bx=cw/2-150,pct=on?me.awt/15:(me.aw||0)/100;rr(bx,by,306,9,4,'#000a');rr(bx,by,306*pct,9,4,on?'#fff3a0':'#ffd84d');ctx.font='bold 11px system-ui';ctx.textAlign='center';ctx.fillStyle='#fff';ctx.fillText(on?'AWAKENED '+me.awt.toFixed(1)+'s':(me.aw>=100?'AWAKEN READY!':'Awakening '+Math.floor(me.aw||0)+'%'),cw/2,by-3)}
- if(tmode)scoreboard();hudFeed();minimap();
+ if(tmode)scoreboard();hudFeed();minimap();if(train)trainedHud();
  // getting hit pulses the screen edge (red: health, blue: shield took it) instead of flashing the whole view
  if(flash>0){ctx.globalAlpha=Math.min(1,flash*(flashS?5:6));ctx.fillStyle=flashS?VB:VR;ctx.fillRect(0,0,cw,chh);ctx.globalAlpha=1}
+ drawUltCut();
  ctx.textAlign='center';if(!raid&&!me.al){ctx.fillStyle='#000a';ctx.fillRect(0,chh/2-40,cw,80);ctx.fillStyle='#fff';ctx.font='bold 26px system-ui';ctx.fillText('KO! Respawning in '+Math.ceil(me.rt),cw/2,chh/2+8)}
   if(over&&!ovKind){ctx.fillStyle='#000c';ctx.fillRect(0,chh/2-55,cw,110);ctx.fillStyle='#ffd166';ctx.font='bold 32px system-ui';ctx.fillText('🏆 '+winner+' wins!',cw/2,chh/2);ctx.font='16px system-ui';ctx.fillStyle='#fff';ctx.fillText('New round in '+Math.ceil(over),cw/2,chh/2+30)}if(typeof UI.pvpCount==='function')UI.pvpCount();if(over<=0&&typeof UI.pvpClose==='function')UI.pvpClose();}
 const TB={};let VB=null;
@@ -495,9 +553,10 @@ function loop(t){if(!run)return;const raw=(t-last)/1e3,dt=Math.min(.05,raw);last
   else if(fts>.024){slowT+=raw;if(slowT>2.5&&Q!==QL[2]){qa.prev=fts;qa.trial=3;slowT=0;setQ(QL.indexOf(Q)+1)}}else slowT=Math.max(0,slowT-raw)}
  // hitstop holds the simulation but never the picture: draw() still runs, so the frame on screen is the
  // frozen impact frame rather than a dropped one. hsT only ticks outside pause, where nothing moves anyway.
- if(!paused){if(hsT>0){hsT=Math.max(0,hsT-dt);draw();pd=0}else{tm+=dt;update(dt);draw();pd=0}}else if(!pd){draw();pd=1}
+ if(REP){REP.t+=raw;drawReplay();raf=requestAnimationFrame(loop);return}
+ if(!paused){if(hsT>0){hsT=Math.max(0,hsT-dt);draw();pd=0}else{const u2=(ultT>0&&!R)?.45:1;ultT=Math.max(0,ultT-dt);const s2=dt*u2;tm+=s2;update(s2);draw();pd=0}}else if(!pd){draw();pd=1}
  raf=requestAnimationFrame(loop)}
-addEventListener('keydown',e=>{const k=(e.key||'').toLowerCase();if(!k)return;if(!run||$('m').style.display!='none')return;if(k=='escape'){UI.pause();return}if(choice){if('123'.includes(k)&&k.length==1)pickBuff(+k-1);return}if(paused)return;(loc2&&(k.startsWith('arrow')||k=='enter')?k2:keys)[k]=1;
+addEventListener('keydown',e=>{const k=(e.key||'').toLowerCase();if(!k)return;if(!run||$('m').style.display!='none')return;if(k=='escape'){if(REP){REP=null;return}UI.pause();return}if(choice){if('123'.includes(k)&&k.length==1)pickBuff(+k-1);return}if(paused)return;(loc2&&(k.startsWith('arrow')||k=='enter')?k2:keys)[k]=1;
  if('qerc'.includes(k)&&k.length==1){me.a=Math.atan2(mouse.y-me.y,mouse.x-me.x);hold=0;tryCast(me,'me',k,mouse.x,mouse.y);e.preventDefault()}
  if(loc2&&others.p2&&',./;'.includes(k)&&k.length==1){const p=others.p2;tryCast(p,'p2',{',':'q','.':'e','/':'r',';':'c'}[k],p.x+Math.cos(p.a)*220,p.y+Math.sin(p.a)*220);e.preventDefault()}
  if(k=='enter')e.preventDefault()

@@ -12,6 +12,8 @@ function wire(){const my=R;begin(true);joinT=Date.now();
   for(const id in others)if(!others[id].bot&&!seen[id])delete others[id]});
  my.on('fx',m=>{if(R!==my)return;const d=m.data;if(m.isMe||!d||!CH[d.c]||!CH[d.c].s[d.s]||!others[m.peer])return;cast(others[m.peer],m.peer,d,false)});
  my.on('kill',m=>{if(R!==my)return;if(!m.isMe&&m.data&&m.data.k&&m.data.k===myPeer()&&me.al){me.k++;feedKill(me,others[m.peer]||{nm:'Enemy',tm:1})}});
+ // rematch handshake: the other side asked for another round. Nothing happens until both have.
+ my.on('rm',m=>{if(R!==my)return;if(!m.isMe)rmPeer=1;tryRematch()});
  $('msg').textContent='';sendPres()};
 function mkRTC(pc,dc,myId,otherId){const cbs={},pcbs=[];let rp=null,mine=null,last=Date.now();const iv=setInterval(()=>{if(rp&&Date.now()-last>5000){rp=null;pcbs.forEach(f=>f({peers:R2.peers()}))}},1000);
  const send=o=>{if(dc.readyState=='open')dc.send(JSON.stringify(o))};

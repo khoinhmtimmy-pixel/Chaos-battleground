@@ -13,25 +13,27 @@ const TX={vi:{tapStart:'NHẤN ĐỂ BẮT ĐẦU',login:'Đăng nhập',registe
   gearEquip:'Mặc',gearEquipped:'✔ Đang mặc',gearAll:'Đã có hết phụ kiện!',gearBon:'Cộng thêm',gearOther:'Dấu ấn riêng của {0} — bạn phải chọn nhân vật đó',
   gearWorn:'Đang mặc',gearEmpty:'Trống',gearSigilOf:'Dấu ấn của {0}',
   gearSigilNote:'Mỗi nhân vật có đúng một dấu ấn, miễn phí, chỉ đeo được khi đang chọn nhân vật đó. Đổi nhân vật ở tab Nhân vật để xem dấu ấn khác.',
+  gearSetNote:'Set chỉ tính các món đang mặc. Đeo đủ số món của một bộ là nhận thêm cộng dồn của bộ đó.',
   dark:'Bóng tối Halloween',darkNote:'Chỉ trong Màn chơi và Raid. Quái vẫn gây sát thương khi bạn không nhìn thấy.',
   evOver:'Halloween đã kết thúc',evDays:'Halloween còn {0} ngày',candy:'Kẹo',hChest:'Rương Halloween',hLeft:'Rương Halloween còn {0} ngày',hOver:'Rương Halloween đã đóng',
  campaign:'CHIẾN DỊCH',raid:'RAID VÔ TẬN',arena:'ĐẤU TRƯỜNG',play:'CHƠI ▶',open:'MỞ ▶',stage:'Màn',campDone:'Đã phá đảo! Chơi lại để cày vàng và XP',raidSub:'Kỷ lục: tầng {0} · phòng {1}',raidNew:'Leo tầng không giới hạn, boss mỗi 5 phòng',raidLock:'🔒 Qua màn 1-3 để mở khoá',arenaCard:'Đấu bot · 2v2 · Online PvP',change:'Đổi nhân vật',
- daily:'Quà hằng ngày',dailyd:'Đăng nhập mỗi ngày để nhận vàng. Chuỗi ngày càng dài, quà càng lớn (tối đa 7 ngày).',claim:'Nhận 🪙 {0}',claimed:'Đã nhận hôm nay · chuỗi {0} ngày',nextBuffs:'Buff cho lượt kế',noBuff:'Chưa có, mua ở Cửa hàng',
+ daily:'Quà hằng ngày',hotdT:'Hero của ngày',hotdOwn:'Bạn đã có nhân vật này — chơi hôm nay nhận +25% vàng.',hotdTry:'Hôm nay chơi thử miễn phí trong Màn chơi (không tính Xếp hạng).',hotdGo:'Chơi thử ▸',dailyd:'Đăng nhập mỗi ngày để nhận vàng. Chuỗi ngày càng dài, quà càng lớn (tối đa 7 ngày).',claim:'Nhận 🪙 {0}',claimed:'Đã nhận hôm nay · chuỗi {0} ngày',nextBuffs:'Buff cho lượt kế',noBuff:'Chưa có, mua ở Cửa hàng',
  dchTitle:'Thử thách hằng ngày',dchPlay:'CHƠI ▶',dchNone:'Chưa có lượt nào hôm nay',dchBoard:'Kỷ lục (riêng máy)',dchEmpty:'Chưa có lượt chơi nào. Danh sách chỉ lưu trên máy bạn.',dchNote:'Chỉ lưu cục bộ trên máy này — không phải xếp hạng toàn cầu và không chống gian lận.',
+ cTitle:'Thống kê sự nghiệp',cMatches:'Trận',cWins:'Thắng',cRate:'Tỉ lệ thắng',cSurvive:'Sống lâu nhất',cFav:'Hero chơi nhiều nhất',cNone:'Chưa có dữ liệu — chơi một trận đã',cRuns:'trận',cAch:'Thành tựu',cChal:'Thử thách',cMore:'Chi tiết ▸',
  rar0:'Cơ bản',rar1:'Hiếm',rar2:'Sử thi',rar3:'Huyền thoại',rar4:'BÍ ẨN',nQuests:'Nhiệm vụ',locked:'Chưa mở khoá',start:'BẮT ĐẦU',stInfo:'{0} phòng',first:'lần đầu ×2',stars3:'3★: không hồi sinh và còn từ 50% máu',
  select:'CHỌN',using:'✔ Đang dùng',upgrade:'⬆ Nâng Lv {0} · 🪙 {1}',maxed:'ĐÃ MAX',unlock:'Mở khoá · 🪙 {0}',orChest:'hoặc thử vận may với rương ở Cửa hàng',upDone:'{0} lên Lv {1}!',noGold:'Không đủ vàng',charNote:'Mỗi cấp nhân vật: +5% máu và sát thương (màn chơi & raid)',
  level:'Cấp',points:'Điểm',sHp:'Máu',sSh:'Khiên',sDm:'Sát thương',sSp:'Tốc độ',respec:'Đặt lại điểm · 🪙 {0}',respecDone:'Đã hoàn lại toàn bộ điểm',noPts:'Hết điểm, lên cấp để nhận thêm',statNote:'Mỗi lần lên cấp nhận 1 điểm. Chỉ số cộng thêm áp dụng cho Màn chơi và Raid; đấu PvP luôn cân bằng.',base:'Gốc',now:'Hiện tại',
  chest1:'Rương Anh Hùng',chest1d:'Mở ngẫu nhiên 1 nhân vật chưa có. Hiếm 70% · Sử thi 24,5% · Huyền thoại 5% · Bí ẩn 0,5%',chest2:'Rương Huyền Thoại',chest2d:'Mở ngẫu nhiên 1 nhân vật chưa có. Sử thi 68% · Huyền thoại 30% · Bí ẩn 2%',chestLeft:'Chỉ còn nhân vật Bí ẩn: mỗi lần mở có {0}% trúng, trượt được hoàn {1} 🪙',chestMiss:'Chưa trúng nhân vật Bí ẩn, hoàn lại {0} 🪙',
- secChest:'Chỉ có trong rương, tỉ lệ cực thấp',secQuest:'Phần thưởng nhiệm vụ: {0}',passive:'Nội tại',pasRovan:'Nhát chém thứ 3 mạnh hơn 80% và rộng hơn. Cứ 8 đòn đánh thường trúng đích hồi 10% máu.',charges:'tích {0} lần',desperNote:'Tuyệt chiêu — chỉ dùng được khi máu ≤ 50% hoặc chuỗi combo đủ 5 tầng. Hồi 22 giây.',
+ secChest:'Chỉ có trong rương, tỉ lệ cực thấp',secQuest:'Phần thưởng nhiệm vụ: {0}',passive:'Nội tại',pasRovan:'Nhát chém thứ 3 mạnh hơn 80% và rộng hơn. Cứ 8 đòn đánh thường trúng đích hồi 10% máu.',charges:'tích {0} lần',desperNote:'Tuyệt chiêu — chỉ dùng được khi máu ≤ 50% hoặc chuỗi combo đủ 5 tầng. Hồi 20 giây.',
  questSub:'Hoàn thành nhiệm vụ để nhận vàng và nhân vật BÍ ẨN.',qClaim:'NHẬN',qDone:'✔ Đã nhận',qGot:'Nhận thưởng: {0}',
  q_wins:'Thắng {0} trận Đấu trường',q_rf:'Lên tới tầng {0} trong Raid',q_rb:'Thắng trọn Raid: hạ cả {0} boss trong một lượt',q_lvl:'Đạt cấp {0}',q_cleared:'Qua {0} màn Chiến dịch',q_kills:'Hạ {0} quái',q_heroes:'Sở hữu {0} nhân vật',q_stars:'Thu thập {0} ★',lucky:'Buff May Mắn',luckyd:'Nhận 1 buff ngẫu nhiên, tự kích hoạt ở lượt chơi kế tiếp (giữ tối đa 3).',luckyFull:'Đã giữ đủ 3 buff, hãy vào trận dùng trước',allOwned:'Bạn đã có tất cả nhân vật!',owned:'Đã có {0}/{1} nhân vật',newHero:'NHÂN VẬT MỚI!',useNow:'Dùng ngay',got:'Nhận được {0}',
  settings:'Cài đặt',language:'Ngôn ngữ',sound:'Âm thanh',graphics:'Đồ hoạ',qAuto:'Tự động',qHigh:'Cao',qMed:'Vừa',qLow:'Thấp (mượt nhất)',autoAim:'📱 Tự ngắm trên điện thoại (ATK và chiêu tự nhắm địch gần nhất)',fullscreen:'⛶ Toàn màn hình',howto:'❓ Cách chơi',account:'Tài khoản',logout:'Đăng xuất',adminPanel:'🛠 Quản trị',accCloud:'Tài khoản cloud',accDev:'Tài khoản trên thiết bị này',accGuest:'Khách (chưa có tài khoản)',mkAcc:'Tạo tài khoản để giữ tiến trình',
- arenaSub:'Đấu đối kháng: ai hạ 5 mạng trước sẽ thắng. Thắng nhận 🪙 và XP.',map:'Bản đồ',mBots:'🤖 Đấu 3 Bot',m2v2:'👥 2v2 cùng Bot',mDummy:'🎯 Tập luyện',mLocal:'⌨️ 2 người 1 máy',online:'Online PvP (tối đa 4 người)',onlineSub:'Mọi người chọn CÙNG máy chủ trung gian và nhập CÙNG mã phòng.',room:'Mã phòng',team2:'👥 Chia đội 2v2 (bản đồ lớn)',broker:'Máy chủ trung gian',joinOnline:'🌐 Vào phòng Online',advServer:'🖥️ Dùng server riêng',advServerSub:'Dán địa chỉ server WebSocket của bạn (wss://…). Mọi người dùng chung địa chỉ và mã phòng.',joinServer:'Vào bằng server',advCode:'🌍 1v1 bằng mã copy-paste',advCodeSub:'Chủ phòng: bấm Host, gửi mã cho bạn, dán mã trả lời rồi bấm Connect. Khách: dán mã của chủ phòng, bấm Join, gửi lại mã trả lời.',pasteHere:'Dán mã vào đây',yourCode:'Mã của bạn hiện ở đây',
+ arenaSub:'Đấu đối kháng: ai hạ 5 mạng trước sẽ thắng. Thắng nhận 🪙 và XP.',map:'Bản đồ',mBots:'🤖 Đấu 3 Bot',m2v2:'👥 2v2 cùng Bot',m3v3:'👥 3 đấu 3 với Bot',mDummy:'🎯 Tập luyện',mLocal:'⌨️ 2 người 1 máy',online:'Online PvP (tối đa 4 người)',onlineSub:'Mọi người chọn CÙNG máy chủ trung gian và nhập CÙNG mã phòng.',room:'Mã phòng',team2:'👥 Chia đội 2v2 (bản đồ lớn)',broker:'Máy chủ trung gian',joinOnline:'🌐 Vào phòng Online',advServer:'🖥️ Dùng server riêng',advServerSub:'Dán địa chỉ server WebSocket của bạn (wss://…). Mọi người dùng chung địa chỉ và mã phòng.',joinServer:'Vào bằng server',advCode:'🌍 1v1 bằng mã copy-paste',advCodeSub:'Chủ phòng: bấm Host, gửi mã cho bạn, dán mã trả lời rồi bấm Connect. Khách: dán mã của chủ phòng, bấm Join, gửi lại mã trả lời.',pasteHere:'Dán mã vào đây',yourCode:'Mã của bạn hiện ở đây',
  rkTitle:'XẾP HẠNG',rkSub:'Đấu 1v1 online theo thang ELO 6 bậc (Đồng → Cao Thủ), mỗi bậc 3 hạng. Ai hạ 5 mạng trước thắng. Tối đa 100 trận/ngày.',rkYou:'ELO của bạn',rkQueue:'⚔️ Vào phòng Xếp hạng',rkBoard:'🏆 Bảng xếp hạng',
  rkNeedCloud:'Xếp hạng cần tài khoản cloud — đang chơi ở chế độ lưu trên máy',rkNeedAcc:'Xếp hạng chỉ dành cho tài khoản đăng ký — Khách không tham gia được',
  rkCode:'Phòng Xếp hạng: {0} — gửi mã này cho đối thủ. Ai hạ 5 mạng trước thắng, điểm ELO.',rkVs:'⚔️ Xếp hạng vs {0} · {1} ELO',rkDelta:'Xếp hạng: {0} ELO → {1}',rkNoOpp:'Không tìm thấy đối thủ trong phòng — trận không được ghi điểm',
  rkBoardTitle:'BẢNG XẾP HẠNG',rkEmpty:'Chưa có ai xếp hạng. Hãy là Number 1!',rkWL:'Thắng/Thua',rkMeLine:'{0} · ELO {1} · {2} thắng · {3} thua',rkUnranked:'chưa xếp hạng',
- rkMeRank:'#{0} · {1} · ELO {2}',rkNote:'Điểm ELO tính trên máy chủ từ kết quả hai phía tự báo cáo (giới hạn 100 trận/ngày) — không chống gian lận tuyệt đối.',rkRecord:'{0} thắng · {1} thua',rkStreak:'chuỗi {0}',rkPlace:'Định hạng {0}/{1} trận',rkNext:'còn {0} ELO tới {1}',rkOpp:'{0}: {1} ELO',
+ rkMeRank:'#{0} · {1} · ELO {2}',rkNote:'Điểm ELO tính trên máy chủ từ kết quả hai phía tự báo cáo (giới hạn 100 trận/ngày) — không chống gian lận tuyệt đối. Bảng đấu là MÙA GIẢI theo tháng: đầu mỗi tháng mọi người trở về 1000 ELO.',rkSeason:'Mùa {0} · còn {1} ngày',rematch:'🔁 Đấu lại',replayBtn:'▶ Xem lại trận',rkRecord:'{0} thắng · {1} thua',rkStreak:'chuỗi {0}',rkPlace:'Định hạng {0}/{1} trận',rkNext:'còn {0} ELO tới {1}',rkOpp:'{0}: {1} ELO',
  rkBronze:'Đồng',rkSilver:'Bạc',rkGold:'Vàng',rkPlat:'Bạch Kim',rkDia:'Kim Cương',rkGM:'Cao Thủ',
  paused:'TẠM DỪNG',resume:'TIẾP TỤC',restart:'Chơi lại từ đầu',quit:'Thoát về sảnh',onlineNoPause:'Trận online vẫn đang diễn ra!',chooseBuff:'CHỌN 1 BUFF',levelUp:'LÊN CẤP! ',lvFmt:'CẤP {0} - CHỌN NÂNG CẤP',runUps:'NÂNG CẤP TRONG TRẬN',downed:'BẠN ĐÃ GỤC NGÃ',reviveQ:'Hồi sinh với 50% máu và đầy khiên? (1 lần mỗi lượt)',noRevive:'Đã dùng lượt hồi sinh',revive:'HỒI SINH',giveup:'Bỏ cuộc',
  victory:'CHIẾN THẮNG!',defeat:'THẤT BẠI',raidOver:'KẾT THÚC RAID',raidReach:'Tới tầng {0} · phòng {1}',newBest:'Kỷ lục mới!',gold:'Vàng',kills:'Hạ gục',time:'Thời gian',lvup:'LÊN CẤP {0}! +{1} điểm nâng cấp · +{2} 🪙',nextStage:'MÀN TIẾP ▶',again:'Chơi lại',retry:'THỬ LẠI',toStats:'💪 Nâng cấp',toHub:'Về sảnh',pvpWin:'Thắng trận! +{0} 🪙 · +{1} XP',failTip:'Mẹo: nâng điểm chỉ số, nâng cấp nhân vật hoặc mua Buff May Mắn rồi thử lại.',
@@ -48,25 +50,27 @@ en:{tapStart:'TAP TO START',login:'Log in',register:'Sign up',username:'Username
   gearEquip:'Equip',gearEquipped:'✔ Equipped',gearAll:'You own every accessory!',gearBon:'Bonus',gearOther:"{0}'s own sigil — pick that hero to wear it",
   gearWorn:'Currently worn',gearEmpty:'Empty',gearSigilOf:"{0}'s sigil",
   gearSigilNote:'Every hero has exactly one sigil, free to use, and it can only be worn while that hero is selected. Switch hero on the Heroes tab to see another one.',
+  gearSetNote:'Sets count only what you are wearing. Reach the set size and its bonus stacks on top of each piece.',
   dark:'Halloween darkness',darkNote:'Stages and Raid only. Enemies still hit you when you cannot see them.',
   evOver:'Halloween has ended',evDays:'Halloween: {0} days left',candy:'Candy',hChest:'Halloween Chest',hLeft:'Halloween Chest: {0} days left',hOver:'The Halloween Chest is closed',
  campaign:'CAMPAIGN',raid:'ENDLESS RAID',arena:'ARENA',play:'PLAY ▶',open:'OPEN ▶',stage:'Stage',campDone:'Campaign cleared! Replay to farm gold and XP',raidSub:'Best: floor {0} · room {1}',raidNew:'Climb forever, a boss every 5 rooms',raidLock:'🔒 Clear stage 1-3 to unlock',arenaCard:'Bots · 2v2 · Online PvP',change:'Change hero',
- daily:'Daily gift',dailyd:'Log in every day for gold. Longer streaks pay more (up to 7 days).',claim:'Claim 🪙 {0}',claimed:'Claimed today · {0} day streak',nextBuffs:'Buffs for next run',noBuff:'None yet, buy in the Shop',
+ daily:'Daily gift',hotdT:'Hero of the day',hotdOwn:'You own this hero — play it today for +25% gold.',hotdTry:'Free trial in the Campaign today (not in Ranked).',hotdGo:'Play trial ▸',dailyd:'Log in every day for gold. Longer streaks pay more (up to 7 days).',claim:'Claim 🪙 {0}',claimed:'Claimed today · {0} day streak',nextBuffs:'Buffs for next run',noBuff:'None yet, buy in the Shop',
  dchTitle:'Daily Challenge',dchPlay:'PLAY ▶',dchNone:'No runs yet today',dchBoard:'Best runs (local)',dchEmpty:'No runs yet. This list is stored on your device only.',dchNote:'Local to this device — not a global ranking and not cheat-proof.',
+ cTitle:'Career stats',cMatches:'Matches',cWins:'Wins',cRate:'Win rate',cSurvive:'Longest survival',cFav:'Most played heroes',cNone:'No data yet — play a match',cRuns:'runs',cAch:'Achievements',cChal:'Challenges',cMore:'Details ▸',
  rar0:'Basic',rar1:'Rare',rar2:'Epic',rar3:'Legendary',rar4:'SECRET',nQuests:'Quests',locked:'Locked',start:'START',stInfo:'{0} rooms',first:'first clear ×2',stars3:'3★: no revive and at least 50% health left',
  select:'SELECT',using:'✔ In use',upgrade:'⬆ To Lv {0} · 🪙 {1}',maxed:'MAXED',unlock:'Unlock · 🪙 {0}',orChest:'or try your luck with a chest in the Shop',upDone:'{0} reached Lv {1}!',noGold:'Not enough gold',charNote:'Each hero level: +5% health and damage (stages & raid)',
  level:'Level',points:'Points',sHp:'Health',sSh:'Shield',sDm:'Damage',sSp:'Speed',respec:'Reset points · 🪙 {0}',respecDone:'All points refunded',noPts:'No points left, level up for more',statNote:'Every level grants 1 point. Bonuses apply in Stages and Raid; PvP is always even.',base:'Base',now:'Now',
  chest1:'Hero Chest',chest1d:'Unlocks a random hero you do not own. Rare 70% · Epic 24.5% · Legendary 5% · Secret 0.5%',chest2:'Legend Chest',chest2d:'Unlocks a random hero you do not own. Epic 68% · Legendary 30% · Secret 2%',chestLeft:'Only Secret heroes are left: each chest has a {0}% chance, a miss refunds {1} 🪙',chestMiss:'No Secret hero this time, {0} 🪙 refunded',
- secChest:'Chest only, at very low odds',secQuest:'Quest reward: {0}',passive:'Passive',pasRovan:'Every third swing hits 80% harder and wider. Every 8 basic hits landed restore 10% health.',charges:'{0} charges',desperNote:'Desperation move — only usable at ≤50% health or on a full 5-stack combo. 22s cooldown.',
+ secChest:'Chest only, at very low odds',secQuest:'Quest reward: {0}',passive:'Passive',pasRovan:'Every third swing hits 80% harder and wider. Every 8 basic hits landed restore 10% health.',charges:'{0} charges',desperNote:'Desperation move — only usable at ≤50% health or on a full 5-stack combo. 20s cooldown.',
  questSub:'Complete quests for gold and SECRET heroes.',qClaim:'CLAIM',qDone:'✔ Claimed',qGot:'Reward: {0}',
  q_wins:'Win {0} Arena matches',q_rf:'Reach floor {0} in the Raid',q_rb:'Beat the full Raid: defeat all {0} bosses in one run',q_lvl:'Reach level {0}',q_cleared:'Clear {0} Campaign stages',q_kills:'Defeat {0} monsters',q_heroes:'Own {0} heroes',q_stars:'Collect {0} ★',lucky:'Lucky Buff',luckyd:'Get a random buff that triggers on your next run (hold up to 3).',luckyFull:'Already holding 3 buffs, go use them first',allOwned:'You own every hero!',owned:'{0}/{1} heroes owned',newHero:'NEW HERO!',useNow:'Use now',got:'Got {0}',
  settings:'Settings',language:'Language',sound:'Sound',graphics:'Graphics',qAuto:'Auto',qHigh:'High',qMed:'Medium',qLow:'Low (smoothest)',autoAim:'📱 Mobile auto-aim (ATK and skills target the nearest enemy)',fullscreen:'⛶ Fullscreen',howto:'❓ How to play',account:'Account',logout:'Log out',adminPanel:'🛠 Admin',accCloud:'Cloud account',accDev:'Account on this device',accGuest:'Guest (no account yet)',mkAcc:'Create an account to keep progress',
- arenaSub:'Deathmatch: first to 5 KOs wins. Wins pay 🪙 and XP.',map:'Map',mBots:'🤖 vs 3 Bots',m2v2:'👥 2v2 with Bots',mDummy:'🎯 Training',mLocal:'⌨️ Local 2-Player',online:'Online PvP (up to 4 players)',onlineSub:'Everyone picks the SAME relay and types the SAME room code.',room:'Room code',team2:'👥 2v2 teams (big map)',broker:'Relay',joinOnline:'🌐 Join online room',advServer:'🖥️ Use your own server',advServerSub:'Paste your WebSocket server address (wss://…). Everyone uses the same address and room code.',joinServer:'Join with server',advCode:'🌍 1v1 with copy-paste codes',advCodeSub:'Host: press Host, send the code, paste the reply, press Connect. Guest: paste the host code, press Join, send your reply back.',pasteHere:'Paste a code here',yourCode:'Your code appears here',
+ arenaSub:'Deathmatch: first to 5 KOs wins. Wins pay 🪙 and XP.',map:'Map',mBots:'🤖 vs 3 Bots',m2v2:'👥 2v2 with Bots',m3v3:'👥 3v3 with Bots',mDummy:'🎯 Training',mLocal:'⌨️ Local 2-Player',online:'Online PvP (up to 4 players)',onlineSub:'Everyone picks the SAME relay and types the SAME room code.',room:'Room code',team2:'👥 2v2 teams (big map)',broker:'Relay',joinOnline:'🌐 Join online room',advServer:'🖥️ Use your own server',advServerSub:'Paste your WebSocket server address (wss://…). Everyone uses the same address and room code.',joinServer:'Join with server',advCode:'🌍 1v1 with copy-paste codes',advCodeSub:'Host: press Host, send the code, paste the reply, press Connect. Guest: paste the host code, press Join, send your reply back.',pasteHere:'Paste a code here',yourCode:'Your code appears here',
  rkTitle:'RANKED',rkSub:'Rated 1v1 online on a six-tier ELO ladder (Bronze → Grandmaster), three divisions each. First to 5 KOs wins. 100 matches a day max.',rkYou:'Your ELO',rkQueue:'⚔️ Enter a Ranked room',rkBoard:'🏆 Leaderboard',
  rkNeedCloud:'Ranked needs a cloud account — you are playing with device saves',rkNeedAcc:'Ranked is for registered accounts — guests cannot join',
  rkCode:'Ranked room: {0} — send this code to your opponent. First to 5 KOs wins, ELO on the line.',rkVs:'⚔️ Ranked vs {0} · {1} ELO',rkDelta:'Rating: {0} ELO → {1}',rkNoOpp:'No opponent found in this room — match not recorded',
  rkBoardTitle:'LEADERBOARD',rkEmpty:'Nobody is ranked yet. Be Number 1!',rkWL:'W-L',rkMeLine:'{0} · ELO {1} · {2}W {3}L',rkUnranked:'unranked',
- rkMeRank:'#{0} · {1} · ELO {2}',rkNote:'ELO is computed on the server from self-reported results (100 matches/day cap) — not fully cheat-proof.',rkRecord:'{0}W {1}L',rkStreak:'streak {0}',rkPlace:'placements {0}/{1}',rkNext:'{0} ELO to {1}',rkOpp:'{0}: {1} ELO',
+ rkMeRank:'#{0} · {1} · ELO {2}',rkNote:'ELO is computed on the server from self-reported results (100 matches/day cap) — not fully cheat-proof. The ladder is a MONTHLY SEASON: everyone returns to 1000 ELO when a new month starts.',rkSeason:'Season {0} · {1} days left',rematch:'🔁 Rematch',replayBtn:'▶ Watch replay',rkRecord:'{0}W {1}L',rkStreak:'streak {0}',rkPlace:'placements {0}/{1}',rkNext:'{0} ELO to {1}',rkOpp:'{0}: {1} ELO',
  rkBronze:'Bronze',rkSilver:'Silver',rkGold:'Gold',rkPlat:'Platinum',rkDia:'Diamond',rkGM:'Grandmaster',
  paused:'PAUSED',resume:'RESUME',restart:'Restart run',quit:'Quit to lobby',onlineNoPause:'The online match is still running!',chooseBuff:'CHOOSE A BUFF',levelUp:'LEVEL UP! ',lvFmt:'LEVEL {0} - CHOOSE AN UPGRADE',runUps:'RUN UPGRADES',downed:'YOU WERE DOWNED',reviveQ:'Revive with 50% health and a full shield? (once per run)',noRevive:'Revive already used',revive:'REVIVE',giveup:'Give up',
  victory:'VICTORY!',defeat:'DEFEAT',raidOver:'RAID OVER',raidReach:'Reached floor {0} · room {1}',newBest:'New best!',gold:'Gold',kills:'Kills',time:'Time',lvup:'LEVEL {0}! +{1} upgrade points · +{2} 🪙',nextStage:'NEXT STAGE ▶',again:'Play again',retry:'RETRY',toStats:'💪 Upgrade',toHub:'Lobby',pvpWin:'Match won! +{0} 🪙 · +{1} XP',failTip:'Tip: spend stat points, level your hero or grab a Lucky Buff, then try again.',
@@ -133,7 +137,11 @@ const charMul=n=>1+.05*((S.own[n]||1)-1);
 function setGear(e){for(const[sl,k]of[['head','gq'],['charm','gc'],['aura','ga']]){const g=GBY[S.eq[sl]];e[k]=g&&g.art||''}return e}
 // the engine asks for this when a run starts; buffs bought beforehand are spent here
 // gear sits next to the stat points: same multipliers, separate axis. Multipliers only, so nothing needs clamping.
-function gearMul(){const o={hp:1,sh:1,dm:1,sp:1,ls:0,cd:1};for(const sl of GSLOTS){const g=GBY[S.eq[sl]];if(!g)continue;const b=g.b;for(const k of['hp','sh','dm','sp'])o[k]*=1+(b[k]||0);o.ls+=b.ls||0;o.cd*=b.cd||1}return o}
+function gearMul(){const o={hp:1,sh:1,dm:1,sp:1,ls:0,cd:1};for(const sl of GSLOTS){const g=GBY[S.eq[sl]];if(!g)continue;const b=g.b;for(const k of['hp','sh','dm','sp'])o[k]*=1+(b[k]||0);o.ls+=b.ls||0;o.cd*=b.cd||1}
+ // set bonuses last, from what is actually worn, so the total in the gear screen is the real total
+ for(const st of GEAR_SETS)if(gearSetCount(st)>=st.need){const b=st.b;for(const k of['hp','sh','dm','sp'])o[k]*=1+(b[k]||0);o.ls+=b.ls||0;o.cd*=b.cd||1}
+ return o}
+const gearSetCount=st=>GSLOTS.filter(sl=>S.eq[sl]&&st.ids.indexOf(S.eq[sl])>=0).length;
 function pveStats(heroIdx){const h=(heroIdx==null||!(heroIdx in CH))?sel:heroIdx,cm=charMul(CH[h].n),b=S.pb.slice();if(b.length){S.pb=[];persist()}const g=gearMul();
  return{hp:cm*(1+BON.hp*S.st.hp)*g.hp,sh:(1+BON.sh*S.st.sh)*g.sh,dm:cm*(1+BON.dm*S.st.dm)*g.dm,sp:(1+BON.sp*S.st.sp)*g.sp,ls:g.ls,cd:g.cd,buffs:b}}
 const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
@@ -186,6 +194,7 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden){push(1);if
 // ---- ranked ladder. The rating itself lives on the server (/api/ranked); this side only picks
 // the entry point, reports a won duel and draws the board. rankedOn (game.js) marks the current
 // online match as rated so presence carries the rating and the round end reports the result.
+let RKSEA=null;   // {s:'2026-11', d: days left}: stamped from the server reply, drawn on the ranked cards
 const RKT=[[800,'🥉','rkBronze'],[1200,'🥈','rkSilver'],[1600,'🥇','rkGold'],[2000,'💠','rkPlat'],[2500,'💎','rkDia'],[1e9,'👑','rkGM']];
 const RKPLACE=10;   // rated matches before the ladder stops showing you as unplaced
 // six tiers of three divisions each: a ladder is read by name (Bạc II) far more than by a raw number,
@@ -199,13 +208,13 @@ const rkTierName=x=>x.ic+' '+t(x.key)+' '+x.div;
 // one card for the arena panel and the leaderboard footer, so the two can never disagree
 function rkCard(m,elo){const x=rkTier(elo),g=(m.w|0)+(m.l|0),p=Math.max(0,Math.min(1,(elo-x.lo)/Math.max(1,x.hi-x.lo)));
  const bar='<span style="display:block;height:8px;border-radius:4px;background:#120c30;border:1px solid #ffffff22;overflow:hidden;margin:6px 0 4px"><i style="display:block;height:100%;width:'+Math.round(p*100)+'%;background:linear-gradient(90deg,#4fd1ff,#7c5cff)"></i></span>';
- return rkTierName(x)+(m.rank!=null?' · #'+m.rank:' · '+t('rkUnranked'))+'<br><b>ELO '+fmt(elo)+'</b> · '+t('rkRecord',m.w|0,m.l|0)+' · 🔥 '+t('rkStreak',m.s|0)+bar+
+ return (RKSEA?'<small style="display:block;margin-bottom:2px">'+t('rkSeason',RKSEA.s,RKSEA.d)+'</small>':'')+rkTierName(x)+(m.rank!=null?' · #'+m.rank:' · '+t('rkUnranked'))+'<br><b>ELO '+fmt(elo)+'</b> · '+t('rkRecord',m.w|0,m.l|0)+' · 🔥 '+t('rkStreak',m.s|0)+bar+
   '<small>'+(g<RKPLACE?t('rkPlace',g,RKPLACE):t('rkNext',fmt(Math.max(1,Math.ceil(x.hi-elo))),rkTierName(rkTier(x.hi))))+'</small>'}
 async function rankedRefresh(){const el=$('rkme');if(!el)return;
  if(!ACC||ACC.mode=='guest'){el.textContent=t('rkNeedAcc');return}
  if(!cloudOK){el.textContent=t('rkNeedCloud');return}
  el.textContent=t('wait');
- try{const j=await api('ranked');if(!j.ok)throw 0;rkElo=j.me.elo;
+ try{const j=await api('ranked');if(!j.ok)throw 0;rkElo=j.me.elo;if(j.season)RKSEA={s:j.season,d:j.days|0};
   el.innerHTML=rkCard(j.me,rkElo)
  }catch(e){el.textContent=t('errNet')}}
 // only the winner reports: the server then moves both ratings, so one duel counts exactly once
@@ -226,6 +235,15 @@ function ov(kind,html){const o=$('ov');ovKind=kind;o.innerHTML=html||'';o.classL
 function toast(msg,bad){if(!msg)return;const d=document.createElement('div');d.textContent=msg;if(bad)d.className='bad';$('toast').appendChild(d);setTimeout(()=>d.remove(),3100)}
 const chapName=i=>LANG=='vi'?CHAP[i].v:CHAP[i].n,bIcon=n=>(BUFFS.find(b=>b.n==n)||{}).ic||'✨',starStr=n=>'★'.repeat(n)+'<u>'+'★'.repeat(3-n)+'</u>';
 function curStats(i){const c=CH[i],cm=charMul(c.n),g=gearMul();return{hp:Math.round(c.hp*cm*(1+BON.hp*S.st.hp)*g.hp),sh:Math.round(shOf(c)*(1+BON.sh*S.st.sh)*g.sh),dm:Math.round((cm*(1+BON.dm*S.st.dm)*g.dm-1)*100),sp:Math.round(c.sp*(1+BON.sp*S.st.sp)*g.sp)}}
+// a hand-written passive keeps its i18n entry (`pas<Name>`); an archetype passive carries its own text
+const pasText=c=>{const k='pas'+c.n,v=(TX[LANG]&&TX[LANG][k])||TX.en[k];return v||(c.pas&&(LANG=='vi'?c.pas.d:c.pas.en))||''}
+// one hero is on trial every UTC day: deterministic, the same for everyone, no server round-trip
+const heroOfDay=()=>{const k=getUtcDateKey();return NORM[(hashDateKey('hotd'+k)>>>0)%NORM.length]}
+function hotdCard(){const i=heroOfDay(),c=CH[i],own=!!S.own[c.n];
+ return`<div class="card"><b>🌞 ${t('hotdT')} · <span style="color:${c.col}">${c.n}</span></b>
+  <div class="mut" style="margin:4px 0">${own?t('hotdOwn'):t('hotdTry')}</div>
+  <div class="chips" style="justify-content:inherit;margin:6px 0 0"><span class="chip">❤️ ${c.hp}</span><span class="chip">⚔️ ${c.s.c.nm}</span>
+  <button class="btn sm green" data-a="hotd">${t('hotdGo')}</button></div></div>`}
 function skillDesc(s){const a=[],d=s.k=='zone'?s.dps:s.k=='dash'?(s.nova||s.path).dmg:['shield','heal','haste','blink'].includes(s.k)?0:s.dmg;if(d)a.push('⚔'+Math.round(d)+(s.n>1&&s.k!='orbit'&&s.k!='chain'?'×'+s.n:'')+(s.k=='zone'?'/s':s.k=='beam'?'/tick':''));if(s.heal||s.amt)a.push('✚'+(s.heal||s.amt));if(s.k=='shield')a.push('◍'+s.dur+'s');
  if(s.st||(s.nova&&s.nova.st))a.push('★');if(s.dot||(s.nova&&s.nova.dot))a.push('🔥');if(s.sl)a.push('❄');if(s.pierce)a.push('⇶');if(s.home)a.push('🎯');if(s.kb||s.pull||(s.nova&&s.nova.kb))a.push('↔');if(s.ls||s.hl)a.push('🩸');if(s.chg)a.push('('+t('charges',s.chg)+')');a.push('⏱'+s.cd+'s');return a.join(' ')}
 const questText=q=>q?t('q_'+q.k,fmt(q.n)):'';
@@ -274,7 +292,7 @@ home(){const c=CH[sel],p=curStats(sel),stg=Math.min(S.stage,NSTAGE),pl=stagePlan
  <div class="modes"><button class="mode m-camp" data-a="playStage" data-v="${stg}"><span class="mi">🗺️</span><b>${t('campaign')}</b><small>${done?t('campDone'):t('stage')+' '+(pl.c+1)+'-'+pl.i+' · '+chapName(pl.c)}</small><em>${t('play')}</em></button>
  <button class="mode m-raid${rk?'':' lock'}" data-a="playRaid"><span class="mi">🏰</span><b>${t('raid')}</b><small>${rk?(S.raid?t('raidSub',Math.ceil(S.raid/5),(S.raid-1)%5+1):t('raidNew')):t('raidLock')}</small><em>${rk?t('play'):'🔒'}</em></button>
  <button class="mode m-pvp" data-a="arena"><span class="mi">⚔️</span><b>${t('arena')}</b><small>${t('arenaCard')}</small><em>${t('open')}</em></button>
- <div class="mini"><div class="card"><b>🎁 ${t('daily')}</b>${dailyCard()}</div><div class="card"><b>✨ ${t('nextBuffs')}</b>${buffRow()}</div></div>${typeof progCard==='function'?progCard():''}${typeof chalCard==='function'?chalCard():''}</div></div>`},
+ <div class="mini"><div class="card"><b>🎁 ${t('daily')}</b>${dailyCard()}</div><div class="card"><b>✨ ${t('nextBuffs')}</b>${buffRow()}</div></div>${typeof progCard==='function'?progCard():''}${hotdCard()}${typeof chalCard==='function'?chalCard():''}</div></div>`},
 stages(){const cs=chapSel,cp=CHAP[cs],lo=cs*10+1;if(stSel<lo||stSel>lo+9)stSel=clamp(S.stage,lo,lo+9);
  const pl=stagePlan(stSel),lock=stSel>S.stage,base=60+25*stSel,foes=[...new Set((pl.i==10?[chi(cp.boss)]:[]).concat(pl.rooms[0].pool))];
  return`<div><div class="chaps">${CHAP.map((c,i)=>{let g=0;for(let s=i*10+1;s<=i*10+10;s++)g+=S.stars[s]||0;return`<button class="chap ${i==cs?'on':''} ${S.stage<=i*10?'lock':''}" style="--cc:${c.col}" data-a="chap" data-v="${i}">${i+1}. ${chapName(i)}<small>★ ${g}/30</small></button>`}).join('')}</div>
@@ -287,7 +305,7 @@ heroes(){const c=CH[heroSel],lv=S.own[c.n]||0,sk=c.s,hid=c.sec&&!lv,list=NORM.sl
   :`<button class="btn${S.gold<PRICE[c.rar]?' off':''}" data-a="buyChar">${t('unlock',fmt(PRICE[c.rar]))}</button><span class="mut">${t('orChest')}</span>`;
  return`<div class="hsplit"><div><div class="hgrid">${list.map(i=>{const h=CH[i],o=S.own[h.n];return`<button class="hc ${o?'':'lock'} ${h.sec?'sec':''} ${i==heroSel?'on':''} ${i==sel?'use':''}" style="--rc:var(--r${h.rar})" data-a="hero" data-v="${i}"><img data-p="${i}|128" alt=""><span>${h.sec&&!o?'???':h.n}</span>${o?`<span class="lvb">Lv${o}</span>`:''}</button>`}).join('')}</div><p class="mut" style="margin-top:10px">${t('owned',Object.keys(S.own).length,NORM.length)} · ${t('charNote')}</p></div>
  <div class="card hinfo"><canvas class="showcase" width="300" height="300" data-sc="${heroSel}" aria-label="${hid?'???':c.n}"${lv?'':hid?' style="filter:brightness(0) opacity(.7)"':' style="filter:brightness(.35)"'}></canvas><div><h3 style="color:${c.col}">${hid?'???':c.n}</h3><div class="mut">${hid?'':c.t+' · '}<span class="rar r${c.rar}">${t('rar'+c.rar)}</span>${lv?' · Lv.'+lv+'/'+CMAX:''}</div><div class="chips" style="justify-content:inherit;margin:6px 0 0"${hid?' hidden':''}><span class="chip">❤️ ${c.hp}</span><span class="chip">🛡️ ${shOf(c)}</span><span class="chip">👟 ${c.sp}</span></div></div>
- <div class="skl"${hid?' hidden':''}>${c.pas?`<kbd>★</kbd><span><b>${t('passive')}</b> <span class="mut">${t('pas'+c.n)}</span></span>`:''}${['a','q','e','r','c'].map(k=>`<kbd>${k=='a'?'ATK':k.toUpperCase()}</kbd><span>${IC[sk[k].k]||'✦'} <b>${sk[k].nm}</b> <span class="mut">${k=='c'?t('desperNote'):skillDesc(sk[k])}</span></span>`).join('')}</div><div class="hact">${acts}</div></div></div>`},
+ <div class="skl"${hid?' hidden':''}>${c.pas?`<kbd>★</kbd><span><b>${t('passive')}</b> <span class="mut">${pasText(c)}</span></span>`:''}${['a','q','e','r','c'].map(k=>`<kbd>${k=='a'?'ATK':k.toUpperCase()}</kbd><span>${IC[sk[k].k]||'✦'} <b>${sk[k].nm}</b> <span class="mut">${k=='c'?t('desperNote'):skillDesc(sk[k])}</span></span>`).join('')}</div><div class="hact">${acts}</div></div></div>`},
 stats(){const p=pts(),c=CH[sel],cur=curStats(sel),used=S.lvl-1-p,rows=[['hp','❤️','sHp','#ff6b7d'],['sh','🛡️','sSh','#a9dcff'],['dm','⚔️','sDm','#ffb02e'],['sp','👟','sSp','#7dffb0']];
  return`<div class="stats"><div class="card"><div class="ptl"><b>${t('level')} ${S.lvl}${S.lvl>=MAXL?' (MAX)':''}</b><span class="pp">${t('points')}: ${p}</span></div>
  ${rows.map(([k,ic,nm,col])=>{const v=S.st[k];return`<div class="srow" style="--sc:${col}"><span class="si">${ic}</span><div class="sn"><span>${t(nm)} <small>${v}/${SMAX}</small></span><small>+${Math.round(v*BON[k]*100)}%${v<SMAX?' → +'+Math.round((v+1)*BON[k]*100)+'%':''}</small></div><div class="pips">${Array.from({length:SMAX},(_,i)=>`<i${i<v?' class="f"':''}></i>`).join('')}</div><button class="btn sm green${p>0&&v<SMAX?'':' off'}" data-a="stat" data-v="${k}">+</button></div>`}).join('')}
@@ -311,11 +329,15 @@ gear(){const slName={head:'slHead',charm:'slCharm',aura:'slAura'},cur=gearMul(),
   const sig=GBY['sg_'+hero];
   const sigCard=sig?`<div class="card" style="margin-bottom:10px"><h3>${t('gearSigilOf',hero)}</h3>
    <p class="mut" style="margin:6px 0 10px">${t('gearSigilNote')}</p><div class="hgrid">${tile(sig)}</div></div>`:'';
+  const setCard=`<div class="card" style="margin-bottom:10px"><h3>✨ Set</h3><div class="qlist" style="gap:6px">`+
+   GEAR_SETS.map(st=>{const n=gearSetCount(st),on=n>=st.need;
+    return`<div class="mut" style="display:flex;gap:8px;justify-content:space-between;align-items:center;${on?'color:#7dffb0':''}"><span>${st.ic} <b>${LANG=='vi'?st.v:st.n}</b> · ${n}/${st.ids.length} <small>(${st.need} = ${LANG=='vi'?st.dv:st.d})</small></span><span>${on?'✔':''}</span></div>`}).join('')+
+   `</div><p class="mut" style="margin-top:6px">${t('gearSetNote')}</p></div>`;
   return`<div>
    <div class="card" style="margin-bottom:10px"><h3>${t('gearWorn')}</h3><div class="worn">${worn}</div>
     <div class="chips" style="justify-content:center;margin-top:10px">${tot.map(([k,v])=>`<span class="chip">${t({'hp':'sHp','sh':'sSh','dm':'sDm','sp':'sSp'}[k])} ${v>0?'+'+v+'%':'—'}</span>`).join('')}</div>
     <p class="mut" style="text-align:center;margin-top:10px">${t('gearSub')}</p></div>
-   ${sec}${sigCard}
+   ${sec}${setCard}${sigCard}
    <p class="mut" style="margin-top:4px">${Object.keys(S.gw).length}/${GEAR.filter(g=>!g.ex).length} ${t('gearOwned')}</p></div>`},
 shop(){const all=!chestPool().length,os=onlySecret(),hv=evOn(),hl=HLEFT();
  return`<div><div class="shop">${[0,1].map(k=>`<div class="card item c${k+1}"><div class="big">${k?'💎':'🎁'}</div><h3>${t('chest'+(k+1))}</h3><p class="mut">${all?t('allOwned'):os?t('chestLeft',CHEST[k].sec,Math.round(CHEST[k].cost*.6)):t('chest'+(k+1)+'d')}</p><button class="btn${all||S.gold<CHEST[k].cost?' off':''}" data-a="chest" data-v="${k}">🪙 ${CHEST[k].cost}</button></div>`).join('')}
@@ -323,6 +345,18 @@ shop(){const all=!chestPool().length,os=onlySecret(),hv=evOn(),hl=HLEFT();
   <div class="card item"><div class="big">${EV.candyIc}</div><h3>${t('candy')}</h3><p class="mut">${S.candy} 🍬 · ${t('lucky')}</p>${buffRow()}<button class="btn purple${S.candy<HCHEST.buff||S.pb.length>=3?' off':''}" data-a="candy">${EV.candyIc} ${HCHEST.buff}</button></div>
   <div class="card item"><div class="big">🎲</div><h3>${t('lucky')}</h3><p class="mut">${t('luckyd')}</p>${buffRow()}<button class="btn purple${S.gold<LUCKY||S.pb.length>=3?' off':''}" data-a="lucky">🪙 ${LUCKY}</button></div>
  <div class="card item"><div class="big">📅</div><h3>${t('daily')}</h3><p class="mut">${t('dailyd')}</p>${dailyCard()}</div></div><p class="mut" style="margin-top:10px">${t('owned',Object.keys(S.own).length,NORM.length)}</p></div>`},
+// a career page: the account's whole history, not the current run. Numbers come from PROG (its own
+// storage key), so nothing here can be confused with the run summary or the level bar.
+career(){const p=PROG,wr=p.matches?Math.round(p.wins/p.matches*100):0;
+ const hs=Object.entries(p.heroes||{}).sort((a,b)=>b[1]-a[1]).slice(0,5);
+ const row=(ok,nm,ds)=>`<div class="mut" style="display:flex;justify-content:space-between;gap:10px;padding:3px 0"><span>${ok?'✔':'○'} ${nm}</span><span style="text-align:right">${ds}</span></div>`;
+ return`<div><div class="card"><h3>📊 ${t('cTitle')}</h3><div class="chips" style="justify-content:inherit;margin:8px 0 0">
+  <span class="chip">${t('cMatches')} ${p.matches}</span><span class="chip">${t('cWins')} ${p.wins}</span><span class="chip">${t('cRate')} ${wr}%</span>
+  <span class="chip">💀 ${fmt(p.kills)}</span><span class="chip">👑 ${fmt(p.bosses)}</span><span class="chip">🏆 ${fmt(p.bestScore)}</span><span class="chip">🪜 ${t('floor')} ${p.bestFloor}</span></div>
+  <p class="mut" style="margin-top:8px">⏱ ${t('cSurvive')} ${Math.floor(p.bestSurvival/60)}:${String(p.bestSurvival%60).padStart(2,'0')}</p></div>
+ <div class="card" style="margin-top:10px"><h3>${t('cFav')}</h3>${hs.length?hs.map(([n,c])=>`<div class="mut" style="display:flex;align-items:center;gap:8px;padding:3px 0"><span style="flex:1">${esc(n)}</span><b>${c} ${t('cRuns')}</b></div>`).join(''):`<p class="mut">${t('cNone')}</p>`}</div>
+ <div class="card" style="margin-top:10px"><h3>🏅 ${t('cAch')}</h3>${ACHIEVEMENTS.map(a=>row(p.achievements.includes(a.id),a.name,a.desc)).join('')}</div>
+ <div class="card" style="margin-top:10px"><h3>🎯 ${t('cChal')}</h3>${CHALLENGES.map(a=>row(p.challenges.includes(a.id),a.name,a.desc)).join('')}</div></div>`},
 quests(){const l=QUESTS.map(q=>{const v=Math.min(q.n,qVal(q.k)),done=S.q[q.id],ok=v>=q.n,h=q.hero&&CH[chi(q.hero)];return[done?2:ok?0:1,`<div class="card qrow${h?' qsec':''}${done?' qdone':''}">${h?`<img data-p="${chi(q.hero)}|96" alt=""${S.own[q.hero]?'':' style="filter:brightness(0) opacity(.6)"'}>`:`<span class="qi">${q.ic}</span>`}
  <div class="qm"><b>${questText(q)}</b><div class="xp"><i style="width:${v/q.n*100}%"></i><span>${fmt(v)} / ${fmt(q.n)}</span></div><span class="mut">${h?`<span class="rar r4">${t('rar4')}</span> · ${S.own[q.hero]?h.n+' · '+h.t:'???'}`:'🪙 '+fmt(q.g)}</span></div>
  ${done?`<span class="mut">${t('qDone')}</span>`:`<button class="btn sm green${ok?' pulse':' off'}" data-a="quest" data-v="${q.id}">${t('qClaim')}</button>`}</div>`]}).sort((a,b)=>a[0]-b[0]);
@@ -341,8 +375,9 @@ function reward(o){let gold=o.gold,xp=0,stars=0,best=false;
  if(o.mode=='stage'){const base=60+25*o.stage;if(o.win){stars=1+(o.revived?0:1)+(!o.revived&&o.hp>=.5?1:0);const old=S.stars[o.stage]||0;S.stars[o.stage]=Math.max(old,stars);gold+=40+12*o.stage+Math.max(0,stars-old)*30;xp=base*(old?1:2);if(S.stage<=o.stage)S.stage=Math.min(NSTAGE+1,o.stage+1)}
   else{gold=Math.round(gold*.6);xp=Math.round(base*.3*o.rooms/Math.max(1,o.total))}}
  else{xp=o.rooms*(25+15*o.floor);if(o.wave>S.raid){S.raid=o.wave;best=o.rooms>0}S.rb=Math.max(S.rb,o.bosses|0)}
+ if(lastRun&&lastRun.hotd)gold=Math.round(gold*1.25);   // hero of the day, owned: +25% gold
  S.kills+=o.kills|0;
- S.gold+=gold;const up=addXp(xp);persist();if(typeof progRecordMatch=='function')progRecordMatch({mode:o.mode,win:o.mode=='stage'?!!o.win:(o.bosses||0)>=5,kills:o.kills|0,time:o.time||0,score:gold||0,bosses:o.bosses|0,floor:o.floor||0,stage:o.stage||0});return{gold,xp,stars,up,best}}
+ S.gold+=gold;const up=addXp(xp);persist();if(typeof progRecordMatch=='function')progRecordMatch({mode:o.mode,win:o.mode=='stage'?!!o.win:(o.bosses||0)>=5,kills:o.kills|0,time:o.time||0,score:gold||0,bosses:o.bosses|0,floor:o.floor||0,stage:o.stage||0,hero:(me&&CH[me.ch])?CH[me.ch].n:''});return{gold,xp,stars,up,best}}
 
 const ACT={
 async start(){if(busy)return;busy=true;try{await Promise.race([probe(),new Promise(r=>setTimeout(r,3500))]);if(await resume())enterHub();else{ACT.authtab(authMode);show('s-auth')}}finally{busy=false}},
@@ -364,7 +399,7 @@ go(v){page=v;render();$('page').scrollTop=0},lang(){setLang(LANG=='vi'?'en':'vi'
   if(!cloudOK){b.querySelector('p').textContent=t('rkNeedCloud');return}
   let j=null;try{j=await api('ranked')}catch(e){}
   if(!j||!j.ok){b.querySelector('p').textContent=t((j&&j.err)||'errNet');return}
-  rkElo=j.me.elo;
+  rkElo=j.me.elo;if(j.season)RKSEA={s:j.season,d:j.days|0};
   const rows=j.top.map((r,i)=>{const tk=rkTier(r.elo),mine=r.name.toLowerCase()===ACC.name.toLowerCase(),bg=i==0?'#ffd84d22':mine?'#ffffff14':'';
    return `<tr${bg?` style="background:${bg}"`:''}><td>${i==0?'👑':'#'+(i+1)}</td><td><b>${esc(r.name)}</b></td><td>${rkTierName(tk)}</td><td>${fmt(r.elo)}</td><td>${r.w}-${r.l}</td></tr>`}).join('');
   b.innerHTML=`<button class="x" data-a="close">✕</button><h3>🏆 ${t('rkBoardTitle')}</h3>`+
@@ -413,6 +448,9 @@ quest(v){const q=QUESTS.find(x=>x.id==v);if(!q||S.q[q.id]||qVal(q.k)<q.n)return;
 lucky(){if(S.pb.length>=3){toast(t('luckyFull'),1);sfx('err');return}if(!spend(LUCKY))return;const l=BUFFS.filter(b=>!b.run),b=l[Math.random()*l.length|0];S.pb.push(b.n);persist();sfx('buy');toast(t('got',b.ic+' '+b.n));render()},
 daily(){if(!dailyReady())return;const a=dailyAmt();S.streak=nextStreak();S.daily=today();S.gold+=a;persist();sfx('buy');toast('🎁 +'+a+' 🪙');render()},
  dailyRun(){if(typeof startDailyRun!=='function'||!S)return;ACT.home();startDailyRun()},
+ // hero of the day: a stage run as that hero. An unowned hero is a free trial; an owned one pays +25%
+ // gold for the day. Ranked and online never see it (begin() only honours cfg.hero in a PvE run).
+ hotd(){const i=heroOfDay(),own=!!S.own[CH[i].n];startRun({mode:'stage',stage:Math.min(S.stage,NSTAGE),hero:i,hotd:1,goldMul:own?1.25:1})},
 // in-game overlays
 resume(){ov(null);paused=0},
 quit(){ov(null);if(raid&&raid.state!='over')endRun(false);else leave('')},
@@ -420,9 +458,12 @@ retry(){if(lastRun)startRun(lastRun,1)},
 next(){const s=lastRun&&lastRun.stage+1;if(s&&s<=NSTAGE&&s<=S.stage)startRun({mode:'stage',stage:s},1);else ACT.home()},
 home(){ov(null);leave('')},toStats(){ov(null);page='stats';leave('')},
 revive(){const r=raid;if(!r||r.revived||!spend(reviveCost(r)))return;persist();ov(null);sfx('heal');revive()},
-giveup(){ov(null);endRun(false)},arenaMode(v){const mode=v;if(mode=='mSurvival'){survivalMode=true;begin(false,0,0,0,0);return}survivalMode=false;if(mode=='mBots')begin(false);else if(mode=='m2v2')begin(false,0,0,0,1);else if(mode=='mDummy')begin(false,0,1);else if(mode=='mLocal')begin(false,1);else if(mode==='online')ACT.joinOnline();else{toast('Starting '+mode,1);sfx('err')}},buff(v){pickBuff(+v)},
+giveup(){ov(null);endRun(false)},arenaMode(v){const mode=v;if(mode=='mSurvival'){survivalMode=true;begin(false,0,0,0,0);return}survivalMode=false;if(mode=='mBots')begin(false);else if(mode=='m2v2')begin(false,0,0,0,2);else if(mode=='m3v3')begin(false,0,0,0,3);else if(mode=='mDummy')begin(false,0,1);else if(mode=='mLocal')begin(false,1);else if(mode==='online')ACT.joinOnline();else{toast('Starting '+mode,1);sfx('err')}},buff(v){pickBuff(+v)},
 joinOnline(){const code=$('rc').value;if(!code){toast(t('enter a room code'),1);sfx('err');return}rankedOn=false;joining=1;try{joinMQ()}finally{joining=0}},
 pvpAgain(){ov(null);const c=(typeof pvpCfg!=='undefined'&&pvpCfg)||{loc:0,dummy:0,team:0};begin(false,c.loc,c.dummy,0,c.team,1)},
+ // online rematch (two-sided) and the replay viewer for any local match
+ rm(){askRematch()},
+ replay(){ov(null);modal(null);if(typeof startReplay==='function')startReplay()},
 admin(){adminPanel()}};
 
 // what the engine calls back into
@@ -442,7 +483,7 @@ pause(){if(!run)return;clearInput();if(ovKind=='pause'){ACT.resume();return}if(o
  // compact snapshot of the current match, so pausing also answers "how is this run going?"
  const stats=raid?`<div class="chips"><span class="chip">📍 ${t('floor')} ${raid.floor}</span><span class="chip">🚪 ${t('rooms')} ${raid.room}</span><span class="chip">💀 ${raid.kills}</span><span class="chip">🪙 ${Math.round(raid.gold)}</span></div>`
   :`<div class="chips"><span class="chip">💀 KO ${(me&&me.k)|0}</span><span class="chip">⏱ ${mm}:${ss}</span></div>`;
- ov('pause',`<div class="panel"><h2>${t('paused')}</h2>${R?`<p class="mut">${t('onlineNoPause')}</p>`:stats}<div class="col"><button class="btn big green" data-a="resume">${t('resume')}</button>${raid&&lastRun?`<button class="btn blue" data-a="retry">${t('restart')}</button>`:''}<button class="btn ghost" data-a="pauseHow">${t('howto')}</button><button class="btn red" data-a="quit">${t('quit')}</button></div></div>`)},
+ ov('pause',`<div class="panel"><h2>${t('paused')}</h2>${R?`<p class="mut">${t('onlineNoPause')}</p>`:stats}<div class="col"><button class="btn big green" data-a="resume">${t('resume')}</button>${R?`<button class="btn blue" data-a="rm">${t('rematch')}</button>`:''}${raid&&lastRun?`<button class="btn blue" data-a="retry">${t('restart')}</button>`:''}<button class="btn ghost" data-a="pauseHow">${t('howto')}</button><button class="btn red" data-a="quit">${t('quit')}</button></div></div>`)},
 choice(l,st){if(!l){if(ovKind=='choice')ov(null);return}ov('choice',`<div class="panel" style="width:min(640px,100%)"><h2>${st&&st.src=='lvl'?t('levelUp')+t('lvFmt',st.lv||0):t('chooseBuff')}</h2><div class="buffs">${l.map((b,i)=>`<button class="bf" data-a="buff" data-v="${i}"><span class="bi">${b.ic}</span>${b.n}<small>${LANG=='vi'?b.dv:b.d}</small><kbd>[ ${i+1} ]</kbd></button>`).join('')}</div></div>`)},
 down(r){const cost=reviveCost(r),can=!r.revived&&S.gold>=cost;sfx('lose');ov('down',`<div class="panel"><h2 class="bad">${t('downed')}</h2><p class="mut">${r.revived?t('noRevive'):t('reviveQ')}</p><div class="col">${r.revived?'':`<button class="btn big green${can?'':' off'}" data-a="revive">${t('revive')} · 🪙 ${cost}</button>`}<button class="btn red" data-a="giveup">${t('giveup')}</button></div><div class="gold" style="align-self:center">🪙 ${fmt(S.gold)}</div></div>`)},
 runEnd(o){const r=reward(o),st=o.mode=='stage',pl=st?stagePlan(o.stage):null,good=!st||o.win,mm=Math.floor(o.time/60),ss=String(Math.floor(o.time%60)).padStart(2,'0'),n=need(S.lvl),mx=S.lvl>=MAXL;sfx(r.up?'lvl':good&&(st||r.best)?'win':'lose');
@@ -454,10 +495,10 @@ runEnd(o){const r=reward(o),st=o.mode=='stage',pl=st?stagePlan(o.stage):null,goo
  <div class="mut">${st?t('stage')+' '+(pl.c+1)+'-'+pl.i+' · '+chapName(pl.c):t('raidReach',o.floor,o.room)+(r.best?' · 🏆 '+t('newBest'):'')}</div>
  <div class="rw"><div><small>${t('gold')}</small>🪙 +${fmt(r.gold)}</div><div><small>XP</small>⭐ +${fmt(r.xp)}</div><div><small>${t('kills')}</small>💀 ${o.kills}</div><div><small>${t('time')}</small>⏱ ${mm}:${ss}</div>${extra}</div>
  ${runUps(o)}${r.up?`<div class="lvup">🎉 ${t('lvup',S.lvl,r.up,50*r.up)}</div>`:''}<div class="xp" style="max-width:none"><i style="width:${mx?100:Math.min(100,S.xp/n*100)}%"></i><span>${t('level')} ${S.lvl} · ${mx?'MAX':Math.floor(S.xp)+' / '+n+' XP'}</span></div>
- ${st&&!o.win?`<p class="mut">${t('failTip')}</p>`:''}<div class="col">${btns}<button class="btn ghost" data-a="home">${t('toHub')}</button></div></div>`)},
+ ${st&&!o.win?`<p class="mut">${t('failTip')}</p>`:''}<div class="col">${btns}${REC&&REC.f.length>4?`<button class="btn blue" data-a="replay">${t('replayBtn')}</button>`:''}<button class="btn ghost" data-a="home">${t('toHub')}</button></div></div>`)},
 // deathmatch win (not training or couch play)
 pvpEnd(win,online,skip){if(!S)return;
- if(!skip&&typeof progRecordMatch=='function')progRecordMatch({mode:'arena',win:!!win,kills:(me&&me.k)|0,time:matchT||0,score:(me&&me.k)|0});
+ if(!skip&&typeof progRecordMatch=='function')progRecordMatch({mode:'arena',win:!!win,kills:(me&&me.k)|0,time:matchT||0,score:(me&&me.k)|0,hero:(me&&CH[me.ch])?CH[me.ch].n:''});
  if(win&&!skip){const g=online?60:30,x=online?100:50;S.gold+=g;S.wins++;const up=addXp(x);persist();toast(t('pvpWin',g,x));if(up){sfx('lvl');toast('🎉 '+t('lvup',S.lvl,up,50*up))}}
  if(rankedOn&&online&&!skip&&win)rankedReport();   // rated duel: report, the toast shows the new ELO
  if(online)return;   // online rounds run on; only local matches show a result screen
@@ -465,7 +506,7 @@ pvpEnd(win,online,skip){if(!S)return;
  ov('pvpEnd',`<div class="panel"><h2 class="${win?'':'bad'}">${win?t('victory'):t('defeat')}</h2>
  <div class="rw"><div><small>${t('kills')}</small>💀 KO ${(me&&me.k)|0}</div><div><small>${t('time')}</small>⏱ ${mm}:${ss}</div>${tmode?`<div><small>${t('score')}</small>🎯 ${teamScore(me.tm)} : ${teamScore(1-me.tm)}</div>`:''}</div>
  <p class="mut">${t('newRound','<b id="pvpN">'+Math.ceil(over)+'</b>')}</p>
- <div class="col"><button class="btn big green" data-a="pvpAgain">${t('again')}</button><button class="btn ghost" data-a="home">${t('toHub')}</button></div></div>`)},
+ <div class="col"><button class="btn big green" data-a="pvpAgain">${t('again')}</button>${REC&&REC.f.length>4?`<button class="btn blue" data-a="replay">${t('replayBtn')}</button>`:''}<button class="btn ghost" data-a="home">${t('toHub')}</button></div></div>`)},
  pvpCount(){const n=Math.ceil(over);if(ovKind=='pvpEnd'&&pvpCdShown!==n){pvpCdShown=n;const el=$('pvpN');if(el)el.textContent=n}},
  pvpClose(){if(ovKind=='pvpEnd')ov(null)},};
 

@@ -13,6 +13,12 @@
 function bossWardenInit(e){if(e.bossPhase)return;e.bossPhase=1;e.bossState='idle';e.bossT=1.6;e.bossWarn=null;e.summoned2=false;e.summoned3=false;e.enraged=false;e.bossRecover=0}
 function bossWardenAI(e,id,t,bd,dt){
  bossWardenInit(e);
+ // Every boss runs this state machine now, so each of them telegraphs and each of them gets a
+ // second phase instead of just being a big health bar. A fight that drags past 90 seconds
+ // enrages once: a stalemate cannot be farmed forever, and the player is told why.
+ e.rageT=(e.rageT||0)+dt;
+ if(e.rageT>90&&!e.rage2){e.rage2=1;e.dmgMul=(e.dmgMul||1)*1.25;e.hst=Math.max(e.hst||0,999);
+  ann('BOSS ENRAGED!','#ff7a7a');say(e.x,e.y-72,'ENRAGED!','#ff7a7a');shake=Math.max(shake,.5);sfx('boss')}
  const hp=e.hp/e.mx;
  // ---- phase transitions (each fires once) -----------------------------------------------
  if(e.bossPhase===1&&hp<=0.6){

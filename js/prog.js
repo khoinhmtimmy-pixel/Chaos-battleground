@@ -6,7 +6,7 @@
 // ============================================================================================
 const PROG_KEY='cb_prog', PROG_VERSION=1;
 const PROG_DEFAULTS=()=>({v:PROG_VERSION, matches:0, wins:0, kills:0, bosses:0, arenaWins:0,
-  bestScore:0, bestSurvival:0, bestFloor:0, achievements:[], challenges:[], badges:[], recent:[]});
+  bestScore:0, bestSurvival:0, bestFloor:0, achievements:[], challenges:[], badges:[], recent:[], heroes:{}});
 
 // Validate + migrate anything loaded from storage.
 function progLoad(){
@@ -31,6 +31,8 @@ function progLoad(){
   out.challenges=strs(p.challenges);
   out.badges=strs(p.badges);
   out.recent=strs(p.recent);
+  // per-hero play counts power the career page's "most played" card
+  if(p.heroes&&typeof p.heroes==='object')for(const k of Object.keys(p.heroes).slice(0,120))if(/^[A-Za-z' ]{1,24}$/.test(k))out.heroes[k]=num(p.heroes[k],0,1e7);
   // version migration hook: older profiles keep their numbers, only new fields default
   if(typeof p.v!=='number')out.v=PROG_VERSION;
   return out;
@@ -86,6 +88,8 @@ function progRecordMatch(stats){
   if(score>PROG.bestScore)PROG.bestScore=score;
   if(time>PROG.bestSurvival)PROG.bestSurvival=time;
   if(floor>PROG.bestFloor)PROG.bestFloor=floor;
+  const hero=typeof stats.hero==='string'?stats.hero.slice(0,24):'';
+  if(hero&&/^[A-Za-z' ]{1,24}$/.test(hero))PROG.heroes[hero]=(PROG.heroes[hero]||0)+1;
 
   const match={mode,win,kills,time,score,bosses,floor,stage:stats.stage||0};
   // achievements
@@ -113,5 +117,6 @@ function progCard(){
     <span class="chip">Kills ${p.kills}</span><span class="chip">Best ${p.bestScore}</span>
     <span class="chip">Survive ${Math.floor(p.bestSurvival/60)}:${String(p.bestSurvival%60).padStart(2,'0')}</span>
    </div>
-   <div style="margin-top:6px">${badges}</div></div>`;
+   <div style="margin-top:6px">${badges}</div>
+   <button class="btn sm blue" data-a="go" data-v="career" style="margin-top:8px">${t('cMore')}</button></div>`;
 }
