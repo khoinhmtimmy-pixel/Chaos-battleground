@@ -364,8 +364,8 @@ if(hit)sq*=1+(e.hft-tm)/.12*.13;
  ctx.fillStyle=INK;ctx.beginPath();ctx.roundRect(bx-2,by-2,bw+4,bh+(e.sm?11:4),7);ctx.fill();ctx.fillStyle='#3a2f55';ctx.beginPath();ctx.roundRect(bx,by,bw,bh,bh/2);ctx.fill();
  const fw=Math.max(0,bw*e.hp/e.mx);if(fw>1){ctx.fillStyle=fc;ctx.beginPath();ctx.roundRect(bx,by,fw,bh,bh/2);ctx.fill();ctx.fillStyle='rgba(255,255,255,.28)';ctx.fillRect(bx+3,by+1.5,Math.max(0,fw-6),3)}
  if(e.sm){ctx.fillStyle='#2a2444';ctx.fillRect(bx,by+bh+2,bw,5);const sw=bw*Math.max(0,e.sd)/e.sm;if(sw>.5){ctx.fillStyle=e.sdt>0?'#86a8cc':'#bfe6ff';ctx.fillRect(bx,by+bh+2,sw,5)}}
- ctx.textAlign='center';ctx.font='900 9px system-ui';ctx.lineWidth=2.5;ctx.strokeStyle=INK;const ht=Math.max(0,Math.round(e.hp))+'';ctx.strokeText(ht,e.x,by+bh-2.5);ctx.fillStyle='#fff';ctx.fillText(ht,e.x,by+bh-2.5);
- ctx.font='900 12px system-ui';ctx.lineWidth=3.5;const nt=(e.awt>0?'★ ':'')+e.nm;ctx.strokeText(nt,e.x,by-6);ctx.fillStyle=tmode?(ally?'#9ccbff':'#ff9a9a'):CH[e.ch].elite||e.boss?'#ffd84d':'#fff';ctx.fillText(nt,e.x,by-6);
+ ctx.textAlign='center';const ht=Math.max(0,Math.round(e.hp))+'',hs=txtSprite(ht,'#fff',9,2.5);ctx.drawImage(hs.c,e.x-hs.w/2,by+bh-2.5-hs.bl,hs.w,hs.h);
+ const nt=(e.awt>0?'★ ':'')+e.nm,nc=tmode?(ally?'#9ccbff':'#ff9a9a'):CH[e.ch].elite||e.boss?'#ffd84d':'#fff',ns=txtSprite(nt,nc,12,3.5);ctx.drawImage(ns.c,e.x-ns.w/2,by-6-ns.bl,ns.w,ns.h);
  if(e.cg&&mine){const s=CH[e.ch].s;for(const k in e.cg){const n=s[k].chg;for(let i=0;i<n;i++){ctx.fillStyle=i<e.cg[k]?'#7fe4ff':'#2a2444';ctx.strokeStyle=INK;ctx.lineWidth=2;ctx.beginPath();ctx.arc(e.x-(n-1)*5+i*10,fy+13,3.4,0,7);ctx.fill();ctx.stroke()}}}
  if(e.stn>0){ctx.fillStyle='#ffe14d';ctx.font='14px system-ui';for(let i=0;i<3;i++){const q=tm*6+i*2.1;ctx.fillText('★',e.x+Math.cos(q)*14,by-18+Math.sin(q)*4)}}}
 
@@ -415,6 +415,19 @@ function ground(M){const sc=Math.min(2,Math.max(1,Math.ceil(K*dpr*2)/2))*(W>1000
  if(GC.k!==k){const c=GC.c||(GC.c=document.createElement('canvas'));c.width=(W+64)*sc;c.height=(H+72)*sc;const x=c.getContext('2d'),o=ctx;x.scale(sc,sc);x.translate(32,32);ctx=x;try{paintGround(M)}finally{ctx=o}GC.k=k}
  ctx.drawImage(GC.c,-32,-32,W+64,H+72)}
 // soft round glow per colour, reused everywhere light is needed
+// text is expensive to rasterise (an outline plus a fill per glyph, every frame). Most in-world
+// labels change only when a number does, so they are baked into sprites and blitted; the baseline
+// offset is stored so the position does not drift from the old strokeText baseline.
+const TXC={};
+function txtSprite(s,col,size,stroke){const k2=size+'|'+col+'|'+(stroke||0)+'|'+s;let e=TXC[k2];if(e)return e;
+ const sc=Math.max(1,dpr),f='900 '+size+'px system-ui',m=document.createElement('canvas').getContext('2d');m.font=f;
+ const pad=Math.ceil((stroke||0)/2)+2,w=Math.ceil(m.measureText(s).width)+pad*2,h=Math.ceil(size*1.5)+pad*2,bl=pad+size*.8;
+ const c=document.createElement('canvas');c.width=Math.ceil(w*sc);c.height=Math.ceil(h*sc);
+ const x=c.getContext('2d');x.scale(sc,sc);x.font=f;x.textAlign='center';x.textBaseline='alphabetic';
+ if(stroke){x.lineWidth=stroke;x.lineJoin='round';x.strokeStyle=INK;x.strokeText(s,w/2,bl)}
+ x.fillStyle=col;x.fillText(s,w/2,bl);
+ if(Object.keys(TXC).length>280)for(const q in TXC)delete TXC[q];
+ return TXC[k2]={c,w,h,bl}}
 const GL={};
 function glow(col){let c=GL[col];if(!c){c=GL[col]=document.createElement('canvas');c.width=c.height=64;const h=col.length==4?'#'+col[1]+col[1]+col[2]+col[2]+col[3]+col[3]:col.slice(0,7),x=c.getContext('2d'),g=x.createRadialGradient(32,32,0,32,32,32);g.addColorStop(0,'#fff');g.addColorStop(.4,h);g.addColorStop(1,h+'00');x.fillStyle=g;x.fillRect(0,0,64,64)}return c}
 let DSP=null,SSP=null;
@@ -485,12 +498,21 @@ note(q){aEll(-2,3,4,3,q.col,0,-.4);aLine(1.6,3,1.6,-8,INK,2);aPoly([1.6,-8,8,-5,
 ball(q){aCirc(0,0,7.1,'#f2762a');ctx.strokeStyle=INK;ctx.lineWidth=1.3;ctx.beginPath();ctx.ellipse(0,0,3.4,7.1,0,0,7);ctx.stroke();aLine(-7.1,0,7.1,0,INK,1.3);aCirc(-2.2,-2.5,2.1,'#ffb37a',1)},
 rock(q){ctx.rotate(tm*5);aPoly([-7,-3,-3,-7,4,-6,7,-1,5,6,-2,7,-7,3],'#9aa3b8');aPoly([-5,-3,-2,-5,3,-4,1,0,-4,1],'#c6cee0',1)},
 vortex(q){}};
+// bodies that do not animate are baked once per (shape, colour) and blitted: a dozen path ops and two
+// strokes per bullet become one drawImage. Painters that read tm (star, rock, dark, wave, fire) and
+// the vortex keep the live path, because freezing them would change how they look.
+const PRC={},PS_STATIC={orb:1,arrow:1,bullet:1,kunai:1,ice:1,needle:1,ball:1,lance:1,fist:1,note:1,slash:1};
+function projBody(ps,q){const col=q.col||'#fff',fc=q.fc||'',k2=ps+'|'+col+'|'+fc;let s=PRC[k2];if(s)return s;
+ const sc=3,size=56,hw=size/2,c=document.createElement('canvas');c.width=c.height=size*sc;
+ const x=c.getContext('2d');x.scale(sc,sc);x.translate(hw,hw);x.lineJoin=x.lineCap='round';x.lineWidth=2.2;
+ const o=ctx;ctx=x;try{(PSH[ps]||PSH.orb)(q)}finally{ctx=o}
+ s=PRC[k2]={c,size,hw};return s}
 function drawProj(q){const sp=Math.hypot(q.vx,q.vy)||1,ux=q.vx/sp,uy=q.vy/sp,r=q.r,ps=q.ps||'orb';
  if(ps=='fist'){const o=ent(q.o);if(o&&o.al&&Math.hypot(o.x-q.x,o.y-q.y)<520){ctx.lineCap='round';ctx.lineWidth=9;ctx.strokeStyle=INK;ctx.beginPath();ctx.moveTo(o.x,o.y-2);ctx.lineTo(q.x,q.y);ctx.stroke();ctx.lineWidth=5.6;ctx.strokeStyle=SKN;ctx.stroke()}}
  ctx.globalCompositeOperation='lighter';const len=Math.min(q.pierce?150:64,r*3+sp*.05);ctx.strokeStyle=q.col;ctx.globalAlpha=.45;ctx.lineWidth=r*1.5;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(q.x,q.y);ctx.lineTo(q.x-ux*len,q.y-uy*len);ctx.stroke();ctx.globalAlpha=.9;ctx.drawImage(glow(q.col),q.x-r*2.1,q.y-r*2.1,r*4.2,r*4.2);ctx.globalAlpha=1;
  if(ps=='vortex'){ctx.strokeStyle='#fff';ctx.lineWidth=3;for(let i=0;i<3;i++){ctx.globalAlpha=.9-i*.22;ctx.beginPath();ctx.arc(q.x,q.y,r*(.35+.28*i),tm*(7-i*1.5)+i*2,tm*(7-i*1.5)+i*2+3.6);ctx.stroke()}ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';ctx.fillStyle='#0c0620cc';ctx.beginPath();ctx.arc(q.x,q.y,r*.24,0,7);ctx.fill();return}
  if(ps=='wave'){ctx.save();ctx.translate(q.x,q.y);ctx.rotate(Math.atan2(uy,ux));const s=Math.max(.7,r/9);ctx.scale(s,s);PSH.wave(q);ctx.restore();ctx.globalCompositeOperation='source-over';return}
- ctx.globalCompositeOperation='source-over';ctx.save();ctx.translate(q.x,q.y);ctx.rotate(Math.atan2(uy,ux));const s=Math.max(.75,r/7);ctx.scale(s,s);ctx.lineJoin=ctx.lineCap='round';ctx.lineWidth=2.2/s+.6;ctx.strokeStyle=INK;(PSH[ps]||PSH.orb)(q);ctx.restore()}
+ ctx.globalCompositeOperation='source-over';ctx.save();ctx.translate(q.x,q.y);ctx.rotate(Math.atan2(uy,ux));const s=Math.max(.75,r/7);const bs=PS_STATIC[ps];if(bs){const b=projBody(ps,q);ctx.drawImage(b.c,-b.hw*s,-b.hw*s,b.size*s,b.size*s)}else{ctx.scale(s,s);ctx.lineJoin=ctx.lineCap='round';ctx.lineWidth=2.2/s+.6;ctx.strokeStyle=INK;(PSH[ps]||PSH.orb)(q)}ctx.restore()}
 function drawPickup(p){const bob=Math.sin(tm*6+p.x)*2.2,x=p.x,y=p.y+bob;softShadow(p.x,p.y+9,8,3.4);
  glowAt(p.t=='coin'?'#ffd23c':p.t=='hp'?'#ff5064':'#50b4ff',x,y,15,.6);ctx.lineJoin='round';ctx.lineWidth=2;ctx.strokeStyle=INK;
  if(p.t=='coin'){const w=Math.abs(Math.cos(tm*4+p.x))*5.4+1.2;aEll(x,y,w,6.4,'#ffd23c');aEll(x,y,w*.55,4,'#ffe98a',1);aEll(x-w*.3,y-2.6,w*.2,1.3,'#fff',1)}
@@ -534,8 +556,8 @@ function lightSplash(){
 // because a halo IS midtone). A buffer that holds only the emitters leaves the floor untouched.
 const EM=[];let BB=null,BB2=null;
 function emitBloom(){
- if(!Q.fx)return;
- const s=4,bw=Math.max(1,Math.ceil(cw/s)),bh=Math.max(1,Math.ceil(chh/s));
+ if(!Q.fx||Q.dpr<1.5)return;
+ const s=6,bw=Math.max(1,Math.ceil(cw/s)),bh=Math.max(1,Math.ceil(chh/s));
  if(!BB){BB=document.createElement('canvas');BB2=document.createElement('canvas')}
  if(BB.width!=bw||BB.height!=bh){BB.width=bw;BB.height=bh;BB2.width=bw;BB2.height=bh}
  const x=BB.getContext('2d'),k=K*dpr/s;
@@ -565,11 +587,20 @@ function emitBloom(){
  ctx.drawImage(BB2,0,0,cw,chh);
  ctx.restore()}
 
+// the sea is a vertical gradient under a scrolling camera. It changed with the camera each frame, so
+// it could not be cached as-is; baked at view size and blitted it is one drawImage instead of a
+// full-screen gradient fill. The wave lines still animate on top of it.
+let SEA=null;
+function seaLayer(M){const k2=MAP+'|'+Math.round(VW)+'x'+Math.round(VH);if(SEA&&SEA.k===k2)return SEA;
+ const w=Math.max(2,Math.ceil(VW+80)),h=Math.max(2,Math.ceil(VH+80)),c=document.createElement('canvas');c.width=w;c.height=h;
+ const x=c.getContext('2d'),g=x.createLinearGradient(0,40,0,40+VH);g.addColorStop(0,M.sea[0]);g.addColorStop(1,M.sea[1]);x.fillStyle=g;x.fillRect(0,0,w,h);
+ SEA={k:k2,c,w,h};return SEA}
+
 // ---------- the world pass: water, island, ground effects, sorted objects, air effects, weather
 function drawWorld(){const M=MAPS[MAP],T=TH[M.th]||TH.sand,k=K*dpr;VW=cw/K;VH=chh/K;
  cam.x=VW<W+60?Math.max(-30,Math.min(W+30-VW,me.x-VW/2)):(W-VW)/2;cam.y=VH<H+60?Math.max(-30,Math.min(H+30-VH,me.y-VH/2)):(H-VH)/2;
  ctx.setTransform(k,0,0,k,(-cam.x+(Math.random()-.5)*shake*22)*k,(-cam.y+(Math.random()-.5)*shake*22)*k);
- let g=ctx.createLinearGradient(0,cam.y,0,cam.y+VH);g.addColorStop(0,M.sea[0]);g.addColorStop(1,M.sea[1]);ctx.fillStyle=g;ctx.fillRect(cam.x-40,cam.y-40,VW+80,VH+80);
+ const sl=seaLayer(M);ctx.drawImage(sl.c,cam.x-40,cam.y-40,sl.w,sl.h);
  {const wn=Q.fx?9:5,ws=Q.fx?26:40,lv=M.th=='lava';ctx.strokeStyle=lv?'rgba(255,190,90,.3)':'#ffffff26';ctx.lineWidth=lv?3:2;for(let j=0;j<wn;j++){const y=cam.y+j*VH/(wn-1);ctx.beginPath();for(let x=cam.x-40;x<=cam.x+VW+40;x+=ws)ctx.lineTo(x,y+Math.sin(x/45+tm*(lv?.8:1.6)+j)*5);ctx.stroke()}
   const e0=Math.sin(tm*2)*5+6;ctx.strokeStyle=lv?'rgba(255,200,90,.5)':'rgba(255,255,255,.5)';ctx.lineWidth=5;ctx.beginPath();ctx.roundRect(-22-e0,-22-e0,W+44+2*e0,H+52+2*e0,66);ctx.stroke();ctx.fillStyle=lv?'rgba(255,150,50,.22)':'rgba(255,255,255,.2)';ctx.beginPath();ctx.roundRect(-22-e0,-22-e0,W+44+2*e0,H+52+2*e0,66);ctx.fill()}
  ground(M);

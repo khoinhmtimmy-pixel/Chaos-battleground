@@ -3,16 +3,27 @@ const cv=document.getElementById('c'),$=id=>document.getElementById(id);let ctx=
 let W=900,H=600;
 if(!CanvasRenderingContext2D.prototype.roundRect)CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h){this.rect(x,y,w,h)};
 // quality tiers: particle cap, max pixel ratio, projectile trail chance, full-size effects
-const QL=[{pc:520,dpr:2,tr:.8,fx:1},{pc:300,dpr:1.5,tr:.5,fx:1},{pc:150,dpr:1,tr:.25,fx:0}];let Q=QL[0],qset=-1;const qa={lock:0,trial:0,prev:0};
-function setQ(i){Q=QL[Math.max(0,Math.min(2,i))];GC.k='';resize()}
+const QL=[{pc:400,dpr:1.8,tr:.6,fx:1,bud:1.8e6},{pc:220,dpr:1.2,tr:.4,fx:0.8,bud:1.2e6},{pc:100,dpr:1,tr:.15,fx:0,bud:0.9e6}];let Q=QL[1],qset=1;const qa={trial:0,up:0};
+function setQ(i){Q=QL[Math.max(0,Math.min(2,i))];qset=i;GC.k='';resize()}
 const P=(x,y,vx,vy,l,c,s)=>{if(parts.length<Q.pc)parts.push({x,y,vx,vy,l,m:l,c,s})};
-const burst=(x,y,c,n)=>{if(!Q.fx)n=n+1>>1;for(let i=0;i<n;i++){const a=Math.random()*6.283,v=60+Math.random()*240;P(x,y,Math.cos(a)*v,Math.sin(a)*v,.35+Math.random()*.3,c,2+Math.random()*4)}};
+const burst=(x,y,c,n)=>{if(!Q.fx)n=Math.max(2,n>>2);else if(Q.fx<1)n=Math.max(3,n>>1);for(let i=0;i<n;i++){const a=Math.random()*6.283,v=60+Math.random()*200;P(x,y,Math.cos(a)*v,Math.sin(a)*v,.25+Math.random()*.25,c,1.5+Math.random()*3)}};
 const num=(x,y,v,c)=>{if(txts.length<60)txts.push({x:x+(Math.random()-.5)*16,y,s:Math.max(1,Math.round(v)),c,l:.8,m:.8})};
 const say=(x,y,s,c)=>txts.push({x,y,s,c,l:1.1,m:1.1,big:1});
 // style.css already silences the DOM under prefers-reduced-motion; the canvas shake and the edge
 // flash are drawn here, so they have to follow the same preference or the setting does nothing.
 const RMM=matchMedia('(prefers-reduced-motion: reduce)');
-function resize(){dpr=Math.min(Q.dpr,devicePixelRatio||1);VG=null;pd=0;const r=$('w').getBoundingClientRect();cw=r.width;chh=r.height;cv.width=cw*dpr;cv.height=chh*dpr;K=Math.max(Math.min(cw/W,chh/H),touch?.95:.9)}
+function resize(){const r=$('w').getBoundingClientRect();cw=r.width;chh=r.height;dpr=Math.min(Q.dpr,devicePixelRatio||1);
+ // The canvas is fill-rate bound, so the backing store is capped by pixel count rather than by
+ // dpr alone: a 2560x1400 window at dpr 2 asks for 14M pixels a frame, which no amount of JS
+ // tuning survives. Halving the buffer on a big screen buys whole milliseconds and is invisible
+ // at this art scale; the HUD is re-drawn inside the same buffer, so nothing goes soft on purpose.
+ const cap=Math.sqrt((Q.bud||2.2e6)/Math.max(1,cw*chh));if(dpr>cap)dpr=Math.max(.5,Math.round(cap*20)/20);
+ VG=null;pd=0;cv.width=Math.round(cw*dpr);cv.height=Math.round(chh*dpr);K=Math.max(Math.min(cw/W,chh/H),touch?.95:.9)}
+// The three full-screen tints (vignette, damage, shield) are radial gradients. Baked once per canvas
+// size they cost one blit each instead of a gradient fill, which is a millisecond-scale difference on
+// every machine without GPU-accelerated canvas.
+function vigBuild(){const w=Math.max(1,Math.round(cw*dpr)),h=Math.max(1,Math.round(chh*dpr)),mk=(inner,c0,c1)=>{const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');const g=x.createRadialGradient(w/2,h/2,Math.min(w,h)*inner,w/2,h/2,Math.max(w,h)*.72);g.addColorStop(0,c0);g.addColorStop(1,c1);x.fillStyle=g;x.fillRect(0,0,w,h);return c};
+ VG={w:cw,h:chh,base:mk(.45,'rgba(0,0,0,0)','rgba(10,5,30,.4)'),red:mk(.3,'rgba(255,0,0,0)','rgba(255,20,40,.75)'),blue:mk(.35,'rgba(120,200,255,0)','rgba(120,200,255,.6)')}}
 addEventListener('resize',resize);
 let PIL=[[300,200,38],[600,200,38],[300,400,38],[600,400,38],[450,300,30]],SP=[[70,70],[830,70],[70,530],[830,530]];
 let kf=[],an=[],fb=0,matchT=0,BUSH=[],tmode=false,onlineTeam=false,autoAim=false,lockT=null,decals=[],pk=[],chest=null,portal=null,choice=null,nid=0,raid=null,aim=null,hold=0,joining=0,MAP=0,onlineMap=0,train=0,loc2=0,k2={},cam={x:0,y:0},K=1,VW=900,VH=600,cw=900,chh=600,dpr=1,touch=matchMedia("(pointer:coarse)").matches,joy={x:0,y:0},parts=[],txts=[],shake=0,hsT=0,sel=0,me,others={},ents=[],R=null,keys={},mouse={x:450,y:300,down:false},last=0,over=0,winner='',lastHit=null,flash=0,run=0,pt=0,tm=0,joinT=Date.now(),paused=0,pd=0,allC=null,raf=0,fts=.016,slowT=0,VG=null,VR=null,flashS=0,pvpCfg=null,shards=[],survivalMode=false,rankedOn=false,rkElo=1000;
@@ -378,12 +389,21 @@ function drawDummy(e){softShadow(e.x,e.y+22,20,7);
  ctx.fillStyle='#fff';ctx.font='bold 12px system-ui';ctx.textAlign='center';ctx.fillText(e.nm,e.x,e.y-54)}
 // lighten (f>0) or darken (f<0) a hex colour; returns hex so results can be shaded again
 const SHC={};function shade(c,f){const k=c+f;if(SHC[k])return SHC[k];if(c.length==4)c='#'+c[1]+c[1]+c[2]+c[2]+c[3]+c[3];const n=parseInt(c.slice(1,7),16),t=f<0?0:255,p=Math.abs(f),h=v=>Math.round((t-v)*p+v).toString(16).padStart(2,'0');return SHC[k]='#'+h(n>>16&255)+h(n>>8&255)+h(n&255)}
+// ability discs are a radial gradient plus a drop shadow that never changes: baking one sprite per
+// (colour, radius) removes five gradient fills from every frame
+const DSC={};
+function discSprite(col,isAtk,r){const k2=(isAtk?'a':col)+'|'+r+'|'+dpr.toFixed(2);let s=DSC[k2];if(s)return s;
+ const sc=Math.max(1,dpr),w=Math.ceil((r+4)*2),px=Math.ceil(w*sc),c=document.createElement('canvas');c.width=c.height=px;
+ const x=c.getContext('2d');x.scale(sc,sc);const cx=w/2,cy=w/2;
+ x.fillStyle='rgba(0,0,0,.35)';x.beginPath();x.arc(cx,cy+4,r+3,0,7);x.fill();
+ const g=x.createRadialGradient(cx-r*.3,cy-r*.35,2,cx,cy,r);
+ g.addColorStop(0,isAtk?'#ffa070':shade(col,.4));g.addColorStop(1,isAtk?'#d13a1e':shade(col,-.28));
+ x.fillStyle=g;x.beginPath();x.arc(cx,cy,r,0,7);x.fill();s=DSC[k2]={c,w};return s}
 function skillBtns(){const sk=CH[me.ch].s;
  for(const [k,x,y,r] of [['a',cw-70,chh-76,38],['q',cw-152,chh-50,27],['e',cw-140,chh-118,27],['r',cw-78,chh-152,27],['c',cw-212,chh-176,27]]){const s=sk[k],cg=s.chg?me.cg[k]:-1,cd=cg>0?0:me.cd[k],fr=cd>0?Math.min(1,cd/s.cd):0;
   // the desperation button reads sealed unless the condition is actually met
   const sealed=k=='c'&&!!(raid&&raid.noUlt),lockd=k=='c'&&(!desOpen(me)||sealed),rdy=k=='c'&&!sealed&&desReady(me);
-  ctx.fillStyle='rgba(0,0,0,.35)';ctx.beginPath();ctx.arc(x,y+4,r+3,0,7);ctx.fill();
-  const g=ctx.createRadialGradient(x-r*.3,y-r*.35,2,x,y,r);g.addColorStop(0,k=='a'?'#ffa070':shade(CH[me.ch].col,.4));g.addColorStop(1,k=='a'?'#d13a1e':shade(CH[me.ch].col,-.28));ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill();ctx.strokeStyle=lockd?'#1b1030':rdy?'#ffd84d':'#1b1030';ctx.lineWidth=lockd?4:rdy?5:4;ctx.stroke();
+  const d=discSprite(CH[me.ch].col,k=='a',r);ctx.drawImage(d.c,x-r-4,y-r-4,d.w,d.w);ctx.strokeStyle=lockd?'#1b1030':rdy?'#ffd84d':'#1b1030';ctx.lineWidth=lockd?4:rdy?5:4;ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.stroke();
   if(rdy){ctx.globalAlpha=.35+.25*Math.sin(tm*8);ctx.fillStyle='#ffd84d';ctx.beginPath();ctx.arc(x,y,r+6,0,7);ctx.fill();ctx.globalAlpha=1}
   ctx.fillStyle=lockd?'#5b5470':'#fff';ctx.font='900 '+(r*.95|0)+'px system-ui';ctx.textAlign='center';ctx.fillText(lockd?'🔒':IC[s.k]||'✦',x,y+r*.32);
   if(lockd){const lb2=sealed?'SEALED':'≤50% HP';ctx.font='900 8px system-ui';ctx.strokeStyle='#1b1030';ctx.lineWidth=2.5;ctx.strokeText(lb2,x,y+r+13);ctx.fillStyle='#c9b6ff';ctx.fillText(lb2,x,y+r+13);continue}
@@ -495,12 +515,13 @@ function drawReplay(){const d=REP.d,fr=d.f;
 function draw(){
  allC=null;drawWorld();
  ctx.setTransform(dpr,0,0,dpr,0,0);
- if(!VG||VG.w!=cw||VG.h!=chh){VG=ctx.createRadialGradient(cw/2,chh/2,Math.min(cw,chh)*.45,cw/2,chh/2,Math.max(cw,chh)*.75);VG.addColorStop(0,'rgba(0,0,0,0)');VG.addColorStop(1,'rgba(10,5,30,.4)');VG.w=cw;VG.h=chh;
-  VR=ctx.createRadialGradient(cw/2,chh/2,Math.min(cw,chh)*.3,cw/2,chh/2,Math.max(cw,chh)*.7);VR.addColorStop(0,'rgba(255,0,0,0)');VR.addColorStop(1,'rgba(255,20,40,.75)');
-  VB=ctx.createRadialGradient(cw/2,chh/2,Math.min(cw,chh)*.35,cw/2,chh/2,Math.max(cw,chh)*.7);VB.addColorStop(0,'rgba(120,200,255,0)');VB.addColorStop(1,'rgba(120,200,255,.6)')}
- ctx.fillStyle=VG;ctx.fillRect(0,0,cw,chh);
+ // vignette / damage / shield tints are full-screen radial gradients. Rebuilding them each frame
+ // (or filling with a gradient each frame) costs milliseconds on a software rasterizer, so they
+ // are baked once per canvas size and blitted — one drawImage instead of a gradient fill.
+ if(!VG||VG.w!=cw||VG.h!=chh)vigBuild();
+ ctx.drawImage(VG.base,0,0,cw,chh);
   drawDark();
- if(me.al&&me.hp<me.mx*.3){const p=(me.mx*.3-me.hp)/(me.mx*.3);ctx.globalAlpha=(.42+.28*Math.sin(tm*7))*(.6+.4*p);ctx.fillStyle=VR;ctx.fillRect(0,0,cw,chh);ctx.globalAlpha=1}
+ if(me.al&&me.hp<me.mx*.3){const p=(me.mx*.3-me.hp)/(me.mx*.3);ctx.globalAlpha=(.42+.28*Math.sin(tm*7))*(.6+.4*p);ctx.drawImage(VG.red,0,0,cw,chh);ctx.globalAlpha=1}
  if(raid)hudRun();else hudPvp();
  const sk=CH[me.ch].s;
  if(!touch)skillBtns();
@@ -509,7 +530,7 @@ function draw(){
  if(touch&&!raid){const on=me.awt>0,by=chh-16,bx=cw/2-150,pct=on?me.awt/15:(me.aw||0)/100;rr(bx,by,306,9,4,'#000a');rr(bx,by,306*pct,9,4,on?'#fff3a0':'#ffd84d');ctx.font='bold 11px system-ui';ctx.textAlign='center';ctx.fillStyle='#fff';ctx.fillText(on?'AWAKENED '+me.awt.toFixed(1)+'s':(me.aw>=100?'AWAKEN READY!':'Awakening '+Math.floor(me.aw||0)+'%'),cw/2,by-3)}
  if(tmode)scoreboard();hudFeed();minimap();if(train)trainedHud();
  // getting hit pulses the screen edge (red: health, blue: shield took it) instead of flashing the whole view
- if(flash>0){ctx.globalAlpha=Math.min(1,flash*(flashS?5:6));ctx.fillStyle=flashS?VB:VR;ctx.fillRect(0,0,cw,chh);ctx.globalAlpha=1}
+ if(flash>0){ctx.globalAlpha=Math.min(1,flash*(flashS?5:6));ctx.drawImage(flashS?VG.blue:VG.red,0,0,cw,chh);ctx.globalAlpha=1}
  drawUltCut();
  ctx.textAlign='center';if(!raid&&!me.al){ctx.fillStyle='#000a';ctx.fillRect(0,chh/2-40,cw,80);ctx.fillStyle='#fff';ctx.font='bold 26px system-ui';ctx.fillText('KO! Respawning in '+Math.ceil(me.rt),cw/2,chh/2+8)}
   if(over&&!ovKind){ctx.fillStyle='#000c';ctx.fillRect(0,chh/2-55,cw,110);ctx.fillStyle='#ffd166';ctx.font='bold 32px system-ui';ctx.fillText('🏆 '+winner+' wins!',cw/2,chh/2);ctx.font='16px system-ui';ctx.fillStyle='#fff';ctx.fillText('New round in '+Math.ceil(over),cw/2,chh/2+30)}if(typeof UI.pvpCount==='function')UI.pvpCount();if(over<=0&&typeof UI.pvpClose==='function')UI.pvpClose();}
@@ -547,10 +568,11 @@ function minimap(){const mw=Math.min(150,cw*.3),mh=mw*H/W,x0=raid?cw-mw-8:8,y0=r
  if(portal){ctx.fillStyle='#d8b4fe';ctx.fillRect(x0+portal.x*sx-3,y0+portal.y*sy-3,6,6)}
  for(const [id,e] of all()){if(!e.al||hiddenE(e))continue;ctx.fillStyle=id=='me'?'#fff':tmode?(e.tm===me.tm?'#4da3ff':'#ff5a5a'):e.raidE?'#ff5a5a':CH[e.ch].col;ctx.beginPath();ctx.arc(x0+e.x*sx,y0+e.y*sy,id=='me'?3.6:e.boss?4.2:2.8,0,7);ctx.fill();if(id=='me'){ctx.strokeStyle='#000';ctx.lineWidth=1;ctx.stroke()}}}
 function loop(t){if(!run)return;const raw=(t-last)/1e3,dt=Math.min(.05,raw);last=t;
- // step down a tier after 2.5s of long frames, then check it helped: if not (30Hz screen, throttled tab) step back up and stop adjusting
- if(qset<0&&!paused&&!qa.lock&&raw<.25){fts=fts*.95+raw*.05;
-  if(qa.trial>0){qa.trial-=raw;if(qa.trial<=0){if(fts>qa.prev*.85){setQ(QL.indexOf(Q)-1);qa.lock=1}slowT=0}}
-  else if(fts>.024){slowT+=raw;if(slowT>2.5&&Q!==QL[2]){qa.prev=fts;qa.trial=3;slowT=0;setQ(QL.indexOf(Q)+1)}}else slowT=Math.max(0,slowT-raw)}
+ // Adaptive quality, as a hysteresis controller
+ if(!paused&&raw<.25){fts=fts*.9+raw*.1;
+  if(qa.trial>0){qa.trial-=raw;if(qa.trial<=0){if(fts>.018&&Q!==QL[2]){qa.trial=2;setQ(QL.indexOf(Q)+1)}slowT=0}}
+  else if(fts>.02){slowT+=raw;if(slowT>1&&Q!==QL[2]){qa.trial=2;slowT=0;setQ(QL.indexOf(Q)+1)}}
+  else{slowT=Math.max(0,slowT-raw);if(fts<.014&&Q!==QL[0]){qa.up+=raw;if(qa.up>4){qa.up=0;setQ(QL.indexOf(Q)-1)}}else qa.up=0}}
  // hitstop holds the simulation but never the picture: draw() still runs, so the frame on screen is the
  // frozen impact frame rather than a dropped one. hsT only ticks outside pause, where nothing moves anyway.
  if(REP){REP.t+=raw;drawReplay();raf=requestAnimationFrame(loop);return}
